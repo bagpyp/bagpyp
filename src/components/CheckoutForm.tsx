@@ -18,14 +18,18 @@ const CheckoutForm = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		console.log(Math.round(100 * input.amount));
 		setLoading(true);
 		// Create a Checkout Session.
 		const checkoutSession: Stripe.Checkout.Session = await fetch(
 			"/api/make_payment",
 			{
 				method: "POST",
+				mode: "cors",
+				cache: "no-cache",
+				credentials: "same-origin",
 				headers: { "Content-Type": "application/json" },
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
 				body: JSON.stringify({ amount: Math.round(100 * input.amount) })
 			}
 		).then((res) => res.json());

@@ -12,7 +12,6 @@ export default async function handler(
 	if (req.method === "POST") {
 		const amount: number = req.body.amount;
 		const displayAmount: number = Math.round(amount / 100);
-		console.log(amount);
 		// TODO: Validate the amount that was passed from the client.
 		try {
 			const checkoutSession: Stripe.Checkout.Session =

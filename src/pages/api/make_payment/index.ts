@@ -27,8 +27,8 @@ export default async function handler(
 							quantity: 1
 						}
 					],
-					success_url: `${req.headers.origin}/thanks`,
-					cancel_url: `${req.headers.origin}/error`
+					success_url: `${req.headers.origin}/thanks?session_id={CHECKOUT_SESSION_ID}`,
+					cancel_url: `${req.headers.origin}/error?session_id={CHECKOUT_SESSION_ID}`
 				});
 			res.status(200).json(checkoutSession);
 		} catch (err) {

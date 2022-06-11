@@ -55,25 +55,32 @@ const CheckoutForm = () => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<div className={"input-group mb-3"}>
-				<span className="input-group-text">$</span>
-				<input
-					className={"form-control"}
-					type={"number"}
-					name={"amount"}
-					min={1}
-					max={1000}
-					step={1}
-					value={input.amount}
-					onChange={handleInputChange}
-				/>
-				<span className="input-group-text text-muted">.00</span>
-			</div>
-			<button className="btn btn-success mb-1" type="submit" disabled={loading}>
+		<div>
+			<form id={"checkout-form"} onSubmit={handleSubmit}>
+				<div className={"input-group mb-3"}>
+					<span className="input-group-text">$</span>
+					<input
+						className={"form-control"}
+						type={"number"}
+						name={"amount"}
+						min={1}
+						max={1000}
+						step={1}
+						value={input.amount}
+						onChange={handleInputChange}
+					/>
+					<span className="input-group-text text-muted">.00</span>
+				</div>
+			</form>
+			<button
+				className="btn btn-success mb-1"
+				type="submit"
+				disabled={loading}
+				form={"checkout-form"}
+			>
 				pay
 			</button>
-		</form>
+		</div>
 	);
 };
 

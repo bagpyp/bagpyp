@@ -7,9 +7,6 @@ const Index = () => {
 	return (
 		<Layout>
 			<h1>👨‍💻 bagpyp</h1>
-			<p>
-				on branch <code>develop</code>
-			</p>
 			{user && <CheckoutForm />}
 		</Layout>
 	);

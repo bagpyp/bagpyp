@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Project } from "../../interfaces";
 import { sampleProjectData } from "../../utils/sample-projects";
 import Layout from "../../components/Layout";
-import List from "../../components/List";
+import Projects from "../../components/Projects";
 
 type Props = {
 	items: Project[];
@@ -13,7 +13,7 @@ type Props = {
 const WithStaticProps = ({ items }: Props) => (
 	<Layout title="Projects">
 		<h1>projects 🗽</h1>
-		<List items={items} />
+		<Projects projects={items} />
 		<p>
 			<Link href="/">
 				<a>home 🏡</a>

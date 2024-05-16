@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import Head from "next/head";
-import logo from "../img/logo.svg";
 import Image from "next/image";
 import styles from "../styles/Layout.module.css";
 import LoginLogout from "./LoginLogout";
@@ -22,7 +21,12 @@ const Layout = ({ children, title = "Bagpyp" }: Props) => {
 			<header className={styles.header}>
 				<Link href="/">
 					<a>
-						<Image src={logo} alt="bagpyp" width={100} height={100} />
+						<Image
+							src={"/img/logo.svg"}
+							alt="bagpyp"
+							width={100}
+							height={100}
+						/>
 					</a>
 				</Link>
 				<nav>

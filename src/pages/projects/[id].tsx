@@ -3,7 +3,7 @@ import { GetStaticProps, GetStaticPaths } from "next";
 import { Project } from "../../interfaces";
 import { sampleProjectData } from "../../utils/sample-projects";
 import Layout from "../../components/Layout";
-import ListDetail from "../../components/ListDetail";
+import ProjectDetail from "../../components/ProjectDetail";
 
 type Props = {
 	item?: Project;
@@ -22,8 +22,8 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
 	}
 
 	return (
-		<Layout title={item ? item.name : "Projects"}>
-			{item && <ListDetail item={item} />}
+		<Layout title={item ? item.title : "Projects"}>
+			{item && <ProjectDetail project={item} />}
 		</Layout>
 	);
 };

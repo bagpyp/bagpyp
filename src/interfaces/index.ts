@@ -6,5 +6,9 @@
 
 export type Project = {
 	id: number;
-	name: string;
-};
+	title: string;
+	description: string;
+	long_description: string;
+	tech_used: string[];
+	images: string[] | string;
+  };

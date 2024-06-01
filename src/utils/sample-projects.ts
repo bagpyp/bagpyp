@@ -57,26 +57,6 @@ export const sampleProjectData: Project[] = [
 	},
 	{
 		id: 5,
-		title: "Pizza Ordering Menu",
-		description:
-			"A JavaScript project that calculates the final pizza price based on selections.",
-		long_description:
-			"This JavaScript project created an interactive pizza ordering menu that calculates the final price based on user selections. The project involved extensive use of HTML, CSS, and JavaScript to create a dynamic and engaging user experience.",
-		tech_used: ["HTML", "CSS", "JavaScript"],
-		images: "pizza_ordering_menu.png"
-	},
-	{
-		id: 6,
-		title: "Tic Tac Toe",
-		description:
-			"A JavaScript project, a game of Tic Tac Toe with sounds and pop-ups.",
-		long_description:
-			"This project was a JavaScript-based Tic Tac Toe game that included sounds and pop-ups for an enhanced user experience. The game was developed using HTML, CSS, and JavaScript, providing an engaging and interactive gameplay experience.",
-		tech_used: ["JavaScript", "CSS", "HTML"],
-		images: "tic_tac_toe.png"
-	},
-	{
-		id: 7,
 		title: "Academy Cinemas Website",
 		description:
 			"A Bootstrap project to practice using the bootstrap framework.",
@@ -86,10 +66,10 @@ export const sampleProjectData: Project[] = [
 		images: "academy_cinemas_website.png"
 	},
 	{
-		id: 8,
+		id: 6,
 		title: "Library Management System",
 		description:
-			"An SQL project creating a Library Management System database and schema.",
+			"A SQL project creating a Library Management System database and schema.",
 		long_description:
 			"This project involved creating a comprehensive Library Management System database and schema using SQL. The system was designed to efficiently manage library operations, including cataloging, member management, and transaction tracking.",
 		tech_used: ["SQL"],

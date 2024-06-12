@@ -1,0 +1,52 @@
+/* ConsultancyService.module.css */
+.container {
+	max-width: 800px;
+	margin: auto;
+}
+
+.intro {
+	margin-top: 3rem;
+}
+
+.services,
+.projects,
+.contact {
+	margin: 2rem;
+}
+
+.intro h1,
+.services h2,
+.projects h2,
+.projects h3,
+.contact h2 {
+	color: #333;
+}
+
+.intro p,
+.project p,
+.contact p,
+.services ul {
+	color: #555;
+}
+
+.project {
+	margin: 2rem;
+	margin-bottom: 3rem;
+}
+
+.project img {
+	border-radius: 4px;
+}
+
+.contact p {
+	line-height: 1.6;
+}
+
+.contact a {
+	color: #0070f3;
+	text-decoration: none;
+}
+
+.contact a:hover {
+	text-decoration: underline;
+}

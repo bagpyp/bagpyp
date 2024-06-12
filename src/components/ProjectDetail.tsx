@@ -32,7 +32,7 @@ const ProjectDetail = ({ project: project }: ProjectDetailProps) => (
 						alt={`${project.title} ${index + 1}`}
 						width={300}
 						height={200}
-						style={{ maxWidth: "100px", borderRadius: "4px" }}
+						style={{ borderRadius: "4px" }}
 					/>
 				))
 			) : (
@@ -41,7 +41,7 @@ const ProjectDetail = ({ project: project }: ProjectDetailProps) => (
 					alt={project.title}
 					width={300}
 					height={200}
-					style={{ maxWidth: "100px", borderRadius: "4px" }}
+					style={{ borderRadius: "4px" }}
 				/>
 			)}
 		</div>

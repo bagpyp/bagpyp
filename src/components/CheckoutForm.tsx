@@ -56,6 +56,8 @@ const CheckoutForm = () => {
 
 	return (
 		<div>
+			<h2>Make a Payment</h2>
+
 			<form id={"checkout-form"} onSubmit={handleSubmit}>
 				<div className={"input-group mb-3"}>
 					<span className="input-group-text">$</span>
@@ -78,7 +80,7 @@ const CheckoutForm = () => {
 				disabled={loading}
 				form={"checkout-form"}
 			>
-				pay
+				Submit
 			</button>
 		</div>
 	);

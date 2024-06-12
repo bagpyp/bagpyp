@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Layout.module.css";
+import LoginLogout from "./LoginLogout";
 
 type Props = {
 	children?: ReactNode;
@@ -18,15 +19,7 @@ const Layout = ({ children, title = "Bagpyp" }: Props) => {
 			</Head>
 			<header className={styles.header}>
 				<Image src={"/img/logo.svg"} alt="bagpyp" width={100} height={100} />
-				<div className={styles.profile}>
-					<Image
-						src="/img/defaultUser.png"
-						alt="User Profile"
-						width={75}
-						height={75}
-						className={styles.circularImage}
-					/>
-				</div>
+				<LoginLogout />
 			</header>
 			<main className={styles.main}>{children}</main>
 			<footer className={styles.footer}>

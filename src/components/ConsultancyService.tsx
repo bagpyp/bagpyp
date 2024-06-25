@@ -71,19 +71,6 @@ const ConsultancyService = () => (
 				/>
 			</div>
 		</section>
-
-		<section className={styles.contact}>
-			<h2>Contact Us</h2>
-			<p>
-				Robbie Cunningham
-				<br />
-				Software Engineer in Portland, OR
-				<br />
-				<a href="mailto:rtc@bagpyp.net">rtc@bagpyp.net</a>
-				<br />
-				(503) 803-4458
-			</p>
-		</section>
 	</div>
 );
 

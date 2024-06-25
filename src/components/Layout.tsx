@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Layout.module.css";
 import LoginLogout from "./LoginLogout";
+import Link from "next/link";
 
 type Props = {
 	children?: ReactNode;
@@ -18,7 +19,10 @@ const Layout = ({ children, title = "Bagpyp" }: Props) => {
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 			</Head>
 			<header className={styles.header}>
-				<Image src={"/img/logo.svg"} alt="bagpyp" width={100} height={100} />
+				<Link href="/">
+					<Image src={"/img/logo.svg"} alt="bagpyp" width={100} height={100} />
+				</Link>
+				<Link href="/contact">Contact</Link>
 				<LoginLogout />
 			</header>
 			<main className={styles.main}>{children}</main>

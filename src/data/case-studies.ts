@@ -40,11 +40,10 @@ export const caseStudiesData: Client[] = [
 		period: "2025",
 		location: "Remote",
 		description:
-			"Enterprise-scale Agentic AI system optimizing legacy seller workspaces and transforming the online selling experience.",
+			"Enterprise-scale Agentic AI system optimizing legacy seller workspaces.",
 		highlights: [
 			"Architected agentic AI workflows for enterprise-scale deployment",
 			"Integrated AI capabilities into legacy seller workspace systems",
-			"Optimized seller workflows through intelligent automation",
 			"Deployed production AI at massive scale",
 			"Implemented CAT framework for continuous reliability monitoring"
 		],

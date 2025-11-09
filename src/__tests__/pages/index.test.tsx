@@ -1,5 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import Index from "../../pages/index";
+import HomePage from "../../pages/index";
+import { caseStudiesData } from "../../data/case-studies";
+import { projectsData } from "../../data/projects";
+import { blogPostsData } from "../../data/blog-posts";
 
 // Mock the Auth0 hook
 jest.mock("@auth0/nextjs-auth0/client", () => ({
@@ -20,19 +23,40 @@ jest.mock("../../utils/get-stripe", () => ({
 	default: jest.fn()
 }));
 
-describe("Index Page", () => {
-	it("renders the consultancy service section", () => {
-		render(<Index />);
-		expect(screen.getByText("Bagpyp | Software Consultancy")).toBeInTheDocument();
+describe("Home Page", () => {
+	const mockProps = {
+		featuredCaseStudies: caseStudiesData.filter((s) => s.featured),
+		featuredProjects: projectsData.filter((p) => p.featured),
+		featuredBlogPosts: blogPostsData.filter((b) => b.featured)
+	};
+
+	it("renders the hero section", () => {
+		render(<HomePage {...mockProps} />);
+		expect(
+			screen.getByText("AI Engineering for", { exact: false })
+		).toBeInTheDocument();
 	});
 
-	it("renders the checkout form", () => {
-		render(<Index />);
-		expect(screen.getByText("Make a Payment")).toBeInTheDocument();
+	it("renders featured work section", () => {
+		render(<HomePage {...mockProps} />);
+		expect(screen.getByText("Featured Work")).toBeInTheDocument();
 	});
 
-	it("renders the submit button", () => {
-		render(<Index />);
-		expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+	it("renders CAT framework highlight", () => {
+		render(<HomePage {...mockProps} />);
+		const catElements = screen.getAllByText("Continuous Alignment Testing (CAT)");
+		expect(catElements.length).toBeGreaterThanOrEqual(1);
+	});
+
+	it("renders View All Experience button", () => {
+		render(<HomePage {...mockProps} />);
+		expect(screen.getByText("View All Experience")).toBeInTheDocument();
+	});
+
+	it("shows OpenAI partner badge", () => {
+		render(<HomePage {...mockProps} />);
+		expect(
+			screen.getByText("One of 8 official OpenAI partners worldwide")
+		).toBeInTheDocument();
 	});
 });

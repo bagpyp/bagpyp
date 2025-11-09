@@ -1,101 +1,117 @@
-# Bagpyp Portfolio Website - Developer Guide
+# Bagpyp AI Consultancy Website - Developer Guide
 
 ## Overview
 
-This is a Next.js-based portfolio website for Bagpyp Software Consultancy. The site features authentication via Auth0, payment processing via Stripe, and a project showcase.
+Modern, professional AI consultancy portfolio website showcasing production AI engineering work, technical projects, and thought leadership. Built with Next.js, TypeScript, and Tailwind CSS.
+
+**Positioning**: One-man AI consultancy with Fortune 500 experience. Creator of Continuous Alignment Testing (CAT) framework. One of 8 official OpenAI partners worldwide.
 
 ## Technology Stack
 
 - **Framework**: Next.js 15.5.6 (React 19.2.0)
 - **Language**: TypeScript 5.9.3
+- **Styling**: Tailwind CSS v3 (custom theme)
 - **Authentication**: Auth0 (@auth0/nextjs-auth0 ^4.12.0)
 - **Payments**: Stripe (^9.8.0)
-- **Styling**: Bootstrap 5.1.3 + CSS Modules
 - **Testing**: Jest 29.7.0 + React Testing Library 16.3.0
-- **Node Version**: >= 20.0.0 (23.10.0 recommended)
+- **Node Version**: 23.10.0 (via asdf .tool-versions)
 
 ## Project Structure
 
 ```
 bagpyp/
 ├── src/
-│   ├── components/         # React components
-│   │   ├── CheckoutForm.tsx
-│   │   ├── ConsultancyService.tsx
-│   │   ├── Layout.tsx
-│   │   ├── LoginLogout.tsx
-│   │   ├── ProjectDetail.tsx
-│   │   └── Projects.tsx
+│   ├── components/           # React components
+│   │   ├── Layout.tsx        # Main layout with nav & footer
+│   │   ├── Hero.tsx          # Hero section for HOME
+│   │   ├── CaseStudyCard.tsx # Case study display cards
+│   │   ├── ProjectCard.tsx   # Project display cards
+│   │   ├── BlogPostCard.tsx  # Blog post preview cards
+│   │   ├── ProjectDetail.tsx # Individual project layout
+│   │   ├── CheckoutForm.tsx  # Payment form
+│   │   └── svgs/             # SVG placeholder components
+│   │       ├── AIBrainIcon.tsx
+│   │       ├── CodeIcon.tsx
+│   │   │   ├── DataIcon.tsx
+│   │       ├── TensorIcon.tsx
+│   │       └── index.ts
+│   ├── data/                 # Content data
+│   │   ├── case-studies.ts   # Professional experience
+│   │   ├── projects.ts       # Personal projects
+│   │   └── blog-posts.ts     # Blog metadata
 │   ├── interfaces/
-│   │   └── index.ts        # TypeScript interfaces
-│   ├── pages/              # Next.js pages (file-based routing)
-│   │   ├── api/            # API routes
+│   │   └── index.ts          # TypeScript types
+│   ├── pages/                # Next.js pages (file-based routing)
+│   │   ├── api/              # API routes
 │   │   │   ├── auth/[...auth0].js
 │   │   │   └── make_payment/index.ts
+│   │   ├── blog/
+│   │   │   ├── [slug].tsx    # Individual blog posts
+│   │   │   └── index.tsx     # Blog listing
 │   │   ├── projects/
-│   │   │   ├── [id].tsx
-│   │   │   └── index.tsx
-│   │   ├── _app.tsx
-│   │   ├── contact.tsx
+│   │   │   ├── [slug].tsx    # Individual projects
+│   │   │   └── index.tsx     # Projects listing
+│   │   ├── _app.tsx          # App wrapper
+│   │   ├── index.tsx         # HOME page
+│   │   ├── experience.tsx    # Case studies page
+│   │   ├── contact.tsx       # Contact page
+│   │   ├── payment.tsx       # Payment page (Auth0 gated)
 │   │   ├── error.tsx
-│   │   ├── index.tsx
 │   │   └── thanks.tsx
-│   ├── styles/             # CSS modules & global styles
-│   │   ├── ConsultancyService.module.css
-│   │   ├── Layout.module.css
-│   │   ├── LoginLogout.module.css
-│   │   └── global.css
+│   ├── styles/
+│   │   └── global.css        # Tailwind directives & custom styles
 │   ├── utils/
-│   │   ├── get-stripe.ts
-│   │   └── sample-projects.ts
-│   └── __tests__/          # Test files
+│   │   └── get-stripe.ts
+│   └── __tests__/            # Test files
 │       ├── components/
 │       └── pages/
-├── public/                 # Static assets
-│   ├── img/
-│   │   ├── projects/
-│   │   ├── defaultUser.png
-│   │   └── logo.svg
-│   └── favicon.ico
-├── jest.config.js          # Jest configuration
-├── jest.setup.js           # Jest setup
-├── next.config.js          # Next.js configuration
-├── tsconfig.json           # TypeScript configuration
-└── package.json
+├── public/
+│   └── images/               # Organized image directories
+│       ├── case-studies/
+│       ├── projects/
+│       │   └── guitar-triads-screenshot.png
+│       └── blog/
+├── tailwind.config.js        # Tailwind theme configuration
+├── postcss.config.js         # PostCSS configuration
+├── jest.config.js            # Jest configuration
+├── .tool-versions            # asdf version management
+├── REFACTOR.md               # Refactor tracking document
+└── CLAUDE.md                 # This file
 ```
+
+## Content Architecture
+
+### Three Main Sections
+
+**1. Experience / Case Studies**
+- Professional work at companies
+- Individual case studies for: Mayo Clinic, eBay, Trust & Will, Arrive Health, Hillcrest
+- Displayed as cards (NO individual pages)
+- Route: `/experience`
+
+**2. Projects**
+- Personal technical projects
+- Each project loads its own React page
+- Guitar app featured (188 tests, physics-based rendering)
+- Routes: `/projects`, `/projects/[slug]` (e.g., `/projects/guitar-app-triads`)
+
+**3. Blog**
+- Technical writing platform
+- Hosts markdown/PDF content
+- CAT framework articles, AI insights
+- Routes: `/blog`, `/blog/[slug]`
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js >= 20.0.0 (23.10.0 recommended)
-- npm (comes with Node.js)
-- asdf (optional - for version management)
-
-If using asdf, the `.tool-versions` file specifies Node.js 23.10.0:
 ```bash
-asdf install
+# Using asdf (recommended)
+asdf install  # Installs Node.js 23.10.0 from .tool-versions
+
+# Or manually
+node --version  # Should be >= 20.0.0
 ```
-
-### Environment Setup
-
-1. Create a `.env.local` file in the root directory with the following variables:
-
-```bash
-# Auth0 Configuration
-AUTH0_SECRET='your-auth0-secret'
-AUTH0_BASE_URL='http://localhost:3000'
-AUTH0_ISSUER_BASE_URL='https://your-domain.auth0.com'
-AUTH0_CLIENT_ID='your-client-id'
-AUTH0_CLIENT_SECRET='your-client-secret'
-
-# Stripe Configuration
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY='pk_test_...'
-STRIPE_SECRET_KEY='sk_test_...'
-STRIPE_API_VERSION='2020-08-27'
-```
-
-**IMPORTANT**: Never commit `.env.local` to version control!
 
 ### Installation
 
@@ -103,31 +119,50 @@ STRIPE_API_VERSION='2020-08-27'
 npm install
 ```
 
+### Environment Setup
+
+Create `.env.local` with:
+
+```bash
+# Auth0
+AUTH0_SECRET='your-secret'
+AUTH0_BASE_URL='http://localhost:3001'
+AUTH0_ISSUER_BASE_URL='https://your-domain.auth0.com'
+AUTH0_CLIENT_ID='your-client-id'
+AUTH0_CLIENT_SECRET='your-client-secret'
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY='pk_test_...'
+STRIPE_SECRET_KEY='sk_test_...'
+STRIPE_API_VERSION='2020-08-27'
+```
+
+**NEVER commit .env.local!**
+
 ## Development
 
-### Running the Development Server
+### Run Development Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the site.
+Site runs on **http://localhost:3001** (or 3000 if available)
 
-### Building for Production
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-Creates an optimized production build in the `.next` directory.
-
-### Starting Production Server
+### Run Tests
 
 ```bash
-npm start
+npm test              # Run once
+npm run test:watch    # Watch mode
 ```
 
-Runs the production server (requires `npm run build` first).
+**Best Practice**: Run tests frequently during development!
 
 ### Linting
 
@@ -135,244 +170,397 @@ Runs the production server (requires `npm run build` first).
 npm run lint
 ```
 
-Runs ESLint to check for code quality issues.
+## Adding Content
+
+### Add a New Case Study
+
+Edit `src/data/case-studies.ts`:
+
+```typescript
+{
+  id: "new-client",
+  name: "Client Name",
+  role: "Your Role",
+  period: "2024",
+  location: "Remote",
+  description: "Brief description",
+  highlights: ["Achievement 1", "Achievement 2"],
+  technologies: ["Python", "TypeScript"],
+  aiFeatures: ["Multi-Agent Systems"], // Optional
+  featured: true
+}
+```
+
+### Add a New Project
+
+1. Add metadata to `src/data/projects.ts`
+2. Create page at `src/pages/projects/[your-slug].tsx`
+3. Add screenshot to `public/images/projects/`
+
+### Add a New Blog Post
+
+1. Add metadata to `src/data/blog-posts.ts`
+2. Place markdown/PDF in `/public/blog/`
+3. Update blog post page to render content (future enhancement)
+
+### Replace SVG Placeholders with Real Images
+
+Images are organized in `/public/images/`:
+- `case-studies/` - Client work screenshots
+- `projects/` - Project screenshots (guitar-triads-screenshot.png already there)
+- `blog/` - Blog post images
+
+Update image paths in data files to point to real images.
+
+## Design System
+
+### Tailwind Custom Theme
+
+**Colors**:
+- `primary-*` - Blues (50-950)
+- `accent-*` - Purples (50-950)
+
+**Utility Classes**:
+- `.btn-primary` - Primary CTA button
+- `.btn-secondary` - Secondary button
+- `.card` - White card with shadow
+- `.card-gradient` - Gradient card
+- `.section` - Page section padding
+- `.container-custom` - Max-width container
+
+### Animations
+
+- `animate-fade-in` - Fade in
+- `animate-slide-up` - Slide up
+- `animate-slide-in` - Slide in
+
+## Key Features
+
+### 1. Auth0 Authentication
+
+- Sign in/out functionality
+- User profile display
+- **Payment page is gated** (login required)
+
+**Imports**:
+```typescript
+import { Auth0Provider } from "@auth0/nextjs-auth0/client";  // in _app.tsx
+import { useUser } from "@auth0/nextjs-auth0/client";        // in components
+```
+
+### 2. Stripe Payments
+
+- Gated payment page (`/payment`)
+- Checkout form with Tailwind styling
+- Success/error pages
+
+### 3. Static Site Generation (SSG)
+
+Most pages use `getStaticProps` for fast loading:
+- HOME page
+- Experience page
+- Projects pages
+- Blog pages
 
 ## Testing
+
+### Test Structure
+
+```
+src/__tests__/
+├── components/
+│   ├── Layout.test.tsx
+│   ├── Hero.test.tsx
+│   └── CaseStudyCard.test.tsx
+└── pages/
+    ├── index.test.tsx
+    ├── experience.test.tsx
+    ├── payment.test.tsx
+    ├── contact.test.tsx
+    ├── error.test.tsx
+    └── thanks.test.tsx
+```
 
 ### Running Tests
 
 ```bash
-npm test
+npm test              # All tests
+npm run test:watch    # Watch mode
 ```
 
-Runs all tests once.
+**Current Status**: ✅ 35 tests passing across 9 test suites
 
-### Watch Mode
+### Writing New Tests
 
-```bash
-npm run test:watch
+Template:
+```typescript
+import { render, screen } from "@testing-library/react";
+import YourComponent from "../../components/YourComponent";
+
+// Mock Auth0
+jest.mock("@auth0/nextjs-auth0/client", () => ({
+  useUser: () => ({ user: null })
+}));
+
+// Mock Next.js Image
+jest.mock("next/image", () => ({
+  __esModule: true,
+  default: (props: any) => <img {...props} />
+}));
+
+describe("YourComponent", () => {
+  it("renders correctly", () => {
+    render(<YourComponent />);
+    expect(screen.getByText("Expected Text")).toBeInTheDocument();
+  });
+});
 ```
 
-Runs tests in watch mode for development.
+## Page Routes
 
-### Test Coverage
+| Route | Description | Type |
+|-------|-------------|------|
+| `/` | HOME - Hero + featured content | SSG |
+| `/experience` | Professional case studies | SSG |
+| `/projects` | Projects listing | SSG |
+| `/projects/[slug]` | Individual project page | SSG |
+| `/blog` | Blog listing | SSG |
+| `/blog/[slug]` | Individual blog post | SSG |
+| `/contact` | Contact information (login-gated details) | Static |
+| `/payment` | Payment form (Auth0-gated) | Static |
+| `/api/auth/[...auth0]` | Auth0 endpoints | API |
+| `/api/make_payment` | Stripe checkout | API |
 
-Tests are located in `src/__tests__/` and mirror the structure of the source code:
-- `src/__tests__/components/` - Component tests
-- `src/__tests__/pages/` - Page tests
+## Development Workflow
 
-Current test suite includes:
-- Layout component tests
-- ConsultancyService component tests
-- Index page tests
-- Contact page tests
-- Error page tests
-- Thanks page tests
+### Best Practices
 
-All tests use Jest and React Testing Library.
+1. **Run tests often** - `npm test` or `npm run test:watch`
+2. **Check dev server** - http://localhost:3001
+3. **Build before committing** - `npm run build`
+4. **Use Tailwind utilities** - Avoid custom CSS when possible
+5. **Keep data in `/src/data`** - Easy to update content
 
-## Key Features
+### Adding a Page
 
-### 1. Authentication (Auth0)
-
-- Login/logout functionality via Auth0
-- User profile display when authenticated
-- Protected contact information (requires login)
-
-**Implementation**:
-- Provider: `src/pages/_app.tsx` (uses `Auth0Provider` from `@auth0/nextjs-auth0/client`)
-- Components: `src/components/LoginLogout.tsx` and `src/pages/contact.tsx` (use `useUser` hook from `@auth0/nextjs-auth0/client`)
-
-### 2. Payment Processing (Stripe)
-
-- Donation/payment form on homepage
-- Stripe Checkout integration
-- Success and error pages for payment flow
-
-**Implementation**:
-- Form: `src/components/CheckoutForm.tsx`
-- API: `src/pages/api/make_payment/index.ts`
-- Success page: `src/pages/thanks.tsx`
-- Error page: `src/pages/error.tsx`
-
-### 3. Project Showcase
-
-- Static project gallery
-- Individual project detail pages
-- Dynamic routing via Next.js
-
-**Implementation**:
-- Data: `src/utils/sample-projects.ts`
-- List: `src/pages/projects/index.tsx`
-- Detail: `src/pages/projects/[id].tsx`
-
-## API Routes
-
-### `/api/auth/[...auth0]`
-Auth0 authentication endpoints (login, logout, callback)
-
-### `/api/make_payment`
-POST endpoint for creating Stripe checkout sessions
-
-**Request Body**:
-```json
-{
-  "amount": 100  // Amount in cents
-}
-```
-
-**Response**:
-```json
-{
-  "id": "cs_test_...",
-  "url": "https://checkout.stripe.com/..."
-}
-```
-
-## Making Changes
-
-### Adding a New Page
-
-1. Create a new file in `src/pages/` (e.g., `about.tsx`)
-2. Use the `Layout` component for consistent header/footer
-3. Export a default React component
+1. Create file in `src/pages/`
+2. Use Layout component
+3. Write tests in `src/__tests__/pages/`
+4. Add navigation link in Layout component (if needed)
 
 Example:
-```tsx
+```typescript
 import Layout from "../components/Layout";
 
-const About = () => {
-  return (
-    <Layout title="About">
-      <h1>About Us</h1>
-      <p>Content here</p>
-    </Layout>
-  );
-};
+const MyPage = () => (
+  <Layout title="My Page | Bagpyp">
+    <div className="section">
+      <div className="container-custom">
+        <h1>My Page</h1>
+      </div>
+    </div>
+  </Layout>
+);
 
-export default About;
+export default MyPage;
 ```
 
-### Adding a New Component
+## Data Management
 
-1. Create a new file in `src/components/` (e.g., `MyComponent.tsx`)
-2. Create corresponding CSS module in `src/styles/` if needed
-3. Write tests in `src/__tests__/components/MyComponent.test.tsx`
+### Case Studies
 
-### Modifying Styles
+**File**: `src/data/case-studies.ts`
 
-- **Global styles**: Edit `src/styles/global.css`
-- **Component styles**: Edit corresponding `.module.css` file
-- **Bootstrap**: Already imported globally in `src/pages/_app.tsx`
+**Highlighted Clients**:
+- Mayo Clinic - Multi-agent RAG for medical research
+- eBay - Enterprise agentic AI
+- Trust & Will - Attorney-in-the-loop automation
+- Arrive Health - Clinical information processing
+- Hillcrest - Ongoing client with e-commerce platform support
 
-### Adding New Projects
+### Projects
 
-Edit `src/utils/sample-projects.ts` and add new project objects with:
-- `id`: Unique number
-- `title`: Project name
-- `description`: Short description
-- `long_description`: Detailed description
-- `tech_used`: Array of technologies
-- `images`: Image filename(s) (in `/public/img/projects/`)
+**File**: `src/data/projects.ts`
 
-## Common Tasks
+**Current**: Guitar learning app (to be ported from `../guitar`)
 
-### Update Dependencies
+**Future**: Add more projects by:
+1. Adding metadata to `projects.ts`
+2. Creating React page in `/pages/projects/[slug].tsx`
+3. Adding screenshots
 
-```bash
-npm update
-```
+### Blog Posts
 
-**Note**: When updating major versions, be aware of breaking changes:
-- Next.js 15+ requires updating `<Link>` components (no nested `<a>` tags)
-- Auth0 v4+ uses new import paths (`@auth0/nextjs-auth0/client`)
-- Next.js 14+ requires updating image config to use `remotePatterns`
+**File**: `src/data/blog-posts.ts`
 
-### Check for Vulnerabilities
+**Structure**: Metadata only - actual content stored as markdown/PDF
 
-```bash
-npm audit
-```
-
-### Format Code
-
-The project uses Prettier for formatting. Configuration is in `.prettierrc`.
-
-## Deployment
-
-The site is configured for deployment on Vercel (see git history for deployment triggers).
-
-### Environment Variables in Production
-
-Set all environment variables from `.env.local` in your hosting platform's dashboard.
+**Topics**: CAT framework, reliability tensors, agentic architecture, AI monitoring
 
 ## Troubleshooting
 
 ### Build Fails
 
-1. Clear the `.next` directory: `rm -rf .next`
-2. Reinstall dependencies: `rm -rf node_modules && npm install`
-3. Try building again: `npm run build`
+```bash
+rm -rf .next node_modules
+npm install
+npm run build
+```
 
 ### Tests Fail
 
-1. Make sure all mocks are properly configured
-2. Check that React Testing Library queries are correct
-3. Run tests in watch mode to debug: `npm run test:watch`
+- Ensure mocks are in correct order (Auth0 before imports)
+- Check that data files exist and are valid
+- Use `getAllByText` for elements that appear multiple times
 
-### Auth0 Issues
+### Tailwind Not Working
 
-- Verify all Auth0 environment variables are set correctly
-- Check that callback URLs are configured in Auth0 dashboard
-- Ensure `AUTH0_BASE_URL` matches your deployment URL
+- Verify `tailwind.config.js` has correct content paths
+- Check `postcss.config.js` configuration
+- Ensure `global.css` imports are correct
 
-### Stripe Issues
+### Dev Server Issues
 
-- Verify Stripe API keys are correct
-- Check that you're using test keys in development
-- Ensure webhook endpoints are configured if using webhooks
+- Clear `.next` directory
+- Rebuild: `npm run build`
+- Restart: `npm run dev`
 
-## Code Style Guidelines
+## Deployment
 
-- Use TypeScript for all new files
-- Use functional components with hooks
-- Use CSS Modules for component-specific styles
-- Follow the existing naming conventions
-- Write tests for new components and pages
-- Keep components small and focused
-- Use Next.js 13+ Link patterns (no nested `<a>` tags)
-- Import Auth0 hooks from `@auth0/nextjs-auth0/client`
+Configured for Vercel deployment.
 
-## Recent Changes
+**Environment Variables**: Set all vars from `.env.local` in Vercel dashboard.
 
-### Latest Update (2025)
-- **Updated to Next.js 15.5.6** with React 19.2.0
-- **Updated Auth0 to v4.12.0** with new import paths:
-  - `Auth0Provider` from `@auth0/nextjs-auth0/client` (previously `UserProvider`)
-  - `useUser` hook from `@auth0/nextjs-auth0/client`
-- **Updated TypeScript to 5.9.3** with modern config (bundler moduleResolution)
-- **Updated all Link components** to remove nested `<a>` tags (Next.js 13+ pattern)
-- **Updated image configuration** to use `remotePatterns` instead of deprecated `domains`
-- **Fixed Jest configuration** to handle ESM modules from Auth0
-- **Added `.tool-versions` file** for asdf version management
+## Recent Major Refactor (2025-01-09)
 
-### Previous Cleanup
-- Removed unnecessary files (yarn.lock, temp files, .DS_Store)
-- Deleted unused API endpoint (`/api/projects`)
-- Converted all `.jsx` files to `.tsx` for consistency
-- Fixed import path bugs
-- Removed unnecessary React imports (React 17+ doesn't require them)
-- Simplified fetch options in CheckoutForm
-- Added comprehensive test suite with Jest and React Testing Library
+### What Changed
+
+**Removed**:
+- Bootstrap CSS (replaced with Tailwind)
+- Old components (ConsultancyService, LoginLogout, Projects)
+- Old CSS modules
+- Old data structure
+
+**Added**:
+- Tailwind CSS v3 with custom theme
+- Modern Layout with sleek navigation
+- Hero section with animations
+- Card components (CaseStudy, Project, BlogPost)
+- 3-section architecture (Experience / Projects / Blog)
+- 5 case studies from Fortune 500 work
+- SVG placeholder components
+- Auth0-gated payment page
+- 35 comprehensive tests
+
+### New Site Structure
+
+**HOME** (`/`):
+- Hero section highlighting AI expertise
+- Featured case studies (Mayo, eBay, Trust & Will)
+- Featured projects (Guitar app)
+- Featured blog posts (CAT framework)
+- CAT framework call-out section
+
+**Experience** (`/experience`):
+- All case studies displayed as cards
+- Grouped by client (Artium AI sub-clients highlighted)
+- Education & credentials section
+- Core competencies list
+
+**Projects** (`/projects`):
+- Project cards linking to individual pages
+- Currently: Guitar app (more to be ported)
+- Template ready for new projects
+
+**Blog** (`/blog`):
+- Blog post cards
+- Individual post pages (markdown/PDF hosting)
+- 4 CAT framework posts (structure ready)
+
+**Payment** (`/payment`):
+- Auth0-gated access
+- Modern checkout form
+- Stripe integration
+
+## Content Updates
+
+### To Add New Content
+
+**Case Study**:
+1. Edit `src/data/case-studies.ts`
+2. Add to `caseStudiesData` array
+3. Replace SVG with real image in `/public/images/case-studies/`
+
+**Project**:
+1. Edit `src/data/projects.ts`
+2. Create page in `src/pages/projects/[slug].tsx`
+3. Add screenshot to `/public/images/projects/`
+4. Write tests
+
+**Blog Post**:
+1. Edit `src/data/blog-posts.ts`
+2. Add markdown/PDF to `/public/blog/`
+3. Future: Implement markdown/PDF rendering
+
+## Testing Strategy
+
+### Current Tests (35 passing)
+
+**Components**:
+- Layout (6 tests)
+- Hero (6 tests)
+- CaseStudyCard (6 tests)
+
+**Pages**:
+- HOME (5 tests)
+- Experience (4 tests)
+- Payment (3 tests)
+- Contact (3 tests)
+- Error, Thanks (2 tests each)
+
+### Run Tests Frequently
+
+During development:
+```bash
+npm run test:watch
+```
+
+Before committing:
+```bash
+npm test
+npm run build
+```
 
 ## Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
 - [Auth0 Next.js SDK](https://github.com/auth0/nextjs-auth0)
 - [Stripe Documentation](https://stripe.com/docs)
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-- [Jest Documentation](https://jestjs.io/docs/getting-started)
+- **REFACTOR.md** - Detailed refactor tracking
 
-## Support
+## Next Steps
 
-For questions or issues, contact the development team or open an issue in the repository.
+1. **Port more projects** from parent directory repos
+2. **Add real screenshots** to replace SVG placeholders
+3. **Implement markdown/PDF rendering** for blog posts
+4. **Add more blog content** from CAT framework
+5. **Consider Chrome DevTools MCP** for automated testing (when available)
+
+## Quick Reference
+
+```bash
+# Development
+npm run dev           # Start dev server (localhost:3001)
+npm run build         # Build production
+npm test              # Run tests
+npm run test:watch    # Watch mode
+
+# Deployment
+git push              # Auto-deploys to Vercel (if configured)
+```
+
+---
+
+**For questions or issues**, see REFACTOR.md for detailed change tracking.

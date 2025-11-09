@@ -1,31 +1,45 @@
 import { GetStaticProps } from "next";
-import Link from "next/link";
-
 import { Project } from "../../interfaces";
-import { sampleProjectData } from "../../utils/sample-projects";
+import { projectsData } from "../../data/projects";
 import Layout from "../../components/Layout";
-import Projects from "../../components/Projects";
+import ProjectCard from "../../components/ProjectCard";
 
 type Props = {
-	items: Project[];
+	projects: Project[];
 };
 
-const WithStaticProps = ({ items }: Props) => (
-	<Layout title="Projects">
-		<h1>Projects</h1>
-		<Projects projects={items} />
-		<p>
-			<Link href="/">Home</Link>
-		</p>
+const ProjectsPage = ({ projects }: Props) => (
+	<Layout
+		title="Projects | Bagpyp"
+		description="Personal projects showcasing technical skills, creativity, and innovation"
+	>
+		<div className="section">
+			<div className="container-custom">
+				{/* Header */}
+				<div className="text-center mb-16">
+					<h1 className="mb-4">Personal Projects</h1>
+					<p className="text-xl text-slate-600 max-w-3xl mx-auto">
+						Exploring technical challenges through creative solutions
+					</p>
+				</div>
+
+				{/* Projects Grid */}
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					{projects.map((project) => (
+						<ProjectCard key={project.id} project={project} />
+					))}
+				</div>
+			</div>
+		</div>
 	</Layout>
 );
 
 export const getStaticProps: GetStaticProps = async () => {
-	// Example for including static props in a Next.js function component page.
-	// Don't forget to include the respective types for any props passed into
-	// the component.
-	const items: Project[] = sampleProjectData;
-	return { props: { items } };
+	return {
+		props: {
+			projects: projectsData
+		}
+	};
 };
 
-export default WithStaticProps;
+export default ProjectsPage;

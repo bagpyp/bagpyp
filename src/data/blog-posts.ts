@@ -51,22 +51,6 @@ export const blogPostsData: BlogPost[] = [
 		image: "building-testing-framework.png"
 	},
 	{
-		id: "agentic-architecture",
-		slug: "agentic-architecture",
-		title: "Agentic Architecture",
-		subtitle: "Structuring Agent-Tool-User Interactions",
-		excerpt:
-			"A structured approach to modeling interactions between agents and tools through chat histories, cycles, and graph-theoretic representations. Foundational concepts for understanding agentic AI systems.",
-		content: "/blog/agentic-architecture.md",
-		author: "Robert Cunningham",
-		publishedDate: "2024-09-11",
-		tags: ["Agentic AI", "Architecture", "Graph Theory", "CAT Framework"],
-		category: "AI Engineering",
-		readingTime: 10,
-		featured: true,
-		image: "AT.svg"
-	},
-	{
 		id: "agentic-algebra",
 		slug: "agentic-architecture-algebra",
 		title: "Formalized Structures: The Algebra of Agentic Architectures",
@@ -81,6 +65,22 @@ export const blogPostsData: BlogPost[] = [
 		readingTime: 15,
 		featured: true,
 		image: "agentic-architecture.png"
+	},
+	{
+		id: "agentic-architecture",
+		slug: "agentic-architecture",
+		title: "Agentic Architecture",
+		subtitle: "Structuring Agent-Tool-User Interactions",
+		excerpt:
+			"A structured approach to modeling interactions between agents and tools through chat histories, cycles, and graph-theoretic representations. Foundational concepts for understanding agentic AI systems.",
+		content: "/blog/agentic-architecture.md",
+		author: "Robert Cunningham",
+		publishedDate: "2024-09-11",
+		tags: ["Agentic AI", "Architecture", "Graph Theory", "CAT Framework"],
+		category: "AI Engineering",
+		readingTime: 10,
+		featured: true,
+		image: "AT.svg"
 	},
 	{
 		id: "reliability-testing",

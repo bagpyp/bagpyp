@@ -220,7 +220,9 @@ Reliability testing is not a one-and-done process; it is best viewed as a **cont
 
 ### 3.4 Using Experiments to Drive Prompt Refinement and Coverage
 
-![plot.png](/blog/reliability-testing/img/plot.png)
+<div style="text-align: center; margin: 2rem 0;">
+    <img src="/blog/reliability-testing/img/plot.png" alt="Reliability experiment plot showing system performance metrics">
+</div>
 
 Reliability experiments not only serve to monitor system performance but also offer a powerful mechanism for systematically refining prompts to improve overall system reliability. By regularly running experiments, teams can identify weaknesses in the system's responses and implement targeted improvements to the prompts, enhancing performance across diverse input scenarios. This approach mirrors the Red-Green-Refactor cycle in software testing, where continuous feedback guides iterative enhancements.
 

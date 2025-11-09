@@ -18,14 +18,9 @@ This tool result will then be interpreted by $A$ via its internal chat method, $
   
   
   
-<p>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/blog/agentic-architecture/img/c_prime.svg" width="600" alt="
-    graph LR
-    U1 -- A.chat --> Q1((q1^(i)))
-    Q1 -- Ti --> R1((r1^(i)))
-    R1 -- A.chat* --> V1((v1))
-    ">
-</p>
+<div style="text-align: center; margin: 2rem 0;">
+    <img src="/blog/agentic-architecture/img/c_prime.svg" style="width: 80%; max-width: 800px;" alt="Agent interaction diagram showing user input flowing through chat to query, tool call to result, and chat* to output">
+</div>
 
 The **value** of this output, $v_1 = chat^*(r_1^{(i)})$ is then interpreted by the user as agent $A$'s response to $u_1$. As such, the input-output pair $(u_1, v_1)$ is added to the **chat history** for $A$, $h$, in the form of a **cycle**, $c_1 = (u_1, v_1)$. Giving us
 
@@ -63,62 +58,17 @@ Cycles can be represented in many ways, consider this representation of a cycle 
   
 
 
-<p>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/blog/agentic-architecture/img/c_prime_graph.svg" width="600" alt="
-    graph LR
-        u1 --> A
-        A --> q1_i^i
-        q1_i^i --> Ti
-        Ti --> r1_i^i
-        r1_i^i --> A
-        A --> v1
-    ">
-</p>
+<div style="text-align: center; margin: 2rem 0;">
+    <img src="/blog/agentic-architecture/img/c_prime_graph.svg" style="width: 80%; max-width: 800px;" alt="Graph representation of a single cycle with tool call">
+</div>
 
 More complicated combinations of interactions within cycles can be depicted in a similar way. Consider the 4 cycles in the example below
   
 
 
-<p>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/blog/agentic-architecture/img/h_pp.svg" width="600" alt="
-    graph TD
-        subgraph c1
-            u1 --> A
-            A --> v1
-        end    
-        subgraph c2
-            u2 --> A
-            A --> q
-            q --> T
-            T --> r
-            r --> A
-            A --> v2
-        end    
-        subgraph c3
-            u3 --> A
-            A --> q
-            q --> T
-            T --> u'
-            u' --> B
-            T --> v'
-            v' --> B
-            r --> A
-            A --> v3
-        end    
-        subgraph c4
-            u4 --> A
-            A --> q
-            q --> T
-            T --> r
-            r --> A
-            A --> q'
-            q' --> T'
-            T' --> r'
-            r' --> A
-            A --> v4
-        end
-    ">
-</p>
+<div style="text-align: center; margin: 2rem 0;">
+    <img src="/blog/agentic-architecture/img/h_pp.svg" style="width: 80%; max-width: 800px;" alt="Four cycles showing increasing complexity: simple input-output, single tool call, agent invocation, and multiple tool calls">
+</div>
 
 1. $c_1$ is a simple input-output pair between the user and $A$ 
 2. In $c_2$, $A$ invokes a tool, $T$ as we've already seen.
@@ -137,60 +87,17 @@ It has also proved beneficial to store the content of messages (input-output pai
   
 
 
-<p>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/blog/agentic-architecture/img/c_prime_node.svg" width="600" alt="
-    graph LR
-        A(u1,v1) --> Ti(q1,r1)
-    ">
-</p>
+<div style="text-align: center; margin: 2rem 0;">
+    <img src="/blog/agentic-architecture/img/c_prime_node.svg" style="width: 80%; max-width: 800px;" alt="Node-based representation with input-output pairs stored inside nodes">
+</div>
 
 This makes it possible to represent each cycle as a Directed, Acyclic Graph where the input and output of any user-agent or agent-tool interaction is stored as a pair _inside the node_.  This greatly decreases the complexity of these structures and makes them much easier to store in a database. 
   
 
 
-<p>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/blog/agentic-architecture/img/h_pp_node.svg" width="600" alt="
-    a list of grpahs for each cycle as before. 
-    their simpler DAG representations are nex
-    t to each one (in parentheses).
-    graph TD
-        subgraph c1 (A)
-            u1 --> A
-            A --> v1
-        end    
-        subgraph c2 (A->T)
-            u2 --> A
-            A --> q
-            q --> T
-            T --> r
-            r --> A
-            A --> v2
-        end    
-        subgraph c3 (A->T->B)
-            u3 --> A
-            A --> q
-            q --> T
-            T --> u'
-            u' --> B
-            T --> v'
-            v' --> B
-            r --> A
-            A --> v3
-        end    
-        subgraph c4 (A  ->T\n\t->T')
-            u4 --> A
-            A --> q
-            q --> T
-            T --> r
-            r --> A
-            A --> q'
-            q' --> T'
-            T' --> r'
-            r' --> A
-            A --> v4
-        end
-    ">
-</p>
+<div style="text-align: center; margin: 2rem 0;">
+    <img src="/blog/agentic-architecture/img/h_pp_node.svg" style="width: 80%; max-width: 800px;" alt="Four cycles with simplified DAG representations showing node-based storage">
+</div>
 
 This structured view of agentic interactions provides a flexible and extensible foundation for modeling complex agent-tool-user ecosystems. By formalizing cycles, derivative histories, and graph representations, we enable clearer reasoning about system behavior, greater ease in monitoring and validation, and more reliable persistence of interactions for future analysis. As these systems grow in sophistication, such foundational models will be critical for ensuring that agents remain aligned, auditable, and effective in solving the increasingly intricate problems they are designed to address.
 

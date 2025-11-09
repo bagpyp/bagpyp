@@ -3,6 +3,54 @@ import { BlogPost } from "../interfaces";
 // Blog post metadata - actual content hosted as markdown/PDF
 export const blogPostsData: BlogPost[] = [
 	{
+		id: "introduction-agentic-reliability",
+		slug: "introduction-agentic-reliability",
+		title: "Redefining Trust: Agentic Reliability Testing",
+		subtitle: "Pioneering Reliability in Agentic Systems",
+		excerpt:
+			"Groundbreaking work on agentic reliability testing—a mathematical framework that's changing how we think about AI system validation. From one of only eight official OpenAI partners worldwide.",
+		content: "/blog/01-introduction-agentic-reliability.md",
+		author: "Robert Cunningham (via Artium AI)",
+		publishedDate: "2024-09-10",
+		tags: ["Agentic AI", "Reliability Testing", "CAT Framework", "OpenAI Partnership"],
+		category: "AI Engineering",
+		readingTime: 8,
+		featured: false,
+		image: "introduction-agentic-reliability.svg"
+	},
+	{
+		id: "mathematics-of-trust",
+		slug: "mathematics-of-trust",
+		title: "The Mathematics of Trust",
+		subtitle: "Graph Theory and Bayesian Analysis for AI Reliability",
+		excerpt:
+			"Mathematical foundations powering AI reliability. Explore graph-theoretic models, Bayesian frameworks, and tensor analysis that make agentic systems provably reliable.",
+		content: "/blog/02-mathematics-of-trust.md",
+		author: "Robert Cunningham (via Artium AI)",
+		publishedDate: "2024-09-10",
+		tags: ["Mathematics", "Graph Theory", "Bayesian Analysis", "Reliability"],
+		category: "Technical Deep Dive",
+		readingTime: 10,
+		featured: false,
+		image: "mathematics-of-trust.svg"
+	},
+	{
+		id: "building-testing-framework",
+		slug: "building-testing-framework",
+		title: "From Theory to Production",
+		subtitle: "Building an Enterprise-Grade AI Testing Framework",
+		excerpt:
+			"Transform mathematical elegance into production systems. Comprehensive guide to building testing frameworks that power Fortune 500 AI deployments.",
+		content: "/blog/03-building-testing-framework.md",
+		author: "Robert Cunningham (via Artium AI)",
+		publishedDate: "2024-09-10",
+		tags: ["Testing Framework", "Production AI", "Enterprise", "CAT Framework"],
+		category: "Technical Deep Dive",
+		readingTime: 12,
+		featured: false,
+		image: "building-testing-framework.svg"
+	},
+	{
 		id: "agentic-architecture",
 		slug: "agentic-architecture",
 		title: "Agentic Architecture",

@@ -1,0 +1,111 @@
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="900" height="500" fill="white"/>
+
+  <!-- Title -->
+  <text x="450" y="40" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#0c4a6e" text-anchor="middle">
+    Tensor Decomposition Revealing Hidden Patterns
+  </text>
+
+  <!-- 3D Tensor representation (isometric view) -->
+  <g transform="translate(200, 150)">
+    <!-- Back faces -->
+    <path d="M0,0 L200,0 L250,50 L50,50 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" opacity="0.6"/>
+    <path d="M200,0 L250,50 L250,250 L200,200 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="2" opacity="0.7"/>
+
+    <!-- Front face (with grid showing data) -->
+    <path d="M0,0 L0,200 L200,200 L200,0 Z" fill="#f8fafc" stroke="#0284c7" stroke-width="3"/>
+
+    <!-- Grid on front face -->
+    <g stroke="#0284c7" stroke-width="1" opacity="0.3">
+      <line x1="50" y1="0" x2="50" y2="200"/>
+      <line x1="100" y1="0" x2="100" y2="200"/>
+      <line x1="150" y1="0" x2="150" y2="200"/>
+      <line x1="0" y1="50" x2="200" y2="50"/>
+      <line x1="0" y1="100" x2="200" y2="100"/>
+      <line x1="0" y1="150" x2="200" y2="150"/>
+    </g>
+
+    <!-- Data points/patterns in cells -->
+    <circle cx="25" cy="25" r="8" fill="#c026d3" opacity="0.8"/>
+    <circle cx="75" cy="25" r="8" fill="#c026d3" opacity="0.8"/>
+    <circle cx="125" cy="75" r="8" fill="#c026d3" opacity="0.8"/>
+    <circle cx="175" cy="125" r="8" fill="#c026d3" opacity="0.8"/>
+    <circle cx="75" cy="125" r="8" fill="#c026d3" opacity="0.8"/>
+    <circle cx="125" cy="175" r="8" fill="#c026d3" opacity="0.8"/>
+
+    <circle cx="25" cy="175" r="6" fill="#0284c7" opacity="0.6"/>
+    <circle cx="175" cy="25" r="6" fill="#0284c7" opacity="0.6"/>
+    <circle cx="75" cy="175" r="6" fill="#0284c7" opacity="0.6"/>
+
+    <!-- Connecting bottom face -->
+    <path d="M0,200 L50,250 L250,250 L200,200 Z" fill="#dbeafe" stroke="#0284c7" stroke-width="2" opacity="0.5"/>
+
+    <!-- Axis labels -->
+    <text x="-20" y="100" font-family="Inter, sans-serif" font-size="12" fill="#64748b" transform="rotate(-90 -20 100)">
+      Inputs
+    </text>
+    <text x="100" y="270" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">
+      Outputs
+    </text>
+    <text x="270" y="150" font-family="Inter, sans-serif" font-size="12" fill="#64748b">
+      Validators
+    </text>
+  </g>
+
+  <!-- Decomposition arrow -->
+  <g transform="translate(500, 250)">
+    <path d="M0,-50 L0,50" stroke="#64748b" stroke-width="3" marker-end="url(#arrowGray)"/>
+    <text x="15" y="5" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#64748b">
+      Decompose
+    </text>
+  </g>
+
+  <!-- Extracted patterns (simplified factors) -->
+  <g transform="translate(600, 150)">
+    <text x="80" y="-10" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#701a75">
+      Hidden Patterns
+    </text>
+
+    <!-- Pattern 1 -->
+    <rect x="0" y="10" width="160" height="50" fill="#fae8ff" stroke="#c026d3" stroke-width="2" rx="4"/>
+    <text x="80" y="32" font-family="Inter, sans-serif" font-size="12" fill="#86198f" text-anchor="middle">
+      Pattern: Tool Preference
+    </text>
+    <text x="80" y="48" font-family="monospace" font-size="10" fill="#a21caf" text-anchor="middle">
+      σ = 0.85
+    </text>
+
+    <!-- Pattern 2 -->
+    <rect x="0" y="75" width="160" height="50" fill="#f5d0fe" stroke="#c026d3" stroke-width="2" rx="4"/>
+    <text x="80" y="97" font-family="Inter, sans-serif" font-size="12" fill="#86198f" text-anchor="middle">
+      Pattern: Input Clusters
+    </text>
+    <text x="80" y="113" font-family="monospace" font-size="10" fill="#a21caf" text-anchor="middle">
+      σ = 0.72
+    </text>
+
+    <!-- Pattern 3 -->
+    <rect x="0" y="140" width="160" height="50" fill="#fdf4ff" stroke="#c026d3" stroke-width="2" rx="4"/>
+    <text x="80" y="162" font-family="Inter, sans-serif" font-size="12" fill="#86198f" text-anchor="middle">
+      Pattern: Failure Modes
+    </text>
+    <text x="80" y="178" font-family="monospace" font-size="10" fill="#a21caf" text-anchor="middle">
+      σ = 0.63
+    </text>
+  </g>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <!-- Bottom insight -->
+  <g transform="translate(100, 430)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#075985">
+      CP Decomposition (Canonical Polyadic) reveals latent behavioral patterns
+    </text>
+  </g>
+</svg>

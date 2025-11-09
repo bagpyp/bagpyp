@@ -30,14 +30,13 @@ const HomePage = ({ featuredItems }: Props) => {
 			<Hero />
 
 			{/* Featured Work - Configurable Mix of Case Studies, Projects, and Blog Posts */}
-			<section className="section bg-white">
+			<section className="section bg-white dark:bg-slate-900">
 				<div className="container-custom">
 					<div className="text-center mb-16">
 						<h2 className="mb-4">Featured Work</h2>
-						<p className="text-xl text-slate-600 max-w-3xl mx-auto">
+						<p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
 							Production AI systems for Fortune 500 companies, interactive
-							projects, and technical thought leadership. Current clients include
-							Hillcrest Ski & Sports.
+							projects, and technical thought leadership.
 						</p>
 					</div>
 
@@ -79,12 +78,12 @@ const HomePage = ({ featuredItems }: Props) => {
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
 							<Link href="/blog/reliability-testing-llm-systems">
-								<button className="btn-primary bg-white text-primary-900 hover:bg-slate-100">
+								<button className="btn-primary">
 									Learn About CAT
 								</button>
 							</Link>
 							<Link href="/contact">
-								<button className="btn-secondary border-white text-white hover:bg-white/10">
+								<button className="btn-secondary bg-transparent border-white text-white hover:bg-white/10">
 									Get in Touch
 								</button>
 							</Link>

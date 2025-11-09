@@ -13,24 +13,29 @@ const ProjectsPage = ({ projects }: Props) => (
 		title="Projects | Bagpyp"
 		description="Personal projects showcasing technical skills, creativity, and innovation"
 	>
-		<div className="section">
+		{/* Header */}
+		<section className="bg-gradient-to-br from-slate-900 to-primary-900 text-white py-20">
 			<div className="container-custom">
-				{/* Header */}
-				<div className="text-center mb-16">
-					<h1 className="mb-4">Personal Projects</h1>
-					<p className="text-xl text-slate-600 max-w-3xl mx-auto">
-						Exploring technical challenges through creative solutions
+				<div className="max-w-4xl">
+					<h1 className="mb-6">Personal Projects</h1>
+					<p className="text-xl text-slate-300 leading-relaxed">
+						Exploring technical challenges through creative solutions in music
+						theory, mathematics, IoT, and AI systems.
 					</p>
 				</div>
+			</div>
+		</section>
 
-				{/* Projects Grid */}
+		{/* Projects Grid */}
+		<section className="section">
+			<div className="container-custom">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{projects.map((project) => (
 						<ProjectCard key={project.id} project={project} />
 					))}
 				</div>
 			</div>
-		</div>
+		</section>
 	</Layout>
 );
 

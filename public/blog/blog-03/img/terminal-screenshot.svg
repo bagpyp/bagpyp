@@ -1,0 +1,60 @@
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background (terminal dark theme) -->
+  <rect width="900" height="500" fill="#0f172a"/>
+
+  <!-- Terminal window chrome -->
+  <rect x="0" y="0" width="900" height="30" fill="#1e293b"/>
+  <circle cx="15" cy="15" r="6" fill="#ef4444"/>
+  <circle cx="35" cy="15" r="6" fill="#f59e0b"/>
+  <circle cx="55" cy="15" r="6" fill="#22c55e"/>
+  <text x="450" y="20" font-family="monospace" font-size="12" fill="#94a3b8" text-anchor="middle">
+    terminal — artium-test
+  </text>
+
+  <!-- Terminal content -->
+  <g font-family="monospace" font-size="13">
+    <!-- Command prompt -->
+    <text x="20" y="60" fill="#22c55e">$</text>
+    <text x="35" y="60" fill="#e2e8f0">pip install artium-reliability</text>
+
+    <!-- Installation output -->
+    <text x="20" y="85" fill="#94a3b8">Collecting artium-reliability...</text>
+    <text x="20" y="105" fill="#94a3b8">Installing collected packages: artium-reliability</text>
+    <text x="20" y="125" fill="#22c55e">Successfully installed artium-reliability-1.0.0</text>
+
+    <!-- Next command -->
+    <text x="20" y="160" fill="#22c55e">$</text>
+    <text x="35" y="160" fill="#e2e8f0">artium-test init my-agent</text>
+
+    <text x="20" y="185" fill="#7dd3fc">✓</text>
+    <text x="35" y="185" fill="#94a3b8">Created project structure</text>
+    <text x="20" y="205" fill="#7dd3fc">✓</text>
+    <text x="35" y="205" fill="#94a3b8">Initialized test configuration</text>
+
+    <!-- Generate command -->
+    <text x="20" y="240" fill="#22c55e">$</text>
+    <text x="35" y="240" fill="#e2e8f0">artium-test generate --scenarios 1000</text>
+
+    <text x="20" y="265" fill="#fbbf24">Generating test scenarios...</text>
+    <text x="20" y="285" fill="#94a3b8">[████████████████████] 100% - 1000/1000</text>
+    <text x="20" y="305" fill="#22c55e">✓ Generated 1000 scenarios in 2.3s</text>
+
+    <!-- Run command -->
+    <text x="20" y="340" fill="#22c55e">$</text>
+    <text x="35" y="340" fill="#e2e8f0">artium-test run --parallel --workers 10</text>
+
+    <text x="20" y="365" fill="#fbbf24">Running tests in parallel...</text>
+    <text x="20" y="385" fill="#22c55e">✓ Passed: 947/1000 (94.7%)</text>
+    <text x="20" y="405" fill="#ef4444">✗ Failed: 53/1000 (5.3%)</text>
+    <text x="20" y="425" fill="#94a3b8">Runtime: 2m 34s</text>
+
+    <!-- Analyze command -->
+    <text x="20" y="460" fill="#22c55e">$</text>
+    <text x="35" y="460" fill="#e2e8f0">artium-test analyze --report comprehensive</text>
+
+    <text x="20" y="485" fill="#c084fc">Generating comprehensive reliability report...</text>
+  </g>
+
+  <!-- Cursor blinking effect (static for SVG) -->
+  <rect x="390" y="470" width="10" height="16" fill="#e2e8f0"/>
+</svg>

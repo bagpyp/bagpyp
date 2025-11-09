@@ -1,0 +1,72 @@
+<svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="900" height="450" fill="white"/>
+
+  <!-- Title -->
+  <text x="450" y="40" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#0c4a6e" text-anchor="middle">
+    Reliability Over Time with Anomaly Detection
+  </text>
+
+  <!-- Chart area -->
+  <g transform="translate(80, 80)">
+    <!-- Axes -->
+    <line x1="0" y1="300" x2="750" y2="300" stroke="#cbd5e1" stroke-width="2"/>
+    <line x1="0" y1="0" x2="0" y2="300" stroke="#cbd5e1" stroke-width="2"/>
+
+    <!-- Y-axis labels -->
+    <g font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="end">
+      <text x="-10" y="305">0.0</text>
+      <text x="-10" y="230">0.2</text>
+      <text x="-10" y="155">0.4</text>
+      <text x="-10" y="80">0.6</text>
+      <text x="-10" y="5">0.8</text>
+    </g>
+
+    <!-- X-axis labels (time) -->
+    <g font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+      <text x="0" y="320">0h</text>
+      <text x="150" y="320">6h</text>
+      <text x="300" y="320">12h</text>
+      <text x="450" y="320">18h</text>
+      <text x="600" y="320">24h</text>
+      <text x="750" y="320">30h</text>
+    </g>
+
+    <!-- Reliability line (wavy with trend) -->
+    <path d="M0,150 L50,140 L100,145 L150,130 L200,135 L250,120 L300,125 L350,115 L400,240 L450,110 L500,115 L550,105 L600,110 L650,100 L700,105 L750,95"
+          fill="none" stroke="#0284c7" stroke-width="3"/>
+
+    <!-- Fill area under curve -->
+    <path d="M0,150 L50,140 L100,145 L150,130 L200,135 L250,120 L300,125 L350,115 L400,240 L450,110 L500,115 L550,105 L600,110 L650,100 L700,105 L750,95 L750,300 L0,300 Z"
+          fill="#0284c7" opacity="0.1"/>
+
+    <!-- Anomaly markers -->
+    <circle cx="400" cy="240" r="12" fill="none" stroke="#ef4444" stroke-width="3"/>
+    <circle cx="400" cy="240" r="18" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.4"/>
+    <text x="400" y="270" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#dc2626" text-anchor="middle">
+      Anomaly
+    </text>
+
+    <!-- Threshold line -->
+    <line x1="0" y1="225" x2="750" y2="225" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+    <text x="760" y="230" font-family="Inter, sans-serif" font-size="11" fill="#f59e0b">
+      Threshold
+    </text>
+
+    <!-- Trend line -->
+    <line x1="0" y1="145" x2="750" y2="98" stroke="#22c55e" stroke-width="2" stroke-dasharray="5,5" opacity="0.7"/>
+    <text x="760" y="103" font-family="Inter, sans-serif" font-size="11" fill="#22c55e">
+      Trend
+    </text>
+  </g>
+
+  <!-- Y-axis label -->
+  <text x="30" y="230" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#64748b" transform="rotate(-90 30 230)" text-anchor="middle">
+    Reliability Score
+  </text>
+
+  <!-- X-axis label -->
+  <text x="450" y="435" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#64748b" text-anchor="middle">
+    Time (hours)
+  </text>
+</svg>

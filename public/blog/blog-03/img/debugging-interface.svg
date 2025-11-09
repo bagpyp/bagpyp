@@ -1,0 +1,151 @@
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1000" height="600" fill="#1e293b"/>
+
+  <!-- IDE-style title bar -->
+  <rect x="0" y="0" width="1000" height="35" fill="#0f172a"/>
+  <circle cx="15" cy="17" r="6" fill="#ef4444"/>
+  <circle cx="35" cy="17" r="6" fill="#f59e0b"/>
+  <circle cx="55" cy="17" r="6" fill="#22c55e"/>
+  <text x="80" y="23" font-family="monospace" font-size="12" fill="#94a3b8">
+    Agent Trace Debugger - test_scenario_047.py
+  </text>
+
+  <!-- Main content area split -->
+  <!-- Left: Trace tree -->
+  <g transform="translate(20, 50)">
+    <rect x="0" y="0" width="450" height="520" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+
+    <!-- Header -->
+    <text x="10" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">
+      Execution Trace
+    </text>
+
+    <!-- Tree structure -->
+    <g font-family="monospace" font-size="11" fill="#cbd5e1">
+      <text x="15" y="55">▼ [Agent] Initial Call</text>
+      <text x="30" y="75" fill="#7dd3fc">  ├─ Input: "Fix TypeScript errors"</text>
+      <text x="30" y="95">  ├─ [Tool] file_search</text>
+      <text x="45" y="115" fill="#86efac">    ├─ Query: "*.ts files"</text>
+      <text x="45" y="135" fill="#fbbf24">    └─ Result: 47 files found</text>
+      <text x="30" y="155">  ├─ [Tool] read_file</text>
+      <text x="45" y="175" fill="#86efac">    ├─ Query: "src/main.ts"</text>
+      <text x="45" y="195" fill="#fbbf24">    └─ Result: 234 lines</text>
+      <text x="30" y="215">  ├─ [Agent] TypeScript Sub-Agent</text>
+      <text x="45" y="235" fill="#c084fc">    ├─ Analyzing errors...</text>
+      <text x="45" y="255" fill="#fbbf24">    └─ Found 12 type errors</text>
+      <text x="30" y="275">  ├─ [Tool] edit_file</text>
+      <text x="45" y="295" fill="#86efac">    ├─ Applying fixes...</text>
+      <text x="45" y="315" fill="#22c55e">    └─ ✓ Success</text>
+      <text x="30" y="335" fill="#7dd3fc">  └─ Output: "Fixed 12 errors in 3 files"</text>
+    </g>
+
+    <!-- Timeline on left edge -->
+    <g stroke="#475569" stroke-width="2" opacity="0.5">
+      <line x1="5" y1="55" x2="5" y2="335"/>
+      <circle cx="5" cy="55" r="3" fill="#0284c7"/>
+      <circle cx="5" cy="335" r="3" fill="#22c55e"/>
+    </g>
+  </g>
+
+  <!-- Right: Metrics panel -->
+  <g transform="translate(490, 50)">
+    <rect x="0" y="0" width="490" height="520" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+
+    <!-- Header -->
+    <text x="10" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">
+      Metrics & Analysis
+    </text>
+
+    <!-- Metrics cards -->
+    <g transform="translate(10, 45)">
+      <!-- Duration -->
+      <rect x="0" y="0" width="140" height="70" fill="#1e293b" stroke="#0284c7" stroke-width="2" rx="6"/>
+      <text x="70" y="25" font-family="Inter, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">
+        Duration
+      </text>
+      <text x="70" y="50" font-family="monospace" font-size="20" font-weight="700" fill="#0284c7" text-anchor="middle">
+        2.3s
+      </text>
+
+      <!-- Tool Calls -->
+      <rect x="160" y="0" width="140" height="70" fill="#1e293b" stroke="#c026d3" stroke-width="2" rx="6"/>
+      <text x="230" y="25" font-family="Inter, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">
+        Tool Calls
+      </text>
+      <text x="230" y="50" font-family="monospace" font-size="20" font-weight="700" fill="#c026d3" text-anchor="middle">
+        23
+      </text>
+
+      <!-- Success Rate -->
+      <rect x="320" y="0" width="140" height="70" fill="#1e293b" stroke="#22c55e" stroke-width="2" rx="6"/>
+      <text x="390" y="25" font-family="Inter, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">
+        Validation
+      </text>
+      <text x="390" y="50" font-family="monospace" font-size="20" font-weight="700" fill="#22c55e" text-anchor="middle">
+        ✓ Pass
+      </text>
+    </g>
+
+    <!-- Tool Usage Chart -->
+    <g transform="translate(10, 140)">
+      <text x="0" y="0" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">
+        Tool Usage Breakdown
+      </text>
+
+      <rect x="0" y="15" width="350" height="25" fill="#0284c7" opacity="0.3" rx="3"/>
+      <rect x="0" y="15" width="280" height="25" fill="#0284c7" rx="3"/>
+      <text x="10" y="32" font-family="Inter, sans-serif" font-size="11" fill="white">
+        read_file (12 calls)
+      </text>
+
+      <rect x="0" y="50" width="350" height="25" fill="#c026d3" opacity="0.3" rx="3"/>
+      <rect x="0" y="50" width="210" height="25" fill="#c026d3" rx="3"/>
+      <text x="10" y="67" font-family="Inter, sans-serif" font-size="11" fill="white">
+        edit_file (9 calls)
+      </text>
+
+      <rect x="0" y="85" width="350" height="25" fill="#22c55e" opacity="0.3" rx="3"/>
+      <rect x="0" y="85" width="70" height="25" fill="#22c55e" rx="3"/>
+      <text x="10" y="102" font-family="Inter, sans-serif" font-size="11" fill="white">
+        file_search (2)
+      </text>
+    </g>
+
+    <!-- Decision timeline -->
+    <g transform="translate(10, 280)">
+      <text x="0" y="0" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">
+        Decision Timeline
+      </text>
+
+      <g transform="translate(0, 20)" stroke="#475569" stroke-width="2">
+        <line x1="0" y1="20" x2="460" y2="20"/>
+        <circle cx="0" cy="20" r="6" fill="#0284c7"/>
+        <circle cx="115" cy="20" r="6" fill="#0284c7"/>
+        <circle cx="230" cy="20" r="6" fill="#c026d3"/>
+        <circle cx="345" cy="20" r="6" fill="#22c55e"/>
+        <circle cx="460" cy="20" r="6" fill="#22c55e"/>
+
+        <text x="0" y="45" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Start</text>
+        <text x="115" y="45" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Scan</text>
+        <text x="230" y="45" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Analyze</text>
+        <text x="345" y="45" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Fix</text>
+        <text x="460" y="45" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Done</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Anomaly annotation -->
+  <g transform="translate(680, 250)">
+    <rect x="0" y="0" width="180" height="60" fill="#7f1d1d" stroke="#ef4444" stroke-width="2" rx="6"/>
+    <text x="90" y="20" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#fca5a5" text-anchor="middle">
+      ⚠ Anomaly Detected
+    </text>
+    <text x="90" y="38" font-family="monospace" font-size="10" fill="#fecaca" text-anchor="middle">
+      Latency spike at 12h
+    </text>
+    <text x="90" y="52" font-family="monospace" font-size="9" fill="#fecaca" text-anchor="middle">
+      3σ above baseline
+    </text>
+  </g>
+</svg>

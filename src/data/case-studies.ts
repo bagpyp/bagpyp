@@ -30,14 +30,14 @@ export const caseStudiesData: Client[] = [
 			"Medical Knowledge Synthesis",
 			"Production AI Monitoring"
 		],
-		
+		logo: "mayo-logo.png",
 		featured: true
 	},
 	{
 		id: "ebay",
 		name: "eBay",
 		role: "AI Engineer (via Artium AI)",
-		period: "2024",
+		period: "2025",
 		location: "Remote",
 		description:
 			"Enterprise-scale Agentic AI system optimizing legacy seller workspaces and transforming the online selling experience.",
@@ -91,7 +91,7 @@ export const caseStudiesData: Client[] = [
 			"Workflow Orchestration",
 			"Compliance Monitoring"
 		],
-		
+		logo: "trust-will-logo.png",
 		featured: true
 	},
 	{
@@ -121,7 +121,7 @@ export const caseStudiesData: Client[] = [
 			"Information Extraction",
 			"Healthcare AI Systems"
 		],
-		
+		logo: "arrive-health-logo.png",
 		featured: true
 	},
 	{
@@ -149,7 +149,7 @@ export const caseStudiesData: Client[] = [
 			"MongoDB",
 			"Microservices"
 		],
-		
+		logo: "ford-logo.png",
 		featured: true
 	},
 	{
@@ -168,7 +168,7 @@ export const caseStudiesData: Client[] = [
 			"Improved iteration velocity and maintainability"
 		],
 		technologies: ["Python", "Oracle EBS", "ETL Pipelines", "SQL", "Agile/TDD"],
-		
+		logo: "trimetlogo.png",
 		featured: false
 	},
 	{

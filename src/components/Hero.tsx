@@ -109,12 +109,12 @@ const Hero = () => {
 					{/* CTAs */}
 					<div className="flex flex-col sm:flex-row gap-4 animate-slide-up animation-delay-300">
 						<Link href="/experience">
-							<button className="btn-primary bg-white text-primary-900 hover:bg-slate-100">
+							<button className="btn-primary">
 								View Experience
 							</button>
 						</Link>
 						<Link href="/blog">
-							<button className="btn-secondary border-white text-white hover:bg-white/10">
+							<button className="btn-secondary bg-transparent border-white text-white hover:bg-white/10">
 								Read Technical Blog
 							</button>
 						</Link>
@@ -123,7 +123,7 @@ const Hero = () => {
 			</div>
 
 			{/* Bottom gradient fade */}
-			<div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-50 to-transparent" />
+			<div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-slate-900 to-transparent" />
 		</section>
 	);
 };

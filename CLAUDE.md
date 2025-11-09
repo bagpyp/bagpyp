@@ -4,7 +4,9 @@
 
 Modern, professional AI consultancy portfolio website showcasing production AI engineering work, technical projects, and thought leadership. Built with Next.js, TypeScript, and Tailwind CSS.
 
-**Positioning**: One-man AI consultancy with Fortune 500 experience. Creator of Continuous Alignment Testing (CAT) framework. One of 8 official OpenAI partners worldwide.
+**Positioning**: One-man AI consultancy with Fortune 500 experience. Creator of Continuous Alignment Testing (CAT) framework. Work done through Artium AI, one of 8 official OpenAI partners worldwide.
+
+**Last Updated**: 2025-11-08 - Added 3 new blog posts, 14 custom SVGs, fixed navigation, restored all company logos
 
 ## Technology Stack
 
@@ -66,11 +68,21 @@ bagpyp/
 │       ├── components/
 │       └── pages/
 ├── public/
-│   └── images/               # Organized image directories
-│       ├── case-studies/
-│       ├── projects/
-│       │   └── guitar-triads-screenshot.png
-│       └── blog/
+│   ├── images/               # Organized image directories
+│   │   ├── case-studies/     # All company logos (mayo, ebay, trust-will, etc.)
+│   │   ├── projects/         # Project screenshots
+│   │   │   └── guitar-triads-screenshot.png
+│   │   └── blog/             # Blog card preview images (SVGs)
+│   └── blog/                 # Blog post content
+│       ├── *.md              # Markdown blog posts
+│       ├── *.pdf             # PDF white papers
+│       ├── agentic-architecture/
+│       │   └── img/          # SVG diagrams for agentic architecture
+│       ├── reliability-testing/
+│       │   └── img/          # PNG diagrams for CAT framework
+│       ├── blog-01/img/      # SVGs for introduction blog
+│       ├── blog-02/img/      # SVGs for mathematics blog
+│       └── blog-03/img/      # SVGs for framework blog
 ├── tailwind.config.js        # Tailwind theme configuration
 ├── postcss.config.js         # PostCSS configuration
 ├── jest.config.js            # Jest configuration
@@ -217,22 +229,36 @@ Update image paths in data files to point to real images.
 ### Tailwind Custom Theme
 
 **Colors**:
-- `primary-*` - Blues (50-950)
-- `accent-*` - Purples (50-950)
+- `primary-*` - Blues (#0284c7 at 600, #0369a1 at 700, #075985 at 800, #0c4a6e at 900)
+- `accent-*` - Purples (#c026d3 at 600, #a21caf at 700, #86198f at 800, #701a75 at 900)
 
 **Utility Classes**:
-- `.btn-primary` - Primary CTA button
-- `.btn-secondary` - Secondary button
+- `.btn-primary` - Primary CTA button (white text on blue gradient 700→800)
+- `.btn-secondary` - Secondary button (darker text primary-800)
 - `.card` - White card with shadow
 - `.card-gradient` - Gradient card
-- `.section` - Page section padding
+- `.section` - Page section padding (py-16 md:py-24)
 - `.container-custom` - Max-width container
+
+**Hero/Header Pattern**:
+All section pages (Experience, Projects, Blog) use consistent dark gradient header:
+- `bg-gradient-to-br from-slate-900 to-primary-900 text-white py-20`
+- max-w-4xl content area
+- h1 with mb-6, subtitle text-xl text-slate-300
 
 ### Animations
 
-- `animate-fade-in` - Fade in
-- `animate-slide-up` - Slide up
-- `animate-slide-in` - Slide in
+- `animate-fade-in` - Fade in (0.5s ease-in)
+- `animate-slide-up` - Slide up (0.5s ease-out)
+- `animate-slide-in` - Slide in (0.5s ease-out)
+
+### Navigation
+
+**Layout.tsx** includes:
+- GitHub and LinkedIn icon links (left side of nav, before text links)
+- Vertical separator divider
+- Standard page links (Experience, Projects, Blog)
+- Sign In button or User avatar (right side)
 
 ## Key Features
 
@@ -371,31 +397,64 @@ export default MyPage;
 
 **File**: `src/data/case-studies.ts`
 
-**Highlighted Clients**:
-- Mayo Clinic - Multi-agent RAG for medical research
-- eBay - Enterprise agentic AI
-- Trust & Will - Attorney-in-the-loop automation
-- Arrive Health - Clinical information processing
-- Hillcrest - Ongoing client with e-commerce platform support
+**All Clients** (7 total with logos):
+- Mayo Clinic (2024) - Multi-agent RAG for medical research
+- eBay (2025) - Enterprise agentic AI
+- Trust & Will (2024) - Attorney-in-the-loop automation
+- Arrive Health (2024) - Clinical information processing
+- Ford Motor Company (2021-2023) - IAM platform & payments modernization
+- TriMet (2023-2024) - Enterprise Python ETL
+- Hillcrest Ski & Sports (2020-Present) - Ongoing e-commerce client ($1M+ annual sales)
 
 ### Projects
 
 **File**: `src/data/projects.ts`
 
-**Current**: Guitar learning app (to be ported from `../guitar`)
+**Current Projects** (4 total):
+1. **Guitar Major Triads Visualizer** - Physics-based fretboard with 188 tests
+2. **Graph Theoretic Multi-Agent Dynamics** - MS thesis project (2015)
+3. **Guitar Modes - 3 Notes Per String** - Modal scale visualization
+4. **Dragontree IoT Monitor** - ESP32 plant monitoring system
 
-**Future**: Add more projects by:
-1. Adding metadata to `projects.ts`
-2. Creating React page in `/pages/projects/[slug].tsx`
-3. Adding screenshots
+**Order matters**: Projects appear on /projects page in array order
+
+**Adding new projects**:
+1. Add metadata to `projects.ts`
+2. Create page in `/pages/projects/[slug].tsx`
+3. Add screenshot to `public/images/projects/`
+4. Update `featured` flag as needed
 
 ### Blog Posts
 
 **File**: `src/data/blog-posts.ts`
 
-**Structure**: Metadata only - actual content stored as markdown/PDF
+**Current Blog Posts** (6 total):
+1. **Reliability Testing for LLM-Based Systems** - CAT Framework white paper (20 min)
+2. **Agentic Architecture** - Graph-theoretic modeling (10 min)
+3. **Algebra of Agentic Architectures** - Mathematical formalization (15 min)
+4. **Building Testing Framework** - Theory to production (12 min) - Artium AI
+5. **Mathematics of Trust** - Bayesian & graph theory (10 min) - Artium AI
+6. **Introduction to Agentic Reliability** - Trust in AI systems (8 min) - Artium AI
 
-**Topics**: CAT framework, reliability tensors, agentic architecture, AI monitoring
+**Blog Order**: Array order in `blog-posts.ts` is REVERSED on /blog page (newest first)
+
+**Structure**:
+- Metadata in `src/data/blog-posts.ts`
+- Content (markdown/PDF) in `/public/blog/`
+- Inline images in `/public/blog/{blog-name}/img/`
+- Card preview images in `/public/images/blog/`
+
+**LaTeX Math Rendering**:
+- Uses `remarkMath` + `rehypeKatex` for LaTeX support
+- Math blocks must have blank lines before `$$`
+- Use `\_` for underscores in math mode (NOT `\textunderscore`)
+- Use `\\\\` for line breaks in multi-line equations
+- Custom CSS in `global.css` ensures math renders in blue (#0c4a6e)
+
+**Image Paths in Markdown**:
+- MUST use absolute paths from /public: `/blog/{name}/img/{file}`
+- NOT relative paths like `./img/{file}`
+- SVGs in XML: Use `&amp;` not `&` for proper parsing
 
 ## Troubleshooting
 
@@ -456,26 +515,33 @@ Configured for Vercel deployment.
 
 **HOME** (`/`):
 - Hero section highlighting AI expertise
-- Featured case studies (Mayo, eBay, Trust & Will)
-- Featured projects (Guitar app)
-- Featured blog posts (CAT framework)
+- Featured items configured in `src/config/featured-items.ts`:
+  - Mayo Clinic, eBay, Trust & Will (AI case studies)
+  - TriMet (data engineering)
+  - Hillcrest (CRITICAL: must be visible for client software check)
+  - Reliability Testing, Agentic Architecture, Algebra blogs
+  - Graph Theoretic Dynamics project
 - CAT framework call-out section
+- Navigation with GitHub/LinkedIn icons
 
 **Experience** (`/experience`):
-- All case studies displayed as cards
-- Grouped by client (Artium AI sub-clients highlighted)
-- Education & credentials section
-- Core competencies list
+- Dark gradient header (matches Projects/Blog styling)
+- All 7 case studies displayed as cards with logos
+- Artium AI sub-clients section (Mayo, eBay, Trust & Will, Arrive)
+- CaseStudyCard shows logo OR gradient fallback with company name
 
 **Projects** (`/projects`):
-- Project cards linking to individual pages
-- Currently: Guitar app (more to be ported)
-- Template ready for new projects
+- Dark gradient header (consistent with Experience/Blog)
+- 4 projects: Guitar Triads, Graph Theoretic, Guitar Modes, Dragontree IoT
+- Project cards are clickable (Next.js 13+ Link syntax)
+- Each project has its own detail page
 
 **Blog** (`/blog`):
-- Blog post cards
-- Individual post pages (markdown/PDF hosting)
-- 4 CAT framework posts (structure ready)
+- Dark gradient header
+- 6 blog posts with custom SVG card images
+- Posts displayed in REVERSE order (newest first)
+- Markdown rendering with KaTeX math support
+- BlogPostCard component handles all image types (SVG, PNG, WEBP)
 
 **Payment** (`/payment`):
 - Auth0-gated access
@@ -540,13 +606,63 @@ npm run build
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - **REFACTOR.md** - Detailed refactor tracking
 
+## Featured Items Configuration
+
+**File**: `src/config/featured-items.ts`
+
+Homepage featured section is fully configurable:
+- Mix case studies, projects, and blog posts
+- Order determines display order
+- Change IDs to swap content
+- FeaturedCard component auto-renders correct card type
+
+**Current Configuration**:
+```typescript
+{ type: "case-study", id: "mayo-clinic" },
+{ type: "case-study", id: "ebay" },
+{ type: "case-study", id: "trust-and-will" },
+{ type: "case-study", id: "trimet" },
+{ type: "case-study", id: "hillcrest" }, // CRITICAL for client
+{ type: "blog", id: "reliability-testing" },
+{ type: "project", id: "graph-dynamics" },
+{ type: "blog", id: "agentic-architecture" },
+{ type: "blog", id: "agentic-algebra" },
+```
+
+## Component Patterns
+
+### Card Components (Clickable Links)
+
+**IMPORTANT**: Next.js 13+ Link syntax
+- `<Link>` acts as anchor tag directly
+- Apply styles to Link, NOT inner div
+- Pattern: `<Link className="card...">content</Link>`
+- DO NOT wrap: `<Link><div className="card">` ❌
+
+**Examples**:
+- ProjectCard.tsx - Clickable project cards
+- BlogPostCard.tsx - Clickable blog post cards
+- CaseStudyCard.tsx - Non-clickable (display only)
+
+### Image Handling
+
+**BlogPostCard**:
+- Removed placeholder SVG filter logic
+- All images (SVG, PNG, WEBP) treated as real images
+- Falls back to icon component only if no image specified
+
+**CaseStudyCard**:
+- Shows logo if available
+- Gradient fallback with company name if no logo
+- All 7 case studies now have logos restored from git
+
 ## Next Steps
 
-1. **Port more projects** from parent directory repos
-2. **Add real screenshots** to replace SVG placeholders
-3. **Implement markdown/PDF rendering** for blog posts
-4. **Add more blog content** from CAT framework
-5. **Consider Chrome DevTools MCP** for automated testing (when available)
+1. ✅ **All company logos restored** (mayo, trust-will, arrive, ford, trimet)
+2. ✅ **6 blog posts live** with markdown/PDF rendering
+3. ✅ **14 custom SVGs generated** for blog content
+4. **Future**: Port more projects from parent directory
+5. **Future**: Add more technical blog content
 
 ## Quick Reference
 

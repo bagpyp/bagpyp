@@ -29,8 +29,8 @@ export const featuredItems: FeaturedItemConfig[] = [
 	{ type: "case-study", id: "ebay" },
 	{ type: "case-study", id: "trust-and-will" },
 
-	// Key Project
-	{ type: "project", id: "guitar-triads" },
+	// TriMet Experience
+	{ type: "case-study", id: "trimet" },
 
 	// Ongoing Client - CRITICAL: Must be visible for Hillcrest software check
 	{ type: "case-study", id: "hillcrest" },
@@ -39,11 +39,11 @@ export const featuredItems: FeaturedItemConfig[] = [
 	{ type: "blog", id: "reliability-testing" },
 
 	// More Projects
-	{ type: "project", id: "guitar-modes" },
 	{ type: "project", id: "graph-dynamics" },
 
 	// More Blog Content
 	{ type: "blog", id: "agentic-architecture" },
+	{ type: "blog", id: "agentic-algebra" },
 ];
 
 /**

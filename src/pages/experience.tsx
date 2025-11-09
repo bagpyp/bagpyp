@@ -33,10 +33,10 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 				<div className="container-custom">
 					{/* Artium AI Sub-clients highlighted */}
 					<div className="mb-16">
-						<h2 className="text-3xl font-bold mb-4 text-slate-900">
+						<h2 className="text-3xl font-bold mb-4 text-slate-900 dark:text-slate-100">
 							AI Engineering at Artium AI
 						</h2>
-						<p className="text-lg text-slate-600 mb-8 max-w-3xl">
+						<p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-3xl">
 							As one of only eight official OpenAI partners worldwide, delivered
 							production AI systems for leading organizations.
 						</p>
@@ -58,10 +58,10 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 
 					{/* Other Experience */}
 					<div>
-						<h2 className="text-3xl font-bold mb-4 text-slate-900">
+						<h2 className="text-3xl font-bold mb-4 text-slate-900 dark:text-slate-100">
 							Additional Experience
 						</h2>
-						<p className="text-lg text-slate-600 mb-8 max-w-3xl">
+						<p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-3xl">
 							Full-stack development, data engineering, and ongoing client
 							support.
 						</p>
@@ -84,46 +84,46 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 			</section>
 
 			{/* Credentials Section */}
-			<section className="section bg-gradient-to-br from-slate-50 to-blue-50">
+			<section className="section bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
 				<div className="container-custom">
 					<div className="max-w-4xl mx-auto">
-						<h2 className="text-3xl font-bold mb-8 text-center">
+						<h2 className="text-3xl font-bold mb-8 text-center dark:text-slate-100">
 							Education & Expertise
 						</h2>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 							{/* Education */}
 							<div className="card p-8">
-								<h3 className="text-xl font-bold mb-6 text-slate-900">
+								<h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-slate-100">
 									Academic Background
 								</h3>
 								<div className="space-y-6">
 									<div>
-										<h4 className="font-semibold text-primary-700">
+										<h4 className="font-semibold text-primary-700 dark:text-primary-400">
 											MS Computational & Applied Mathematics
 										</h4>
-										<p className="text-slate-600">
+										<p className="text-slate-600 dark:text-slate-300">
 											Portland State University, 2015-2017
 										</p>
 									</div>
 									<div>
-										<h4 className="font-semibold text-primary-700">
+										<h4 className="font-semibold text-primary-700 dark:text-primary-400">
 											Software Development Bootcamp
 										</h4>
-										<p className="text-slate-600">The Tech Academy, 2019</p>
+										<p className="text-slate-600 dark:text-slate-300">The Tech Academy, 2019</p>
 									</div>
 								</div>
 							</div>
 
 							{/* Core Skills */}
 							<div className="card p-8">
-								<h3 className="text-xl font-bold mb-6 text-slate-900">
+								<h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-slate-100">
 									Core Competencies
 								</h3>
 								<ul className="space-y-3">
 									<li className="flex items-start">
 										<svg
-											className="w-5 h-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5"
+											className="w-5 h-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
 											fill="currentColor"
 											viewBox="0 0 20 20"
 										>
@@ -133,13 +133,13 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 												clipRule="evenodd"
 											/>
 										</svg>
-										<span className="text-slate-700">
+										<span className="text-slate-700 dark:text-slate-300">
 											LLM System Design & AI Engineering
 										</span>
 									</li>
 									<li className="flex items-start">
 										<svg
-											className="w-5 h-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5"
+											className="w-5 h-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
 											fill="currentColor"
 											viewBox="0 0 20 20"
 										>
@@ -149,13 +149,13 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 												clipRule="evenodd"
 											/>
 										</svg>
-										<span className="text-slate-700">
+										<span className="text-slate-700 dark:text-slate-300">
 											Statistical & Mathematical Modeling
 										</span>
 									</li>
 									<li className="flex items-start">
 										<svg
-											className="w-5 h-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5"
+											className="w-5 h-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
 											fill="currentColor"
 											viewBox="0 0 20 20"
 										>
@@ -165,13 +165,13 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 												clipRule="evenodd"
 											/>
 										</svg>
-										<span className="text-slate-700">
+										<span className="text-slate-700 dark:text-slate-300">
 											Multi-Agent & RAG Architectures
 										</span>
 									</li>
 									<li className="flex items-start">
 										<svg
-											className="w-5 h-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5"
+											className="w-5 h-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
 											fill="currentColor"
 											viewBox="0 0 20 20"
 										>
@@ -181,13 +181,13 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 												clipRule="evenodd"
 											/>
 										</svg>
-										<span className="text-slate-700">
+										<span className="text-slate-700 dark:text-slate-300">
 											Continuous Alignment Testing (CAT)
 										</span>
 									</li>
 									<li className="flex items-start">
 										<svg
-											className="w-5 h-5 text-primary-500 mr-2 flex-shrink-0 mt-0.5"
+											className="w-5 h-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5"
 											fill="currentColor"
 											viewBox="0 0 20 20"
 										>
@@ -197,7 +197,7 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 												clipRule="evenodd"
 											/>
 										</svg>
-										<span className="text-slate-700">
+										<span className="text-slate-700 dark:text-slate-300">
 											Enterprise Software Architecture
 										</span>
 									</li>

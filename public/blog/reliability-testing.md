@@ -1,9 +1,5 @@
 # Reliability Testing for LLM-Based Systems
 
-  <div style="text-align: center;">  
-    <img alt="plot" src="/blog/reliability-testing/img/plot.png" style="width: 90%">
-  </div>
-
 As large language models (LLMs) become increasingly integrated into various applications, ensuring their reliability is critical. These systems often take multiple inputs and produce corresponding outputs, each of which must adhere to specific guidelines or criteria. Assessing the reliability of such systems is essential for maintaining trust, safety, and effectiveness. This white paper introduces a framework for conducting reliability tests on LLM-based systems. The framework utilizes validators and verifiers to evaluate the system's behavior across multiple dimensions, providing a comprehensive assessment of its performance.
 
 ## Section 1: Key Concepts in Reliability Testing
@@ -43,7 +39,7 @@ Binomial experiments are used to quantify the reliability of the system as deter
   The system generates a single output for each varied input, and the validator assesses the entire collection of outputs, generating a Pass or Fail for each input-output pair (depicted below as green or red markers respectively).
 
   <div style="text-align: center;">  
-    <img alt="2411" src="/blog/reliability-testing/img/2411.png" style="width: 90%">
+    <img alt="2411" src="/blog/reliability-testing/img/2411.png" style="width: 40%">
   </div>
 
 ### 1.2 **Fixed Input, Multiple Outputs:**
@@ -51,7 +47,7 @@ Binomial experiments are used to quantify the reliability of the system as deter
    A single input is used to generate multiple outputs, and the validator assesses this set of outputs.
 
   <div style="text-align: center;">   
-    <img alt="1241" src="/blog/reliability-testing/img/1241.png" style="width: 90%">
+    <img alt="1241" src="/blog/reliability-testing/img/1241.png" style="width: 40%">
   </div>
 
 ### 1.3 **Varying Inputs, Multiple Outputs**
@@ -59,7 +55,7 @@ Binomial experiments are used to quantify the reliability of the system as deter
   In this approach, the system generates multiple outputs for each varied input, resulting in a comprehensive set of $N^2$ outputs. This method enables a thorough examination of the system's behavior across a wide range of scenarios, capturing both the variability in inputs and the stochastic nature of output generation.
 
   <div style="text-align: center;">  
-    <img alt="24241" src="/blog/reliability-testing/img/24241.png" style="width: 90%">
+    <img alt="24241" src="/blog/reliability-testing/img/24241.png" style="width: 40%">
   </div>
 
 ### Aggregating the results
@@ -133,7 +129,7 @@ The Reliability Tensor $R$ can be defined with dimensions corresponding to:
   $\{validator_1,\ validator_2,\ ..., validator_K\}$
 
   <div style="text-align: center;">
-    <img alt="242424" src="/blog/reliability-testing/img/242424.png" style="width: 90%;">
+    <img alt="242424" src="/blog/reliability-testing/img/242424.png" style="width: 60%;">
   </div>
 
 Each element $R_{i,j,k}$ in the tensor represents the result (pass or fail) of validator $k$ applied to output $output_j$ generated from input $input_i$.
@@ -224,7 +220,7 @@ Reliability testing is not a one-and-done process; it is best viewed as a **cont
 
 ### 3.4 Using Experiments to Drive Prompt Refinement and Coverage
 
-![plot.png](img/plot.png)
+![plot.png](/blog/reliability-testing/img/plot.png)
 
 Reliability experiments not only serve to monitor system performance but also offer a powerful mechanism for systematically refining prompts to improve overall system reliability. By regularly running experiments, teams can identify weaknesses in the system's responses and implement targeted improvements to the prompts, enhancing performance across diverse input scenarios. This approach mirrors the Red-Green-Refactor cycle in software testing, where continuous feedback guides iterative enhancements.
 
@@ -316,19 +312,18 @@ Once you have defined these specialized LLM-based checks, they can be plugged ri
 ```python
 from src.experiment import Experiment
 
-# Note: ethics_validator and accuracy_validator would need to be defined
-# as generative validators using an LLM, since they require subjective judgment
 exp = Experiment(
     name="generative_conditional_experiment",
-    validators=[tone_validator],  # Only including defined validators
-    inputs=my_database_inputs,  # Provided by your production logs
-    num_to_generate=0,   # Because we already have outputs
-    outputs=my_database_outputs  # Pulled from your logs (note: 'outputs' not 'precomputed_outputs')
+    validators=[tone_validator],
+    inputs=database_inputs,  # Provided by production logs
+    num_to_generate=0,  # Because we already have outputs
+    outputs=database_outputs  # Pulled from logs (note: 'outputs' not 'precomputed_outputs')
 )
 
 # Running the experiment
 exp.run()
 ```
+
 Just like other validators, each **Generative Conditional Validator** produces a pass/fail ratio, stored in your aggregated Cat Scores. Over time, you can track how well your system meets more complex criteria, such as ethical compliance or factual accuracy, using a single scoreboard.
 
 ## 4.5 Summary of Benefits

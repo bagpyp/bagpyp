@@ -53,7 +53,7 @@ const BlogPage = ({ posts }: Props) => {
 export const getStaticProps: GetStaticProps = async () => {
 	return {
 		props: {
-			posts: blogPostsData
+			posts: [...blogPostsData].reverse()
 		}
 	};
 };

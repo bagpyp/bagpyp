@@ -11,6 +11,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import { promises as fs } from "fs";
 import path from "path";
+import { useEffect, useState } from "react";
 
 type Props = {
 	post?: BlogPost;
@@ -19,6 +20,26 @@ type Props = {
 };
 
 const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
+	const [isDark, setIsDark] = useState(false);
+
+	useEffect(() => {
+		// Check initial dark mode state
+		const checkDarkMode = () => {
+			setIsDark(document.documentElement.classList.contains("dark"));
+		};
+
+		checkDarkMode();
+
+		// Watch for dark mode changes
+		const observer = new MutationObserver(checkDarkMode);
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ["class"]
+		});
+
+		return () => observer.disconnect();
+	}, []);
+
 	if (errors || !post) {
 		return (
 			<Layout title="Blog Post Not Found">
@@ -41,10 +62,14 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 					integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
 					crossOrigin="anonymous"
 				/>
-				{/* Highlight.js CSS for Python syntax highlighting */}
+				{/* Highlight.js CSS - dynamically load based on theme */}
 				<link
 					rel="stylesheet"
-					href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+					href={
+						isDark
+							? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+							: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+					}
 				/>
 			</Head>
 			<Layout title={`${post.title} | Bagpyp Blog`} description={post.excerpt}>
@@ -54,29 +79,29 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 						<div className="mb-12">
 							{/* Category & Date */}
 							<div className="flex items-center gap-4 mb-6">
-								<span className="px-3 py-1 bg-primary-100 text-primary-700 text-sm font-semibold rounded-full">
+								<span className="px-3 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm font-semibold rounded-full">
 									{post.category}
 								</span>
-								<span className="text-slate-500">
+								<span className="text-slate-500 dark:text-slate-400">
 									{new Date(post.publishedDate).toLocaleDateString("en-US", {
 										month: "long",
 										day: "numeric",
 										year: "numeric"
 									})}
 								</span>
-								<span className="text-slate-500">• {post.readingTime} min read</span>
+								<span className="text-slate-500 dark:text-slate-400">• {post.readingTime} min read</span>
 							</div>
 
 							{/* Title */}
 							<h1 className="mb-4">{post.title}</h1>
 							{post.subtitle && (
-								<p className="text-2xl text-slate-600 font-medium mb-6">
+								<p className="text-2xl text-slate-600 dark:text-slate-400 font-medium mb-6">
 									{post.subtitle}
 								</p>
 							)}
 
 							{/* Author */}
-							<div className="flex items-center gap-3 pt-6 border-t border-slate-200">
+							<div className="flex items-center gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
 								<div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold">
 									{post.author
 										.split(" ")
@@ -84,8 +109,8 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 										.join("")}
 								</div>
 								<div>
-									<p className="font-semibold text-slate-900">{post.author}</p>
-									<p className="text-sm text-slate-500">AI Engineer & Consultant</p>
+									<p className="font-semibold text-slate-900 dark:text-slate-100">{post.author}</p>
+									<p className="text-sm text-slate-500 dark:text-slate-400">AI Engineer & Consultant</p>
 								</div>
 							</div>
 						</div>
@@ -95,7 +120,7 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 							{post.tags.map((tag) => (
 								<span
 									key={tag}
-									className="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-full"
+									className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm rounded-full"
 								>
 									#{tag}
 								</span>
@@ -104,11 +129,11 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 
 						{/* Content */}
 						{isPDF ? (
-							<div className="card p-12 bg-gradient-to-br from-blue-50 to-purple-50 text-center">
-								<h3 className="text-2xl font-bold mb-4 text-slate-900">
+							<div className="card p-12 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 text-center">
+								<h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
 									Download PDF White Paper
 								</h3>
-								<p className="text-slate-600 mb-6">
+								<p className="text-slate-600 dark:text-slate-400 mb-6">
 									This article is available as a comprehensive PDF white paper.
 								</p>
 								<a
@@ -121,7 +146,7 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 								</a>
 							</div>
 						) : markdownContent ? (
-							<div className="prose prose-lg max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-img:rounded-lg prose-img:shadow-lg">
+							<div className="prose prose-lg max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-100 prose-pre:text-slate-900 prose-li:text-slate-700 prose-ul:text-slate-700 prose-ol:text-slate-700 prose-img:rounded-lg prose-img:shadow-lg dark:prose-headings:text-slate-100 dark:prose-p:text-slate-300 dark:prose-a:text-primary-400 dark:prose-strong:text-slate-100 dark:prose-code:text-primary-300 dark:prose-pre:bg-slate-900 dark:prose-pre:text-slate-100 dark:prose-li:text-slate-300 dark:prose-ul:text-slate-300 dark:prose-ol:text-slate-300">
 								<ReactMarkdown
 									remarkPlugins={[remarkGfm, remarkMath]}
 									rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
@@ -131,7 +156,7 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 							</div>
 						) : (
 							<div className="card p-12 text-center">
-								<p className="text-slate-600">Content not available</p>
+								<p className="text-slate-600 dark:text-slate-400">Content not available</p>
 							</div>
 						)}
 					</div>

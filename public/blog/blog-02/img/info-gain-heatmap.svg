@@ -1,0 +1,106 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="500" fill="white"/>
+
+  <!-- Title -->
+  <text x="400" y="40" font-family="Inter, sans-serif" font-size="22" font-weight="700" fill="#0c4a6e" text-anchor="middle">
+    Adaptive Test Selection: Information Gain Heatmap
+  </text>
+
+  <!-- Heatmap grid -->
+  <g transform="translate(100, 90)">
+    <!-- Column labels -->
+    <text x="60" y="-10" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Test 1</text>
+    <text x="150" y="-10" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Test 2</text>
+    <text x="240" y="-10" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Test 3</text>
+    <text x="330" y="-10" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Test 4</text>
+    <text x="420" y="-10" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Test 5</text>
+    <text x="510" y="-10" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Test 6</text>
+
+    <!-- Row labels -->
+    <text x="-10" y="45" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="end">Iter 1</text>
+    <text x="-10" y="105" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="end">Iter 2</text>
+    <text x="-10" y="165" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="end">Iter 3</text>
+    <text x="-10" y="225" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="end">Iter 4</text>
+    <text x="-10" y="285" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="end">Iter 5</text>
+
+    <!-- Heatmap cells - varying colors by information gain -->
+    <!-- Row 1 - High initial information -->
+    <rect x="10" y="10" width="80" height="50" fill="#ef4444" opacity="0.8"/>
+    <rect x="100" y="10" width="80" height="50" fill="#f97316" opacity="0.8"/>
+    <rect x="190" y="10" width="80" height="50" fill="#f59e0b" opacity="0.8"/>
+    <rect x="280" y="10" width="80" height="50" fill="#eab308" opacity="0.7"/>
+    <rect x="370" y="10" width="80" height="50" fill="#84cc16" opacity="0.6"/>
+    <rect x="460" y="10" width="80" height="50" fill="#22c55e" opacity="0.5"/>
+
+    <!-- Row 2 - Decreasing as we learn -->
+    <rect x="10" y="70" width="80" height="50" fill="#22c55e" opacity="0.5"/>
+    <rect x="100" y="70" width="80" height="50" fill="#eab308" opacity="0.7"/>
+    <rect x="190" y="70" width="80" height="50" fill="#f59e0b" opacity="0.8"/>
+    <rect x="280" y="70" width="80" height="50" fill="#84cc16" opacity="0.6"/>
+    <rect x="370" y="70" width="80" height="50" fill="#22c55e" opacity="0.5"/>
+    <rect x="460" y="70" width="80" height="50" fill="#10b981" opacity="0.4"/>
+
+    <!-- Row 3 -->
+    <rect x="10" y="130" width="80" height="50" fill="#10b981" opacity="0.4"/>
+    <rect x="100" y="130" width="80" height="50" fill="#22c55e" opacity="0.5"/>
+    <rect x="190" y="130" width="80" height="50" fill="#ef4444" opacity="0.8"/>
+    <rect x="280" y="130" width="80" height="50" fill="#22c55e" opacity="0.5"/>
+    <rect x="370" y="130" width="80" height="50" fill="#10b981" opacity="0.4"/>
+    <rect x="460" y="130" width="80" height="50" fill="#06b6d4" opacity="0.3"/>
+
+    <!-- Row 4 -->
+    <rect x="10" y="190" width="80" height="50" fill="#06b6d4" opacity="0.3"/>
+    <rect x="100" y="190" width="80" height="50" fill="#10b981" opacity="0.4"/>
+    <rect x="190" y="190" width="80" height="50" fill="#22c55e" opacity="0.5"/>
+    <rect x="280" y="190" width="80" height="50" fill="#10b981" opacity="0.4"/>
+    <rect x="370" y="190" width="80" height="50" fill="#06b6d4" opacity="0.3"/>
+    <rect x="460" y="190" width="80" height="50" fill="#0284c7" opacity="0.2"/>
+
+    <!-- Row 5 - Lowest information gain -->
+    <rect x="10" y="250" width="80" height="50" fill="#0284c7" opacity="0.2"/>
+    <rect x="100" y="250" width="80" height="50" fill="#06b6d4" opacity="0.3"/>
+    <rect x="190" y="250" width="80" height="50" fill="#10b981" opacity="0.4"/>
+    <rect x="280" y="250" width="80" height="50" fill="#06b6d4" opacity="0.3"/>
+    <rect x="460" y="250" width="80" height="50" fill="#0284c7" opacity="0.2"/>
+    <rect x="370" y="250" width="80" height="50" fill="#0284c7" opacity="0.2"/>
+
+    <!-- Add white borders -->
+    <g stroke="white" stroke-width="2" fill="none">
+      <rect x="10" y="10" width="530" height="290"/>
+    </g>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(650, 150)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#0c4a6e">
+      Information Gain
+    </text>
+
+    <rect x="0" y="15" width="30" height="20" fill="#ef4444" opacity="0.8"/>
+    <text x="40" y="30" font-family="Inter, sans-serif" font-size="12" fill="#64748b">High</text>
+
+    <rect x="0" y="45" width="30" height="20" fill="#f59e0b" opacity="0.7"/>
+    <text x="40" y="60" font-family="Inter, sans-serif" font-size="12" fill="#64748b">Medium</text>
+
+    <rect x="0" y="75" width="30" height="20" fill="#22c55e" opacity="0.5"/>
+    <text x="40" y="90" font-family="Inter, sans-serif" font-size="12" fill="#64748b">Low</text>
+
+    <rect x="0" y="105" width="30" height="20" fill="#0284c7" opacity="0.2"/>
+    <text x="40" y="120" font-family="Inter, sans-serif" font-size="12" fill="#64748b">Minimal</text>
+  </g>
+
+  <!-- Insight -->
+  <g transform="translate(100, 420)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#075985">
+      → Algorithm selects tests with maximum expected information gain
+    </text>
+  </g>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#0284c7" />
+    </marker>
+  </defs>
+</svg>

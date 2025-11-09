@@ -1,315 +1,388 @@
-# Formalized Structures
+# Agentic Architecture: A Graph-Theoretic Framework
 
-Suppose an agent user interaction of degree $k$ as in the above. Then,
+## Introduction
 
-$$
-h = [\ c_i\ ]_{i=1}^k = [\ (u_1, v_1),\ (u_2,\ v_2),\ \dots,\ (u_k, v_k)\ ]
-$$
+This paper presents a mathematical framework for modeling interactions between users, AI agents, and tools as directed acyclic graphs (DAGs). We formalize how agent interactions are structured, stored, and analyzed through a graph-theoretic lens, where nodes contain input-output pairs and edges represent invocation relationships. This approach simplifies the representation while maintaining complete information about the interaction history.
 
-Supposing further that throught the $k$ cycles, $m$ tool calls were made. Then queries and results for each tool call
-can be represented in matrix form $R$,
-where $r_{i,j}$ is the result from the $j^{th}$ tool call, built for the $i^{th}$ tool, $T_i$:
+## Core Definitions
 
-$$
-[\ r_{i,j}\ ]_{\ \substack{
-i \in \{ 1, 2, \dots, n \} \\
-j = [ 1, 2, \dots, m ]
-}}
-$$
+**Definition (Agent System):** Let $A$ be an **agent** with system prompt $s_A$ and toolset $T_A = \{ T_1, T_2, \dots, T_n \}$.
 
-Where the $m$ rows of $R$ represent the $m$ tool calls made, and the $n$ columns of $R$ are aligned with the $n$
-different tools that can be called.
+**Definition (Interaction Cycle):** A **cycle** $c_i$ represents a complete user-agent interaction, initiated by user input $u_i$ and concluded with agent response $v_i$. We denote:
 
 $$
-R =
-\begin{bmatrix}
-r_{1,1} & r_{1,2} & \cdots & r_{1,n} \\
-r_{2,1} & r_{2,2} & \cdots & r_{2,n} \\
-\vdots & \vdots & \ddots & \vdots \\
-r_{m,1} & r_{m,2} & \cdots & r_{m,n}
-\end{bmatrix}
+c_i = (u_i, v_i)
 $$
 
-However, since any given tool call is made to exactly one tool, each row of $R$ can only contain one entry. Since tools
-can be called in any order, a more accurate representation of $R$ might look like:
+**Definition (Chat History):** The **chat history** after $k$ cycles is:
 
 $$
-R =
-\begin{bmatrix}
-0 & 0 & r_{1,j_1} & 0 & \cdots & 0 \\
-r_{2,j_2} & 0 & 0 & 0 & \cdots & 0 \\
-0 & r_{3,j_3} & 0 & 0 & \cdots & 0 \\
-\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & 0 & 0 & \cdots & r_{m,j_m}
-\end{bmatrix}
+h_k = [c_i]_{i=1}^k = [(u_1, v_1), (u_2, v_2), \dots, (u_k, v_k)]
 $$
 
-where the column index $(j_l)_{l=1}^m$ is a sequence of values from $\{1, 2, \dots, m\}$ in no particular order,
-signifying that tools can be called in any order. As another example, that tools can be called an arbitrary number of
-time (including not at all), let
+## Derivative Chat Histories
+
+When an agent $A$ receives input $u_1$ and determines tool $T_i$ should be called, it constructs query $q_1^{(i)}$ yielding:
 
 $$
-R =
-\begin{bmatrix}
-0 & r_{1,2} & 0 & 0 & 0 \\
-r_{2,1} & 0 & 0 & 0 & 0 \\
-0 & 0 & r_{3,3} & 0 & 0 \\
-0 & 0 & 0 & 0 & r_{4,5} \\
-0 & r_{5,2} & 0 & 0 & 0 \\
-0 & r_{6,2} & 0 & 0 & 0 \\
-\end{bmatrix}
+r_1^{(i)} = T_i(q_1^{(i)})
 $$
 
-In this example, the sequence $(j_l)_{l=1}^6 = (2,1,3,5,2,2)$, indicating the order in which tools $1$ through $5$ were
-called throughout the interaction.  ($m=6$ and $n=5$). In this example, $T_2$ has been called three times, whereas $T_4$
-was never called at all. Tools $1$, $3$ and $5$ were each called once. Of course,
+The agent interprets this result via its internal chat method $\text{chat}^*$:
 
 $$
-R =
-\begin{bmatrix}
-0 & T_2(q_1) & 0 & 0 & 0 \\
-T_1(q_2) & 0 & 0 & 0 & 0 \\
-0 & 0 & T_3(q_3) & 0 & 0 \\
-0 & 0 & 0 & 0 & T_5(q_4) \\
-0 & T_2(q_5) & 0 & 0 & 0 \\
-0 & T_2(q_6) & 0 & 0 & 0 \\
-\end{bmatrix}
+v_1 = \text{chat}^*(r_1^{(i)})
 $$
 
-So that where
+**Definition (Derivative History):** The **first derivative** of chat history includes intermediate tool interactions:
 
 $$
-Q =
-\begin{bmatrix}
-q_1 \\
-q_2 \\
-q_3 \\
-q_4 \\
-q_5 \\
-q_6 \\
-\end{bmatrix}, \
-\quad
-T = [ \ T_1 \ T_2 \ T_3 \ T_4 \ T_5 \ ]
+h' = [c'_i] \text{ where } c'_i = (u_i, q_i^{(j)}, r_i^{(j)}, v_i)
 $$
 
-we have:
+The **second derivative** $h''$ captures the full depth of all nested interactions, including agent-to-agent invocations through tools.
+
+## Graph-Theoretic Representation
+
+### Node-Based Model
+
+We represent each interaction as a node containing an input-output pair:
+
+**Definition (Interaction Node):** A node $N$ in the interaction graph is defined as:
 
 $$
-R = Q \otimes_\circ T \ \cdot
-\begin{bmatrix}
+N = (e_{\text{in}}, e_{\text{out}}, \lambda)
+$$
+
+where $e_{\text{in}}$ is the input, $e_{\text{out}}$ is the output, and $\lambda$ is a label identifying the processing entity (agent or tool).
+
+### Cycle as DAG
+
+Each cycle $c_i$ forms a directed acyclic graph $G_i = (V_i, E_i)$ where:
+
+- $V_i$ is the set of interaction nodes
+- $E_i \subseteq V_i \times V_i$ represents invocation relationships
+- The root node contains $(u_i, v_i)$ labeled with agent $A$
+- Child nodes contain tool or sub-agent interactions
+
+**Proposition (DAG Property):** For any cycle $c_i$, the graph $G_i$ is acyclic, i.e., there exists no sequence of edges forming a directed cycle.
+
+**Proof:** By construction, edges represent invocation relationships with strict temporal ordering. A tool cannot invoke its calling agent within the same execution context, ensuring acyclicity. ∎
+
+## Formal Graph Examples
+
+Consider the following cycle types expressed as graphs:
+
+### Simple Input-Output (Type 1)
+
+A simple cycle with no tool calls, just user input and agent response:
+
+```
+Traditional Flow:
+    u₁ → [A] → v₁
+
+Node Representation:
+    [(u₁, v₁)ₐ]
+```
+
+$$
+G_1 = (\{N_A\}, \emptyset) \text{ where } N_A = (u_1, v_1, A)
+$$
+
+### Single Tool Call (Type 2)
+
+Agent receives input, calls a tool, and responds:
+
+```
+Traditional Flow:
+    u₂ → [A] ─q→ [T] ─r→ [A] → v₂
+
+Node Representation:
+    [(u₂, v₂)ₐ]
+         ↓
+      [(q, r)ₜ]
+```
+
+$$
+G_2 = (\{N_A, N_T\}, \{(N_A, N_T)\})
+$$
+
+where $N_A = (u_2, v_2, A)$ and $N_T = (q_2, r_2, T)$
+
+### Nested Agent Invocation (Type 3)
+
+Tool $T$ invokes another agent $B$ during execution:
+
+```
+Traditional Flow:
+    u₃ → [A] ─q→ [T] ─u'→ [B] ─v'→ [T] ─r→ [A] → v₃
+
+Node Representation:
+    [(u₃, v₃)ₐ]
+         ↓
+      [(q, r)ₜ]
+         ↓
+     [(u', v')ᵦ]
+```
+
+$$
+G_3 = (\{N_A, N_T, N_B\}, \{(N_A, N_T), (N_T, N_B)\})
+$$
+
+### Multiple Tool Calls (Type 4)
+
+Agent calls two different tools before responding:
+
+```
+Traditional Flow:
+    u₄ → [A] ─q₁→ [T₁] ─r₁→ [A]
+          └─q₂→ [T₂] ─r₂→ [A] → v₄
+
+Node Representation:
+        [(u₄, v₄)ₐ]
+         ↙        ↘
+  [(q₁, r₁)ₜ₁]  [(q₂, r₂)ₜ₂]
+```
+
+$$
+G_4 = (\{N_A, N_{T_1}, N_{T_2}\}, \{(N_A, N_{T_1}), (N_A, N_{T_2})\})
+$$
+
+## Matrix Representations
+
+### Tool Selection Matrix
+
+For a cycle with $m$ tool calls across $n$ available tools, we define the selection matrix:
+
+$$
+S \in \{0,1\}^{m \times n}
+$$
+
+where $S_{ij} = 1$ if the $i$-th call invokes tool $T_j$, and $0$ otherwise.
+
+**Lemma (Row Sum Property):** Each row of $S$ sums to exactly 1:
+
+$$
+\sum_{j=1}^n S_{ij} = 1 \quad \forall i \in \{1, \ldots, m\}
+$$
+
+### Access Control Matrix
+
+In multi-agent systems, we formalize access control through a block matrix $\mathcal{A}$:
+
+$$
+\mathcal{A} = [M \mid R]
+$$
+
+where:
+- $M \in \{0,1\}^{|A| \times |A|}$ is the agent-to-agent adjacency matrix
+- $R \in \{0,1\}^{|A| \times |T|}$ is the agent-to-tool access matrix
+- $A$ is the set of agents, $T$ is the set of tools
+
+**Definition (Agent Dispatch System):** A dispatch system is a tuple $(A, T, T_0, A_0, \mathcal{A})$ where:
+- $A = \{a_1, \ldots, a_n\}$ is the agent set
+- $T = \{t_0, t_1, \ldots, t_m\}$ is the tool set
+- $T_0 = \{t_0\} \subseteq T$ is the dispatch tool
+- $A_0 = \{a_1\} \subseteq A$ is the user-facing agent
+- $\mathcal{A}$ encodes access relations
+
+The dispatch tool $t_0$ mediates inter-agent communication: $M_{ij} = 1 \iff$ agent $a_i$ can invoke agent $a_j$ via $t_0$.
+
+### Reachability and Path Generation
+
+**Definition (Reachability):** Agent $a_j$ is reachable from agent $a_i$ if $(M^k)_{ij} > 0$ for some $k \geq 1$, where $M^k$ denotes the $k$-th power of matrix $M$.
+
+The set of all reachable agents from $a_i$ is:
+
+$$
+\mathcal{R}(a_i) = \{a_j : \exists k \geq 1, (M^k)_{ij} > 0\}
+$$
+
+**Theorem (Transitive Closure):** The transitive closure $M^* = \sum_{k=1}^{n-1} M^k$ encodes all reachability relations, where $(M^*)_{ij} > 0$ iff $a_j \in \mathcal{R}(a_i)$.
+
+### Loop Prevention Through Nilpotency
+
+**Definition (Nilpotent Matrix):** A matrix $M$ is nilpotent if $\exists k \in \mathbb{N}$ such that $M^k = 0$. The smallest such $k$ is the nilpotency index.
+
+**Theorem (Loop-Free Characterization):** An agent dispatch system is loop-free if and only if its agent-to-agent adjacency matrix $M$ is nilpotent.
+
+**Proof:**
+
+(⇒) Suppose the system is loop-free. Then the directed graph $G = (A, E)$ where $E = \{(a_i, a_j) : M_{ij} = 1\}$ is acyclic. For an acyclic graph with $n$ vertices, any path has length at most $n-1$. Thus $(M^n)_{ij}$ counts paths of length $n$ from $a_i$ to $a_j$, which must be zero for all $i,j$. Hence $M^n = 0$.
+
+(⇐) Suppose $M^k = 0$ for some $k$. Then no paths of length $k$ or greater exist in the dispatch graph. If a cycle existed, we could traverse it repeatedly to create arbitrarily long paths, contradicting $M^k = 0$. Thus the system is loop-free. ∎
+
+**Corollary (Trace Test for Acyclicity):** A dispatch system has no self-loops of length $k$ if and only if $\text{tr}(M^k) = 0$.
+
+**Proof:** The trace $\text{tr}(M^k) = \sum_{i=1}^n (M^k)_{ii}$ counts closed walks of length $k$. These exist iff there are cycles in the graph. ∎
+
+**Proposition (Maximum Invocation Depth):** For a loop-free dispatch system with nilpotency index $\nu$, the maximum invocation chain length is $\nu - 1$.
+
+### Example: Five-Agent System
+
+Consider the access control matrix:
+
+```
+  A B C D E | 0 1 2 3 4 5 6
+A 0 0 0 1 1 | 1 1 0 0 0 0 0
+B 0 0 0 0 0 | 0 0 1 1 0 1 0
+C 0 1 0 0 0 | 1 0 0 0 0 0 1
+D 0 0 1 0 0 | 1 0 0 0 0 0 0
+E 0 0 0 0 0 | 0 1 0 0 1 0 0
+```
+
+The agent-to-agent submatrix is:
+
+$$
+M = \begin{pmatrix}
+0 & 0 & 0 & 1 & 1 \\
+0 & 0 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 & 0 \\
-1 & 0 & 0 & 0 & 0 \\
 0 & 0 & 1 & 0 & 0 \\
-0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0 & 0
+\end{pmatrix}
+$$
+
+Computing powers:
+
+$$
+M^2 = \begin{pmatrix}
+0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0
+\end{pmatrix}, \quad
+M^3 = \begin{pmatrix}
 0 & 1 & 0 & 0 & 0 \\
-\end{bmatrix}
-\stackrel{\text{def}}{=} S
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0
+\end{pmatrix}, \quad
+M^4 = 0
 $$
 
-where "$\cdot$" denotes the Hadamard (element-wise) product, $\otimes_\circ$ denotes the Kronecker product over function
-composition, and we define the binary matrix $S$, the **selection mask for $R$**, containing $1$s in the $i,j^{th}$
-position to signify that $T_i$ was called with $q_j$ and $0$s elsewhere.  $S$ thus encodes which tools were called and
-in which order by the agent throughout its engagement by the user.
+Since $M^4 = 0$ with $\text{tr}(M^k) = 0$ for all $k$, the system is provably loop-free with maximum invocation depth 3.
 
-## The Algebra
+## Database Schema Formalization
 
-Consider the matrix $S$ from above. There is no reason why an agent couldn't make all $6$ of those tool calls within the
-first cycle of a user-agent interaction. Suppose it did, and that during cycle $2$ the agent makes the following $3$
-tool calls:
+### Trace Record Structure
+
+Each node in the persistent storage is represented as a tuple:
 
 $$
-S_2 =
-\begin{bmatrix}
-1 & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 0 & 1 \\
-\end{bmatrix}
+\tau = (\mathrm{id}, \mathrm{parent\_id}, \mathrm{cycle\_id}, \mathrm{call\_order}, \mathrm{fn}, e_{\mathrm{in}}, e_{\mathrm{out}}, \epsilon, \mathrm{pv}, \mathrm{av}, t_c, t_u)
 $$
 
-This gives rise to $k$ selection masks $S_i$, one for each cycle within a user-agent interaction. Whereas each $S_i$
-will always have $5$ columns (since there are $5$ tools to call from in this example), the row count of $S_i$ will vary
-according to the number of tool-calls made inside a given cycle. Let $m = [m_l]_{l=1}^k$ be the sequence of such row
-counts.
+where:
+- $\mathrm{id} \in \mathbb{N}$: unique identifier
+- $\mathrm{parent\_id} \in \mathbb{N} \cup \{\mathrm{NULL}\}$: reference to parent node
+- $\mathrm{cycle\_id} \in \mathbb{N}$: cycle grouping
+- $\mathrm{call\_order} \in \mathbb{N}$: sibling ordering
+- $\mathrm{fn}$: symbolic function name
+- $e_{\text{in}}, e_{\text{out}}$: JSON input/output
+- $\epsilon$: exception data (if any)
+- $\mathrm{pv}$: prompt versions
+- $\mathrm{av}$: application version
+- $t_c, t_u$: creation and update timestamps
 
-Let's consider another example over a few more cycles ($k=5$), but with a smaller toolset $\{ T_1, T_2, T_3 \}$ ($n=3$):
+### Tree Reconstruction
 
-$$
-\begin{bmatrix}
-0 & 1 & 0 \\
-1 & 0 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-1 & 0 & 0 \\
-0 & 0 & 1 \\
-0 & 1 & 0 \\
-0 & 1 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-0 & 0 & 1 \\
-1 & 0 & 0 \\
-0 & 1 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-0 & 0 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-1 & 0 & 0 \\
-0 & 1 & 0 \\
-\end{bmatrix}
-$$
+Given traces $\{\tau_i\}$ with the same $\mathrm{cycle\_id}$, we reconstruct the DAG:
 
-Setting and defining $\mu$ as the maximum number of tool calls made across each of the $5$ cycles, $\mu = 4$, <i>
-i.e.</i>
+**Theorem (Unique Reconstruction):** The parent-child relationships encoded in $\mathrm{parent\_id}$ fields uniquely determine a DAG structure for each cycle.
+
+**Proof:** The parent\_id field creates a forest structure. Within each cycle\_id group, exactly one node has parent\_id = NULL (the root), and all other nodes have exactly one parent, forming a tree (which is a special case of a DAG). ∎
+
+## Algebraic Properties
+
+### Composition of Cycles
+
+The full interaction history over $k$ cycles can be viewed as a forest:
 
 $$
-\begin{align*}
-\mu =
-&= \max\{m_i \ | \ i \in \{1, \dots, 5\}\} \\
-&= \max\{2, 4, 3, 0, 2\} \\
-&= 4
-\end{align*}
+\mathcal{F}_k = \bigcup_{i=1}^k G_i
 $$
 
-we can construct a tensor of shape $k \times \mu \times n$ to encode which tools were called, the order in which they
-were called, and within which cycle each tool call was made throughout the entire user-agent interaction. Using the
-example from above,
+where each $G_i$ is a tree rooted at the user-agent interaction node.
+
+### Path Analysis
+
+For any node $N$ in cycle $G_i$, the depth $d(N)$ is the length of the unique path from the root to $N$:
 
 $$
-\sum =
-\begin{bmatrix}
-\begin{bmatrix}
-0 & 1 & 0 \\
-1 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 0 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-1 & 0 & 0 \\
-0 & 0 & 1 \\
-0 & 1 & 0 \\
-0 & 1 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-0 & 0 & 1 \\
-1 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 1 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-0 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 0 & 0 \\
-\end{bmatrix}, \
-\begin{bmatrix}
-1 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 1 & 0 \\
-\end{bmatrix}
-\end{bmatrix}
+d(N) = \begin{cases}
+0 & \text{if } N \text{ is root} \\
+1 + d(\text{parent}(N)) & \text{otherwise}
+\end{cases}
 $$
 
-Which we can further encode as an array of column indexes, $J$, over the course of a user-agent interaction. Wherein
-the $p^{th}$ element of $J$ is equal to the column index from $R$ within cycle $p$ as defined above. In this case, the
-map from $\sigma$ to $J$ is recognizable in symbols:
+**Definition (Interaction Depth):** The depth of a cycle is:
 
 $$
-J = [\ (2,1),\ (1,3,2,2),\ (3,1,2),\ (0),\ (1,2)\  ]
+\Delta(G_i) = \max_{N \in V_i} d(N)
 $$
 
-As one final step, right-padding each $J_i$ with $0$s into a vector of length $\mu$, we can define the $k \times \mu$
-matrix with entries from $\{1,\dots,n\}$, $\sigma$, where in this case:
+This represents the maximum nesting level of tool/agent invocations within the cycle.
+
+## Query and Result Arrays
+
+For $m$ total tool calls across all cycles, we maintain:
 
 $$
-\sigma =
-\begin{bmatrix}
-2 & 1 & 0 & 0 \\
-1 & 3 & 2 & 2 \\
-3 & 1 & 2 & 0 \\
-0 & 0 & 0 & 0 \\
-1 & 2 & 0 & 0 \\
-\end{bmatrix}
+\mathbf{q} = [q_1, q_2, \ldots, q_m] \quad \text{and} \quad \mathbf{r} = [r_1, r_2, \ldots, r_m]
 $$
 
-Providing us with an effective hash for the behavior of the system over $k$ cycles. This allows us to store the entire
-anatomy of the communication between a user, an agent and its toolset in the following format (continuing with the
-example from above):
+These can be indexed by a mapping function $\phi: (i,j) \mapsto l$ where $(i,j)$ represents the $j$-th tool call in cycle $i$ and $l$ is the global index.
 
-In a similar fashion, we can construct $\rho$ from $R$ and $\theta$ from $Q$ with the relation
+## Tensor Representation
 
-$$
-\rho_{i,j} = T_{\sigma_{i,j}}(\theta_{i,j})
-$$
-
-So that,
+For advanced analysis, we construct a 3-tensor:
 
 $$
-\theta =
-\begin{bmatrix}
-\theta_{1,1} & \theta_{1,2} & 0 & 0 \\
-\theta_{2,1} & \theta_{2,2} & \theta_{2,3} & \theta_{2,4} \\
-\theta_{3,1} & \theta_{3,2} & \theta_{3,3} & 0 \\
-0 & 0 & 0 & 0 \\
-\theta_{5,1} & \theta_{5,2} & 0 & 0 \\
-\end{bmatrix},\ \ \ \ \ \ \
-\rho =
-\begin{bmatrix}
-T_2(q_{1,1}) & T_1(q_{1,2}) & 0 & 0 \\
-T_1(q_{2,1}) & T_3(q_{2,2}) & T_2(q_{2,3}) & T_2(q_{2,4}) \\
-T_3(q_{3,1}) & T_1(q_{3,2}) & T_2(q_{3,3}) & 0 \\
-0 & 0 & 0 & 0 \\
-T_1(q_{5,1}) & T_2(q_{5,2}) & 0 & 0 \\
-\end{bmatrix}
-=
-\begin{bmatrix}
-\rho_{1,1} & \rho_{1,2} & 0 & 0 \\
-\rho_{2,1} & \rho_{2,2} & \rho_{2,3} & \rho_{2,4} \\
-\rho_{3,1} & \rho_{3,2} & \rho_{3,3} & 0 \\
-0 & 0 & 0 & 0 \\
-\rho_{5,1} & \rho_{5,2} & 0 & 0 \\
-\end{bmatrix}
+\mathcal{T} \in \mathbb{R}^{k \times \mu \times n}
 $$
 
-Finally, since the structure of tool calls is fully encoded by $\sigma$, we can take the vectorization of $\theta$
-and $\rho$ as vectors of length $m \stackrel{\text{def}}{=} \sum_{p=1}^k m_p$, giving $m$ as equal to the total number
-of tool calls throughout the user-agent interaction (or equivalently, the number of non-zero entries in $\sigma$):
+where:
+- $k$ = number of cycles
+- $\mu = \max_i |V_i|$ = maximum nodes in any cycle
+- $n$ = number of available tools
 
-$$
-\begin{align}
-\hat{q}
-= [\ q_1\ q_2\ q_3\ \cdots\ q_m\ ] = [\ \theta_{1,1}\ \theta_{1,2}\ \theta_{2,1}\ \theta_{2,2}\ \cdots\ \theta_{5,1}\ \theta_{5,2}\ ]
-\end{align}
-$$
-$$
-\hat{r}
-= [\ r_1\ r_2\ r_3\ \cdots\ r_m\ ]  = [\ \rho_{1,1}\ \rho_{1,2}\ \rho_{2,1}\ \rho_{2,2}\ \cdots\ \rho_{5,1}\ \rho_{5,2}\ ]
-$$
+Element $\mathcal{T}_{ijl} = 1$ if the $j$-th node in cycle $i$ invokes tool $T_l$, and $0$ otherwise.
 
-## Proposition
+## Proposition: Complete Reconstruction
 
-Let A be an agent with a system prompt $s_A$ and a toolset $T = \{ T_1, T_2, \dots, T_n \}$. Suppose a user interacts
-with $A$ over $k$ cycles, resulting in:
+**Proposition:** The quadruple $(h, \mathbf{q}, S, \mathbf{r})$ where:
+- $h$ is the chat history
+- $\mathbf{q}$ is the query array
+- $S$ is the selection matrix
+- $\mathbf{r}$ is the result array
 
-- Chat History: $h$, where $u_i$ is the user input and $v_i$ is the agent’s response at cycle $i$.
-  $$
-  h = [\ (u_1,v_1),\ (u_2,v_2),\ \dots,\ (u_k,v_k)\ ]
-  $$
-- Tool Indices Matrix: $\sigma$, where $\sigma_{i,j}$ indicates which tool $T_{\sigma_{i,j}}$ was called with
-  query $\theta_{i,j}$.
-  $$
-  \sigma \in \{1,\ 2,\ \dots,\ n\}^{k \times \mu} \\
-  $$
-- Queries Array: $\hat{q}$, where $\hat{q}_p \implies \theta_{i,j}$, the j$^\text{th}$ query made by $A$ in cycle $i$.
-  $$
-  \hat{q} \in \{\ q\ \}^m,\ \theta \in \{\ q\ \}^{k \times \mu} \\
-  $$
-- Results Array: $\hat{r}$, where $\hat{r} \implies \rho_{i,j} = T_{\sigma_{i,j}}(\theta_{i,j})$.
-  $$
-  \hat{r} \in \{\ r\ \}^m,\ \rho \in \{\ r\ \}^{k \times \mu} \\
-  $$
+is necessary and sufficient to reconstruct the complete interaction history including all tool invocations and their relationships.
 
-Then, the entire interaction between the user and the agent, including all tool calls and results, is uniquely
-determined by the artifacts $h$, $\hat{q}$, $\sigma$, and $\hat{r}$. Moreover, these artifacts are necessary and
-sufficient to fully reconstruct the interaction.
+**Proof:**
+
+**Necessity:** Each component captures essential information that cannot be derived from the others.
+
+**Sufficiency:** Given $(h, \mathbf{q}, S, \mathbf{r})$:
+1. $h$ provides user inputs and agent outputs for each cycle
+2. $S$ identifies which tools were called and in what order
+3. $\mathbf{q}$ provides the queries sent to each tool
+4. $\mathbf{r}$ provides the results from each tool
+
+The temporal ordering implicit in the arrays, combined with the selection matrix, allows complete reconstruction of the interaction DAG. ∎
+
+## Advantages of the Graph Model
+
+1. **Simplified Storage**: Each node stores a complete interaction pair, reducing edge complexity
+2. **Natural Hierarchy**: Parent-child relationships directly model invocation patterns
+3. **Efficient Queries**: Tree structure enables fast traversal and analysis
+4. **Version Tracking**: Node-level version information supports evolution analysis
+5. **Composability**: Cycles compose naturally as a forest of trees
+
+## Conclusion
+
+This graph-theoretic framework provides a rigorous foundation for understanding and implementing agent-tool-user interaction systems. By representing interactions as DAGs with node-stored data pairs, we achieve both mathematical clarity and practical efficiency. The framework naturally supports persistence, analysis, and evolution of complex agent systems while maintaining the complete information needed for auditing and optimization.
+
+The shift from edge-based to node-based storage of interaction data represents a key insight: by bundling input-output pairs within nodes, we transform a complex multi-graph into a simple tree structure, dramatically simplifying both theoretical analysis and practical implementation.

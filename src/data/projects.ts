@@ -98,7 +98,7 @@ export const projectsData: Project[] = [
 			"Visual learning tool",
 			"Interactive exploration"
 		],
-		images: ["guitar-triads-screenshot.png"],
+		images: ["guitar-modes-screenshot.png"],
 		featured: false,
 		year: "2024",
 		category: "Full-Stack"
@@ -171,7 +171,7 @@ export const projectsData: Project[] = [
 			"Cloud deployment",
 			"Full-stack integration"
 		],
-		images: ["dragontree.JPG", "desk.JPG", "arduino.png"],
+		images: ["desk.JPG", "dragontree.JPG", "arduino.png"],
 		featured: false,
 		year: "2020",
 		category: "Infrastructure"

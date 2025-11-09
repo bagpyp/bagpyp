@@ -229,9 +229,10 @@ Final commit and push...
 - `/images/blog/reliability-testing/img/24241.png`
 - `/images/blog/reliability-testing/img/242424.png`
 
-### Project Screenshots (12 total)
+### Project Screenshots (13 total)
 **Guitar Projects**:
-- `/images/projects/guitar-triads-screenshot.png` (used for all 3 guitar projects)
+- `/images/projects/guitar-triads-screenshot.png` (NEW from ~/Desktop/triads.png)
+- `/images/projects/guitar-modes-screenshot.png` (NEW from ~/Desktop/modes.png)
 
 **Graph Theoretic Dynamics**:
 - `/images/projects/concensusGraph.png`

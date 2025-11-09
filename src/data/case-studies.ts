@@ -30,6 +30,7 @@ export const caseStudiesData: Client[] = [
 			"Medical Knowledge Synthesis",
 			"Production AI Monitoring"
 		],
+		logo: "mayo-logo.png",
 		featured: true
 	},
 	{
@@ -60,6 +61,7 @@ export const caseStudiesData: Client[] = [
 			"Intelligent Workflow Automation",
 			"Enterprise-Scale AI Deployment"
 		],
+		logo: "ebay-logo.png",
 		featured: true
 	},
 	{
@@ -89,6 +91,7 @@ export const caseStudiesData: Client[] = [
 			"Workflow Orchestration",
 			"Compliance Monitoring"
 		],
+		logo: "trust-will-logo.png",
 		featured: true
 	},
 	{
@@ -118,6 +121,7 @@ export const caseStudiesData: Client[] = [
 			"Information Extraction",
 			"Healthcare AI Systems"
 		],
+		logo: "arrive-health-logo.png",
 		featured: true
 	},
 	{
@@ -145,6 +149,7 @@ export const caseStudiesData: Client[] = [
 			"MongoDB",
 			"Microservices"
 		],
+		logo: "ford-logo.png",
 		featured: true
 	},
 	{
@@ -163,6 +168,7 @@ export const caseStudiesData: Client[] = [
 			"Improved iteration velocity and maintainability"
 		],
 		technologies: ["Python", "Oracle EBS", "ETL Pipelines", "SQL", "Agile/TDD"],
+		logo: "trimetlogo.png",
 		featured: false
 	},
 	{
@@ -189,6 +195,7 @@ export const caseStudiesData: Client[] = [
 			"Data Pipelines",
 			"RPBC2"
 		],
+		logo: "hillcrestlogo.webp",
 		featured: true
 	}
 ];

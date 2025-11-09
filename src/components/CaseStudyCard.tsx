@@ -1,4 +1,5 @@
 import { Client } from "../interfaces";
+import Image from "next/image";
 
 type Props = {
 	caseStudy: Client;
@@ -7,22 +8,45 @@ type Props = {
 const CaseStudyCard = ({ caseStudy }: Props) => {
 	return (
 		<div className="card group cursor-default h-full">
-			{/* Header with gradient */}
-			<div className="relative h-48 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600 flex items-center justify-center overflow-hidden">
-				{/* Animated background pattern */}
-				<div className="absolute inset-0 opacity-10">
-					<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:translate-x-full transition-transform duration-1000" />
-				</div>
-
-				{/* Company name */}
-				<div className="relative z-10 text-white text-center p-6">
-					<h3 className="text-3xl font-bold mb-2">{caseStudy.name}</h3>
-					<p className="text-primary-100 text-sm">{caseStudy.period}</p>
-				</div>
+			{/* Header with logo or gradient */}
+			<div className="relative h-48 bg-white flex items-center justify-center overflow-hidden border-b border-slate-200">
+				{/* Logo if available */}
+				{caseStudy.logo ? (
+					<div className="relative w-full h-full p-8 flex items-center justify-center">
+						<Image
+							src={`/images/case-studies/${caseStudy.logo}`}
+							alt={`${caseStudy.name} logo`}
+							fill
+							className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+						/>
+					</div>
+				) : (
+					// Fallback gradient with company name
+					<>
+						<div className="absolute inset-0 bg-gradient-to-br from-primary-500 via-primary-600 to-accent-600" />
+						<div className="absolute inset-0 opacity-10">
+							<div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:translate-x-full transition-transform duration-1000" />
+						</div>
+						<div className="relative z-10 text-white text-center p-6">
+							<h3 className="text-3xl font-bold mb-2">{caseStudy.name}</h3>
+							<p className="text-primary-100 text-sm">{caseStudy.period}</p>
+						</div>
+					</>
+				)}
 			</div>
 
 			{/* Content */}
 			<div className="p-6">
+				{/* Company name and period (when logo is shown) */}
+				{caseStudy.logo && (
+					<div className="mb-4 pb-4 border-b border-slate-200">
+						<h3 className="text-2xl font-bold text-slate-900 mb-1">
+							{caseStudy.name}
+						</h3>
+						<p className="text-slate-500 text-sm">{caseStudy.period}</p>
+					</div>
+				)}
+
 				<div className="mb-4">
 					<span className="text-primary-600 font-semibold text-sm">
 						{caseStudy.role}

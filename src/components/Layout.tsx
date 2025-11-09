@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
 
 type Props = {
@@ -15,7 +14,6 @@ const Layout = ({
 	title = "Robert Cunningham | AI Engineering Consultancy",
 	description = "Expert AI engineering and software consultancy specializing in production LLM systems, multi-agent architectures, and enterprise software development."
 }: Props) => {
-	const { user } = useUser();
 	const [darkMode, setDarkMode] = useState(false);
 
 	// Initialize dark mode from localStorage or system preference
@@ -133,19 +131,10 @@ const Layout = ({
 							>
 								Blog
 							</Link>
-							{user && (
-								<Link
-									href="/payment"
-									className="text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
-								>
-									Payment
-								</Link>
-							)}
 						</div>
 
-						{/* Dark Mode Toggle & User Avatar / Login */}
-						<div className="flex items-center space-x-4">
-							{/* Dark Mode Toggle */}
+						{/* Dark Mode Toggle */}
+						<div className="flex items-center">
 							<button
 								onClick={toggleDarkMode}
 								className="p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -161,25 +150,6 @@ const Layout = ({
 									</svg>
 								)}
 							</button>
-							{user ? (
-								<Link href="/api/auth/logout">
-									<div className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-										<Image
-											src={user.picture || "/img/defaultUser.png"}
-											alt={user.name || "User"}
-											width={40}
-											height={40}
-											className="rounded-full border-2 border-primary-500"
-										/>
-									</div>
-								</Link>
-							) : (
-								<Link href="/api/auth/login">
-									<button className="btn-primary text-sm px-4 py-2">
-										Sign In
-									</button>
-								</Link>
-							)}
 						</div>
 					</div>
 				</div>

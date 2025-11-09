@@ -16,8 +16,6 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 				() => {
 					if (project.slug === "guitar-major-triads") {
 						return import("../projects/guitar/components/MajorTriads");
-					} else if (project.slug === "guitar-scale-practice") {
-						return import("../projects/guitar/components/ScalePractice");
 					} else if (project.slug === "guitar-modes-3nps") {
 						return import("../projects/guitar/components/Modes3NPS");
 					}

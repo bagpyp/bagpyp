@@ -38,39 +38,6 @@ export const projectsData: Project[] = [
 		category: "Full-Stack"
 	},
 	{
-		id: "guitar-scales",
-		slug: "guitar-scale-practice",
-		title: "Guitar Scale Practice Trainer",
-		subtitle: "Modal Scale Challenges with 3-Notes-Per-String",
-		description:
-			"Interactive scale practice challenges for all 7 modes with progressive hints, scoring system, and XYZ pattern visualization.",
-		longDescription:
-			"Advanced scale practice tool featuring random challenges across all modal scales. Progressive hint system reveals notes one at a time while tracking your score. Implements 3-notes-per-string patterns with realistic fretboard physics.",
-		client: "Personal Project",
-		technologies: [
-			"Next.js 14",
-			"TypeScript",
-			"Web Audio API",
-			"Vitest"
-		],
-		features: [
-			"Challenges for all 7 modes",
-			"Progressive hint system with scoring",
-			"3-notes-per-string XYZ patterns",
-			"Real-time feedback",
-			"Physics-based rendering"
-		],
-		outcomes: [
-			"Advanced music theory implementation",
-			"Interactive learning system",
-			"Comprehensive test coverage"
-		],
-		images: ["guitar-triads-screenshot.png"],
-		featured: true,
-		year: "2024",
-		category: "Full-Stack"
-	},
-	{
 		id: "guitar-modes",
 		slug: "guitar-modes-3nps",
 		title: "Guitar Modes - 3 Notes Per String",

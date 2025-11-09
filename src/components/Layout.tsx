@@ -70,12 +70,6 @@ const Layout = ({
 							>
 								Blog
 							</Link>
-							<Link
-								href="/contact"
-								className="text-slate-700 hover:text-primary-600 font-medium transition-colors"
-							>
-								Contact
-							</Link>
 							{user && (
 								<Link
 									href="/payment"
@@ -156,14 +150,6 @@ const Layout = ({
 										className="text-slate-400 hover:text-white transition-colors"
 									>
 										Blog
-									</Link>
-								</li>
-								<li>
-									<Link
-										href="/contact"
-										className="text-slate-400 hover:text-white transition-colors"
-									>
-										Contact
 									</Link>
 								</li>
 							</ul>

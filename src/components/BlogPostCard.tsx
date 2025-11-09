@@ -15,8 +15,15 @@ const getIconForPost = (slug: string) => {
 };
 
 const BlogPostCard = ({ post }: Props) => {
-	// Use real image if available (not an SVG placeholder)
-	const hasRealImage = post.image && !post.image.endsWith(".svg");
+	// Check if using a generated placeholder SVG icon
+	const placeholderSVGs = [
+		"cat-reliability-tensor.svg",
+		"reliability-tensor-3d.svg",
+		"agentic-algebra.svg",
+		"sidecar-pattern.svg"
+	];
+	const isPlaceholder = post.image && placeholderSVGs.includes(post.image);
+	const hasRealImage = post.image && !isPlaceholder;
 	const IconComponent = getIconForPost(post.slug);
 
 	return (
@@ -29,7 +36,7 @@ const BlogPostCard = ({ post }: Props) => {
 							src={`/images/blog/${post.image}`}
 							alt={post.title}
 							fill
-							className="object-cover group-hover:scale-110 transition-transform duration-500"
+							className="object-contain group-hover:scale-110 transition-transform duration-500"
 						/>
 					) : (
 						<div className="w-full h-full p-8">

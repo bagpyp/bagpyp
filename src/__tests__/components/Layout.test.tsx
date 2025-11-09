@@ -28,8 +28,6 @@ describe("Layout", () => {
 		expect(projectsLinks.length).toBeGreaterThanOrEqual(1);
 		const blogLinks = screen.getAllByText("Blog");
 		expect(blogLinks.length).toBeGreaterThanOrEqual(1);
-		const contactLinks = screen.getAllByText("Contact");
-		expect(contactLinks.length).toBeGreaterThanOrEqual(1);
 	});
 
 	it("renders Bagpyp brand", () => {

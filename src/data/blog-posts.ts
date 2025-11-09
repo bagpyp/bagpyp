@@ -16,7 +16,7 @@ export const blogPostsData: BlogPost[] = [
 		category: "AI Engineering",
 		readingTime: 10,
 		featured: true,
-		image: "c_prime_node.svg"
+		image: "AT.svg"
 	},
 	{
 		id: "agentic-algebra",

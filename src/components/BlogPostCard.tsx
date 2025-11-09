@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BlogPost } from "../interfaces";
 import { TensorIcon, AIBrainIcon, CodeIcon, DataIcon } from "./svgs";
 
@@ -7,13 +8,15 @@ type Props = {
 };
 
 const getIconForPost = (slug: string) => {
-	if (slug.includes("tensor")) return TensorIcon;
+	if (slug.includes("tensor") || slug.includes("reliability")) return TensorIcon;
 	if (slug.includes("algebra") || slug.includes("agentic")) return CodeIcon;
 	if (slug.includes("monitoring") || slug.includes("sidecar")) return DataIcon;
 	return AIBrainIcon;
 };
 
 const BlogPostCard = ({ post }: Props) => {
+	// Use real image if available (not an SVG placeholder)
+	const hasRealImage = post.image && !post.image.endsWith(".svg");
 	const IconComponent = getIconForPost(post.slug);
 
 	return (
@@ -21,9 +24,18 @@ const BlogPostCard = ({ post }: Props) => {
 			<div className="card group cursor-pointer h-full hover:scale-105 transition-transform duration-300">
 				{/* Image/Icon */}
 				<div className="relative h-48 bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
-					<div className="w-full h-full p-8">
-						<IconComponent className="w-full h-full" />
-					</div>
+					{hasRealImage ? (
+						<Image
+							src={`/images/blog/${post.image}`}
+							alt={post.title}
+							fill
+							className="object-cover group-hover:scale-110 transition-transform duration-500"
+						/>
+					) : (
+						<div className="w-full h-full p-8">
+							<IconComponent className="w-full h-full" />
+						</div>
+					)}
 
 					{/* Reading time badge */}
 					<div className="absolute top-4 right-4">

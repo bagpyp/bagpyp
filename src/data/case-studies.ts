@@ -61,7 +61,7 @@ export const caseStudiesData: Client[] = [
 			"Intelligent Workflow Automation",
 			"Enterprise-Scale AI Deployment"
 		],
-		logo: "ebay-logo.png",
+		logo: "ebay-logo.svg",
 		featured: true
 	},
 	{
@@ -195,7 +195,7 @@ export const caseStudiesData: Client[] = [
 			"Data Pipelines",
 			"RPBC2"
 		],
-		logo: "hillcrestlogo.webp",
+		logo: "hillcrest-logo.png",
 		featured: true
 	}
 ];

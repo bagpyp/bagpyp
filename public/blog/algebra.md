@@ -1,12 +1,13 @@
 # Formalized Structures
 
-Suppose an agent user interaction of degree $k$ as in the above.  Then,
+Suppose an agent user interaction of degree $k$ as in the above. Then,
 
 $$
 h = [\ c_i\ ]_{i=1}^k = [\ (u_1, v_1),\ (u_2,\ v_2),\ \dots,\ (u_k, v_k)\ ]
 $$
 
-Supposing further that throught the $k$ cycles, $m$ tool calls were made. Then queries and results for each tool call can be represented in matrix form $R$,
+Supposing further that throught the $k$ cycles, $m$ tool calls were made. Then queries and results for each tool call
+can be represented in matrix form $R$,
 where $r_{i,j}$ is the result from the $j^{th}$ tool call, built for the $i^{th}$ tool, $T_i$:
 
 $$
@@ -295,7 +296,8 @@ with $A$ over $k$ cycles, resulting in:
   $$
   h = [\ (u_1,v_1),\ (u_2,v_2),\ \dots,\ (u_k,v_k)\ ]
   $$
-- Tool Indices Matrix: $\sigma$, where $\sigma_{i,j}$ indicates which tool $T_{\sigma_{i,j}}$ was called with query $\theta_{i,j}$.
+- Tool Indices Matrix: $\sigma$, where $\sigma_{i,j}$ indicates which tool $T_{\sigma_{i,j}}$ was called with
+  query $\theta_{i,j}$.
   $$
   \sigma \in \{1,\ 2,\ \dots,\ n\}^{k \times \mu} \\
   $$

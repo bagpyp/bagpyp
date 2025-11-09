@@ -212,22 +212,24 @@ Final commit and push...
 
 ## 📸 Complete Image Inventory
 
-### Blog Images (12 total)
+### Blog Images (12 total) - CORRECTED PATHS
 **Agentic Architecture** (5 SVG diagrams):
-- `/images/blog/agentic-architecture/img/c_prime.svg`
-- `/images/blog/agentic-architecture/img/c_prime_graph.svg`
-- `/images/blog/agentic-architecture/img/c_prime_node.svg`
-- `/images/blog/agentic-architecture/img/h_pp.svg`
-- `/images/blog/agentic-architecture/img/h_pp_node.svg`
+- `/blog/agentic-architecture/img/c_prime.svg` ✅
+- `/blog/agentic-architecture/img/c_prime_graph.svg` ✅
+- `/blog/agentic-architecture/img/c_prime_node.svg` ✅
+- `/blog/agentic-architecture/img/h_pp.svg` ✅
+- `/blog/agentic-architecture/img/h_pp_node.svg` ✅
 
 **Reliability Testing** (7 PNG charts):
-- `/images/blog/reliability-testing/img/plot.png`
-- `/images/blog/reliability-testing/img/scores.png`
-- `/images/blog/reliability-testing/img/table.png`
-- `/images/blog/reliability-testing/img/1241.png`
-- `/images/blog/reliability-testing/img/2411.png`
-- `/images/blog/reliability-testing/img/24241.png`
-- `/images/blog/reliability-testing/img/242424.png`
+- `/blog/reliability-testing/img/plot.png` ✅
+- `/blog/reliability-testing/img/scores.png` ✅
+- `/blog/reliability-testing/img/table.png` ✅
+- `/blog/reliability-testing/img/1241.png` ✅
+- `/blog/reliability-testing/img/2411.png` ✅
+- `/blog/reliability-testing/img/24241.png` ✅
+- `/blog/reliability-testing/img/242424.png` ✅
+
+**Note**: Images stored in `public/blog/` (not `public/images/blog/`)
 
 ### Project Screenshots (13 total)
 **Guitar Projects**:
@@ -263,6 +265,11 @@ Final commit and push...
 - ✅ All images organized by content type
 - ✅ PDFs linked from markdown posts
 - ✅ react-markdown + remark-gfm + rehype-raw implemented
+- ✅ remark-math + rehype-katex for LaTeX rendering
+- ✅ KaTeX CSS loaded for mathematical notation
 - ✅ @tailwindcss/typography added for prose styling
 - ✅ Keyboard events work (from guitar components)
 - ✅ Light backgrounds for guitar projects
+- ✅ Image paths corrected (/blog/ not /images/blog/)
+- ✅ All blog images now displaying correctly
+- ✅ LaTeX equations rendering inline and in display mode

@@ -6,7 +6,6 @@ import { blogPostsData } from "../../data/blog-posts";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
 import { promises as fs } from "fs";
 import path from "path";
@@ -118,7 +117,11 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 							<div className="prose prose-lg max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-img:rounded-lg prose-img:shadow-lg">
 								<ReactMarkdown
 									remarkPlugins={[remarkGfm, remarkMath]}
-									rehypePlugins={[rehypeRaw, rehypeKatex]}
+									rehypePlugins={[rehypeKatex]}
+									components={{
+										// Allow HTML img tags for blog diagrams
+										img: ({ node, ...props }) => <img {...props} alt={props.alt || ""} />
+									}}
 								>
 									{markdownContent}
 								</ReactMarkdown>

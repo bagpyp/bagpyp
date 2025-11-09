@@ -230,7 +230,7 @@ $$
 3 & 1 & 2 & 0 \\
 0 & 0 & 0 & 0 \\
 1 & 2 & 0 & 0 \\
-\end{bmatrix} \
+\end{bmatrix}
 $$
 
 Providing us with an effective hash for the behavior of the system over $k$ cycles. This allows us to store the entire

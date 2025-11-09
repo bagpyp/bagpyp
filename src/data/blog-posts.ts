@@ -16,7 +16,7 @@ export const blogPostsData: BlogPost[] = [
 		category: "AI Engineering",
 		readingTime: 8,
 		featured: false,
-		image: "introduction-agentic-reliability.svg"
+		image: "introduction-agentic-reliability.png"
 	},
 	{
 		id: "mathematics-of-trust",
@@ -32,7 +32,7 @@ export const blogPostsData: BlogPost[] = [
 		category: "Technical Deep Dive",
 		readingTime: 10,
 		featured: false,
-		image: "mathematics-of-trust.svg"
+		image: "mathematics-of-trust.png"
 	},
 	{
 		id: "building-testing-framework",
@@ -48,7 +48,7 @@ export const blogPostsData: BlogPost[] = [
 		category: "Technical Deep Dive",
 		readingTime: 12,
 		featured: false,
-		image: "building-testing-framework.svg"
+		image: "building-testing-framework.png"
 	},
 	{
 		id: "agentic-architecture",

@@ -14,13 +14,13 @@ const Hero = () => {
 					<div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-8 animate-fade-in">
 						<span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
 						<span className="text-sm font-medium">
-							One of 8 official OpenAI partners worldwide
+							Directly associated with one of 8 official OpenAI partners worldwide
 						</span>
 					</div>
 
 					{/* Main headline */}
 					<h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-slide-up">
-						AI Engineering for
+						Expert in AI Engineering for
 						<span className="block bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 bg-clip-text text-transparent">
 							Production Systems
 						</span>

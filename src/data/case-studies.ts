@@ -128,7 +128,7 @@ export const caseStudiesData: Client[] = [
 		id: "ford",
 		name: "Ford Motor Company",
 		role: "Software Engineer → Engineering Manager",
-		period: "September 2021 - September 2023",
+		period: "",
 		location: "Detroit, MI (via Integral.io)",
 		description:
 			"Led critical modernization efforts across Ford's autonomous vehicle and global payments divisions.",
@@ -156,7 +156,7 @@ export const caseStudiesData: Client[] = [
 		id: "trimet",
 		name: "TriMet",
 		role: "Software Engineer, Data Engineering",
-		period: "December 2023 - July 2024",
+		period: "",
 		location: "Portland, OR",
 		description:
 			"Built and maintained enterprise Python ETL applications for Oregon's largest public transportation agency.",
@@ -175,7 +175,7 @@ export const caseStudiesData: Client[] = [
 		id: "hillcrest",
 		name: "Hillcrest Ski & Sports",
 		role: "Software Developer → Principal Consultant",
-		period: "February 2020 - Present",
+		period: "",
 		location: "Gresham, OR",
 		description:
 			"Built and continuously maintain e-commerce platform driving over $1M in annual sales. Ongoing client with active support and feature development.",

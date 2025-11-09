@@ -1,5 +1,4 @@
 import { AppProps } from "next/app";
-import "bootstrap/dist/css/bootstrap.css";
 import "../styles/global.css";
 import { Auth0Provider } from "@auth0/nextjs-auth0/client";
 

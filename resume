@@ -1,0 +1,75 @@
+ROBERT CUNNINGHAM
+Portland, OR • rtc@bagpyp.net • (503) 803-4458 • LinkedIn • GitHub
+Senior Software Engineer with a background in Applied Mathematics, focused on AI engineering with statistical
+rigor. Creator of Continuous Alignment Testing (CAT), a framework shaping how agentic AI systems are validated,
+monitored, and trusted in production. Experienced at designing and deploying large-scale LLM systems. Skilled at
+bridging research and production to deliver reliable, interpretable, and scalable AI software.
+PROFESSIONAL EXPERIENCE
+Software Engineering Consultant → Senior Software Engineer
+ARTIUM AI | Los Angeles, CA
+July 2024 - present
+● At Artium AI, one of only eight official OpenAI partners worldwide, I created Continuous Alignment Testing
+(CAT), a framework for validating agentic AI architectures and monitoring alignment in production.
+● While there, I led several LLM-based systems to scale for top-tier clients:
+○ Mayo Clinic: Multi-agent/RAG system for accelerating medical research and discovery.
+○ eBay: Enterprise-scale Agentic AI for legacy seller workspaces optimizing online selling.
+○ Trust & Will: Attorney-in-the-loop automation digitizing estate planning practices.
+○ Arrive Health: Complex AI flows for condensing clinical information for critical patient support.
+Software Engineer, Data Engineering
+TRIMET | Portland, OR
+December 2023 - July 2024
+● Built, deployed, and maintained enterprise Python ETL applications integrating Oracle EBS with modern
+data pipelines, enabling faster delivery and cross-team collaboration.
+● Championed Agile practices, TDD, and pair programming, shifting the culture toward modern engineering
+and improving iteration velocity and maintainability.
+Software Engineer → Software Engineering Manager
+FORD MOTOR COMPANY via Integral.io | Detroit, MI
+September 2021 - September 2023
+● Ford Pro (Autonomous Vehicles Division)
+○ Spearheaded a large-scale modernization of Ford’s legacy Identity & Access Management platform,
+applying the strangler fig pattern to replace decades-old systems.
+○ Led the rebuild in Java Spring Boot + GraphQL, delivering a secure, efficient, and maintainable IAM
+platform for Ford’s autonomous vehicle division.
+● Ford Credit (Global Payments Division)
+○ Architected a global payments platform in React + Stripe.js within a microservices framework, securely
+processing worldwide transactions.
+○ As technical team lead, designed and implemented a Python service for MongoDB migrations,
+ensuring zero downtime in transitioning sensitive payment data.
+Software Developer
+HILLCREST SKI & SPORTS | Gresham, OR
+February 2020 – May 2021
+• Built the company’s first dynamic e-commerce platform, transforming a static site into a modern system
+that integrated inventory and sales, enabling real-time, multi-channel fulfillment.
+• Developed automated data ingestion, scraping and cleanup pipelines, bringing 23,000+ SKUs online.
+• Support and maintain RPBC2, licensed software that powers ongoing, daily operations and keeps Hillcrest
+competitive in e-commerce, driving over $1M in annual e-commerce sales.
+BUSINESS OWNERSHIP
+Founder & Principal Consultant
+BAGPYP, LLC | Portland, OR
+October 2023 - present
+● Founded Bagpyp, LLC, a consulting firm specializing in custom software development, legacy system
+refactoring, microservices architecture, data analysis, and CI/CD implementation.
+● Manage contracts and maintain strong client relationships with key partners such as Hillcrest Ski & Sports
+● Deliver high-quality software solutions and ongoing support for various projects, including e-commerce
+platforms and healthcare systems.
+EDUCATION
+HONORS & AWARDS
+MS Computational and Applied Mathematics
+Portland State University (PSU)
+2015 – 2017
+BS Applied Mathematics, Minor Physics
+University of Oregon (UO)
+2010 – 2014
+Software Development Bootcamp
+2019, The Tech Academy
+Ford Family Foundation Scholarship
+Full Ride scholarship—tuition, room and board
+2010
+Pathway Oregon Scholar
+2010
+SKILLS
+● Core: LLM System Design, AI Engineering, Statistical & Mathematical Modeling, Machine Learning, Software
+Architecture, Data Modeling & Visualization
+● Soft: Collaborative Leadership, Adaptability, Analytical Rigor, Creative Problem-Solving, Communication
+● Practices: Continuous Alignment Testing (CAT), Agile/XP, TDD, Pair Programming, CI/CD
+● Technical: Python, TypeScript/React, Java, C#, GraphQL, Postgres/Mongo, Docker, AWS/GCP

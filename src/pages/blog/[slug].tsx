@@ -6,7 +6,9 @@ import { blogPostsData } from "../../data/blog-posts";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
+import rehypeHighlight from "rehype-highlight";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -38,6 +40,11 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 					href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
 					integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
 					crossOrigin="anonymous"
+				/>
+				{/* Highlight.js CSS for Python syntax highlighting */}
+				<link
+					rel="stylesheet"
+					href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
 				/>
 			</Head>
 			<Layout title={`${post.title} | Bagpyp Blog`} description={post.excerpt}>
@@ -117,11 +124,7 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 							<div className="prose prose-lg max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-img:rounded-lg prose-img:shadow-lg">
 								<ReactMarkdown
 									remarkPlugins={[remarkGfm, remarkMath]}
-									rehypePlugins={[rehypeKatex]}
-									components={{
-										// Allow HTML img tags for blog diagrams
-										img: ({ node, ...props }) => <img {...props} alt={props.alt || ""} />
-									}}
+									rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
 								>
 									{markdownContent}
 								</ReactMarkdown>

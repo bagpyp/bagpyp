@@ -2,25 +2,24 @@ import { GetStaticProps } from "next";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import Hero from "../components/Hero";
-import CaseStudyCard from "../components/CaseStudyCard";
-import ProjectCard from "../components/ProjectCard";
-import BlogPostCard from "../components/BlogPostCard";
+import FeaturedCard from "../components/FeaturedCard";
 import { Client, Project, BlogPost } from "../interfaces";
-import { caseStudiesData } from "../data/case-studies";
-import { projectsData } from "../data/projects";
-import { blogPostsData } from "../data/blog-posts";
+import { caseStudiesData, getCaseStudyById } from "../data/case-studies";
+import { projectsData, getProjectBySlug } from "../data/projects";
+import { blogPostsData, getBlogPostBySlug } from "../data/blog-posts";
+import { featuredItems, FeaturedItemConfig } from "../config/featured-items";
 
-type Props = {
-	featuredCaseStudies: Client[];
-	featuredProjects: Project[];
-	featuredBlogPosts: BlogPost[];
+type FeaturedItem = {
+	item: Client | Project | BlogPost;
+	type: "case-study" | "project" | "blog";
+	config: FeaturedItemConfig;
 };
 
-const HomePage = ({
-	featuredCaseStudies,
-	featuredProjects,
-	featuredBlogPosts
-}: Props) => {
+type Props = {
+	featuredItems: FeaturedItem[];
+};
+
+const HomePage = ({ featuredItems }: Props) => {
 	return (
 		<Layout
 			title="Bagpyp | AI Engineering Consultancy"
@@ -30,83 +29,42 @@ const HomePage = ({
 			{/* Hero Section */}
 			<Hero />
 
-			{/* Featured Case Studies - Including Hillcrest Ski & Sports */}
+			{/* Featured Work - Configurable Mix of Case Studies, Projects, and Blog Posts */}
 			<section className="section bg-white">
 				<div className="container-custom">
 					<div className="text-center mb-16">
 						<h2 className="mb-4">Featured Work</h2>
 						<p className="text-xl text-slate-600 max-w-3xl mx-auto">
-							Production AI systems for Fortune 500 companies and leading
-							healthcare institutions. Current clients include Hillcrest Ski & Sports.
+							Production AI systems for Fortune 500 companies, interactive
+							projects, and technical thought leadership. Current clients include
+							Hillcrest Ski & Sports.
 						</p>
 					</div>
 
+					{/* Flexible Grid - Mix any content types */}
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-						{featuredCaseStudies.slice(0, 4).map((study) => (
-							<CaseStudyCard key={study.id} caseStudy={study} />
+						{featuredItems.map(({ item, type, config }, idx) => (
+							<FeaturedCard
+								key={`${type}-${config.id}-${idx}`}
+								item={item}
+								type={type}
+							/>
 						))}
 					</div>
 
-					<div className="text-center">
+					<div className="text-center space-x-4">
 						<Link href="/experience">
 							<button className="btn-primary">View All Experience</button>
+						</Link>
+						<Link href="/projects">
+							<button className="btn-secondary">View All Projects</button>
+						</Link>
+						<Link href="/blog">
+							<button className="btn-secondary">Read Blog</button>
 						</Link>
 					</div>
 				</div>
 			</section>
-
-			{/* Featured Projects */}
-			{featuredProjects.length > 0 && (
-				<section className="section bg-gradient-to-br from-slate-50 to-blue-50">
-					<div className="container-custom">
-						<div className="text-center mb-16">
-							<h2 className="mb-4">Personal Projects</h2>
-							<p className="text-xl text-slate-600 max-w-3xl mx-auto">
-								Exploring technical challenges through creative solutions
-							</p>
-						</div>
-
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-							{featuredProjects.map((project) => (
-								<ProjectCard key={project.id} project={project} />
-							))}
-						</div>
-
-						<div className="text-center">
-							<Link href="/projects">
-								<button className="btn-primary">View All Projects</button>
-							</Link>
-						</div>
-					</div>
-				</section>
-			)}
-
-			{/* Featured Blog Posts */}
-			{featuredBlogPosts.length > 0 && (
-				<section className="section bg-white">
-					<div className="container-custom">
-						<div className="text-center mb-16">
-							<h2 className="mb-4">Technical Writing</h2>
-							<p className="text-xl text-slate-600 max-w-3xl mx-auto">
-								Insights on AI engineering, reliability testing, and production
-								systems
-							</p>
-						</div>
-
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-							{featuredBlogPosts.map((post) => (
-								<BlogPostCard key={post.id} post={post} />
-							))}
-						</div>
-
-						<div className="text-center">
-							<Link href="/blog">
-								<button className="btn-primary">Read More Articles</button>
-							</Link>
-						</div>
-					</div>
-				</section>
-			)}
 
 			{/* CAT Framework Highlight */}
 			<section className="section bg-gradient-to-br from-primary-900 via-accent-900 to-primary-900 text-white">
@@ -120,7 +78,7 @@ const HomePage = ({
 							predictably at scale.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
-							<Link href="/blog/introducing-continuous-alignment-testing">
+							<Link href="/blog/reliability-testing-llm-systems">
 								<button className="btn-primary bg-white text-primary-900 hover:bg-slate-100">
 									Learn About CAT
 								</button>
@@ -139,11 +97,37 @@ const HomePage = ({
 };
 
 export const getStaticProps: GetStaticProps = async () => {
+	// Build featured items array from configuration
+	const items: FeaturedItem[] = featuredItems
+		.map((config) => {
+			let item: Client | Project | BlogPost | undefined;
+
+			if (config.type === "case-study") {
+				item = getCaseStudyById(config.id);
+			} else if (config.type === "project") {
+				// Projects use slug, not id
+				item = projectsData.find((p) => p.id === config.id);
+			} else if (config.type === "blog") {
+				// Blog posts use slug, not id
+				item = blogPostsData.find((b) => b.id === config.id);
+			}
+
+			if (!item) {
+				console.warn(`Featured item not found: ${config.type} - ${config.id}`);
+				return null;
+			}
+
+			return {
+				item,
+				type: config.type,
+				config
+			};
+		})
+		.filter((item): item is FeaturedItem => item !== null);
+
 	return {
 		props: {
-			featuredCaseStudies: caseStudiesData.filter((s) => s.featured),
-			featuredProjects: projectsData.filter((p) => p.featured),
-			featuredBlogPosts: blogPostsData.filter((b) => b.featured)
+			featuredItems: items
 		}
 	};
 };

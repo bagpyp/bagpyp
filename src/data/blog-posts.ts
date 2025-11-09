@@ -16,7 +16,7 @@ export const blogPostsData: BlogPost[] = [
 		category: "AI Engineering",
 		readingTime: 10,
 		featured: true,
-		image: "agentic-architecture.png"
+		image: "c_prime_node.svg"
 	},
 	{
 		id: "agentic-algebra",
@@ -32,7 +32,7 @@ export const blogPostsData: BlogPost[] = [
 		category: "Technical Deep Dive",
 		readingTime: 15,
 		featured: true,
-		image: "agentic-algebra.svg"
+		image: "agentic-architecture.png"
 	},
 	{
 		id: "reliability-testing",

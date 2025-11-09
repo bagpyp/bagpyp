@@ -14,14 +14,17 @@ const Layout = ({
 	title = "Robert Cunningham | AI Engineering Consultancy",
 	description = "Expert AI engineering and software consultancy specializing in production LLM systems, multi-agent architectures, and enterprise software development."
 }: Props) => {
-	const [darkMode, setDarkMode] = useState(false);
+	const [darkMode, setDarkMode] = useState(true);
 
-	// Initialize dark mode from localStorage or system preference
+	// Initialize dark mode from localStorage or default to dark
 	useEffect(() => {
 		const storedTheme = localStorage.getItem("theme");
-		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-		if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
+		if (storedTheme === "light") {
+			setDarkMode(false);
+			document.documentElement.classList.remove("dark");
+		} else {
+			// Default to dark mode
 			setDarkMode(true);
 			document.documentElement.classList.add("dark");
 		}

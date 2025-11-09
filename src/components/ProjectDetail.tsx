@@ -18,6 +18,8 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 						return import("../projects/guitar/components/MajorTriads");
 					} else if (project.slug === "guitar-scale-practice") {
 						return import("../projects/guitar/components/ScalePractice");
+					} else if (project.slug === "guitar-modes-3nps") {
+						return import("../projects/guitar/components/Modes3NPS");
 					}
 					return Promise.resolve(() => <div>Guitar component not found</div>);
 				},
@@ -38,7 +40,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 	// If it's a guitar project, render the interactive component
 	if (isGuitarProject && GuitarComponent) {
 		return (
-			<div className="bg-slate-900 min-h-screen">
+			<div className="bg-white min-h-screen">
 				<GuitarComponent />
 			</div>
 		);

@@ -208,9 +208,60 @@ Final commit and push...
 
 ---
 
+---
+
+## 📸 Complete Image Inventory
+
+### Blog Images (12 total)
+**Agentic Architecture** (5 SVG diagrams):
+- `/images/blog/agentic-architecture/img/c_prime.svg`
+- `/images/blog/agentic-architecture/img/c_prime_graph.svg`
+- `/images/blog/agentic-architecture/img/c_prime_node.svg`
+- `/images/blog/agentic-architecture/img/h_pp.svg`
+- `/images/blog/agentic-architecture/img/h_pp_node.svg`
+
+**Reliability Testing** (7 PNG charts):
+- `/images/blog/reliability-testing/img/plot.png`
+- `/images/blog/reliability-testing/img/scores.png`
+- `/images/blog/reliability-testing/img/table.png`
+- `/images/blog/reliability-testing/img/1241.png`
+- `/images/blog/reliability-testing/img/2411.png`
+- `/images/blog/reliability-testing/img/24241.png`
+- `/images/blog/reliability-testing/img/242424.png`
+
+### Project Screenshots (12 total)
+**Guitar Projects**:
+- `/images/projects/guitar-triads-screenshot.png` (used for all 3 guitar projects)
+
+**Graph Theoretic Dynamics**:
+- `/images/projects/concensusGraph.png`
+- `/images/projects/threeDim.png`
+- `/images/projects/pyCharm.png`
+- `/images/projects/screenshot.png`
+
+**Dragontree IoT**:
+- `/images/projects/dragontree.JPG`
+- `/images/projects/desk.JPG`
+- `/images/projects/arduino.png`
+- `/images/projects/vsenv.png`
+
+### PDFs (2 total)
+- `/blog/agentic-architecture/algebra.pdf` (168KB)
+- `/blog/reliability-testing/reliability_testing.pdf` (2.6MB)
+
+### Markdown Files (3 total)
+- `/blog/agentic-architecture.md` (with updated image paths)
+- `/blog/algebra.md` (original with relative paths)
+- `/blog/reliability-testing.md` (with updated image paths + PDF link)
+
+---
+
 ## 📝 Notes
 
-- Keep IMPORTING.md updated as we progress
-- Run tests after each major change
-- Verify image paths work in markdown
-- Test all project pages load correctly
+- ✅ All image paths updated in markdown files
+- ✅ All images organized by content type
+- ✅ PDFs linked from markdown posts
+- ✅ react-markdown + remark-gfm + rehype-raw implemented
+- ✅ @tailwindcss/typography added for prose styling
+- ✅ Keyboard events work (from guitar components)
+- ✅ Light backgrounds for guitar projects

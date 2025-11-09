@@ -2,13 +2,20 @@ import { GetStaticProps, GetStaticPaths } from "next";
 import Layout from "../../components/Layout";
 import { BlogPost } from "../../interfaces";
 import { blogPostsData } from "../../data/blog-posts";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import { promises as fs } from "fs";
+import path from "path";
 
 type Props = {
 	post?: BlogPost;
+	markdownContent?: string;
 	errors?: string;
 };
 
-const BlogPostPage = ({ post, errors }: Props) => {
+const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 	if (errors || !post) {
 		return (
 			<Layout title="Blog Post Not Found">
@@ -18,6 +25,8 @@ const BlogPostPage = ({ post, errors }: Props) => {
 			</Layout>
 		);
 	}
+
+	const isPDF = post.content.endsWith(".pdf");
 
 	return (
 		<Layout title={`${post.title} | Bagpyp Blog`} description={post.excerpt}>
@@ -75,25 +84,38 @@ const BlogPostPage = ({ post, errors }: Props) => {
 						))}
 					</div>
 
-					{/* Content Placeholder */}
-					<div className="prose prose-lg max-w-none">
+					{/* Content */}
+					{isPDF ? (
 						<div className="card p-12 bg-gradient-to-br from-blue-50 to-purple-50 text-center">
 							<h3 className="text-2xl font-bold mb-4 text-slate-900">
-								Content Hosted Externally
+								Download PDF White Paper
 							</h3>
 							<p className="text-slate-600 mb-6">
-								This blog post is available as a{" "}
-								{post.content.endsWith(".pdf") ? "PDF document" : "markdown file"}
-								.
+								This article is available as a comprehensive PDF white paper.
 							</p>
-							<p className="text-sm text-slate-500">
-								Content path: <code className="text-primary-700">{post.content}</code>
-							</p>
-							<p className="text-sm text-slate-400 mt-4">
-								Future enhancement: Implement markdown/PDF rendering here
-							</p>
+							<a
+								href={post.content}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="btn-primary inline-block"
+							>
+								Download PDF
+							</a>
 						</div>
-					</div>
+					) : markdownContent ? (
+						<div className="prose prose-lg max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-900 prose-pre:text-slate-100">
+							<ReactMarkdown
+								remarkPlugins={[remarkGfm]}
+								rehypePlugins={[rehypeRaw, rehypeSanitize]}
+							>
+								{markdownContent}
+							</ReactMarkdown>
+						</div>
+					) : (
+						<div className="card p-12 text-center">
+							<p className="text-slate-600">Content not available</p>
+						</div>
+					)}
 				</div>
 			</article>
 		</Layout>
@@ -117,7 +139,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 			return { props: { errors: "Post not found" } };
 		}
 
-		return { props: { post } };
+		// If it's a markdown file, read it
+		let markdownContent = null;
+		if (post.content.endsWith(".md")) {
+			const filePath = path.join(process.cwd(), "public", post.content);
+			try {
+				markdownContent = await fs.readFile(filePath, "utf8");
+			} catch (err) {
+				console.error(`Failed to read markdown file: ${filePath}`, err);
+			}
+		}
+
+		return { props: { post, markdownContent } };
 	} catch (err: any) {
 		return { props: { errors: err.message } };
 	}

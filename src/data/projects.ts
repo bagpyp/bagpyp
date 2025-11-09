@@ -71,6 +71,39 @@ export const projectsData: Project[] = [
 		category: "Full-Stack"
 	},
 	{
+		id: "guitar-modes",
+		slug: "guitar-modes-3nps",
+		title: "Guitar Modes - 3 Notes Per String",
+		subtitle: "Interactive Modal Scale Visualizer",
+		description:
+			"Visual exploration of all 7 modes (Ionian through Locrian) using 3-notes-per-string patterns with color-coded fretboard display.",
+		longDescription:
+			"Comprehensive modal scale visualization tool showing all 7 modes across the fretboard. Uses 3-notes-per-string patterns for optimal finger positioning. Each mode is color-coded and displayed with physics-based fretboard rendering.",
+		client: "Personal Project",
+		technologies: [
+			"Next.js 14",
+			"TypeScript",
+			"Web Audio API",
+			"Music Theory"
+		],
+		features: [
+			"All 7 modes visualization (Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian)",
+			"3-notes-per-string patterns",
+			"Color-coded scale degrees",
+			"Interactive fretboard",
+			"Mode comparison tool"
+		],
+		outcomes: [
+			"Complete modal theory implementation",
+			"Visual learning tool",
+			"Interactive exploration"
+		],
+		images: ["guitar-triads-screenshot.png"],
+		featured: false,
+		year: "2024",
+		category: "Full-Stack"
+	},
+	{
 		id: "graph-dynamics",
 		slug: "graph-theoretic-dynamics",
 		title: "Graph Theoretic Multi-Agent Dynamics",

@@ -42,7 +42,7 @@ const ProjectsPage = ({ projects }: Props) => (
 export const getStaticProps: GetStaticProps = async () => {
 	return {
 		props: {
-			projects: projectsData
+			projects: projectsData.filter((project) => project.featured)
 		}
 	};
 };

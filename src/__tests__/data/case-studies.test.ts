@@ -6,7 +6,7 @@ import {
 
 describe("Case Studies Data", () => {
 	it("has all expected case studies", () => {
-		expect(caseStudiesData).toHaveLength(5);
+		expect(caseStudiesData).toHaveLength(7);
 	});
 
 	it("includes Mayo Clinic case study", () => {
@@ -34,7 +34,7 @@ describe("Case Studies Data", () => {
 	});
 
 	it("CRITICAL: includes Hillcrest Ski & Sports case study", () => {
-		const hillcrest = caseStudiesData.find((s) => s.id === "hillcrest-ongoing");
+		const hillcrest = caseStudiesData.find((s) => s.id === "hillcrest");
 		expect(hillcrest).toBeDefined();
 		expect(hillcrest?.name).toBe("Hillcrest Ski & Sports");
 		expect(hillcrest?.featured).toBe(true);

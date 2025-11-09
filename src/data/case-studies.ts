@@ -121,20 +121,65 @@ export const caseStudiesData: Client[] = [
 		featured: true
 	},
 	{
-		id: "hillcrest-ongoing",
+		id: "ford",
+		name: "Ford Motor Company",
+		role: "Software Engineer → Engineering Manager",
+		period: "September 2021 - September 2023",
+		location: "Detroit, MI (via Integral.io)",
+		description:
+			"Led critical modernization efforts across Ford's autonomous vehicle and global payments divisions.",
+		highlights: [
+			"Spearheaded large-scale IAM platform modernization for autonomous vehicles",
+			"Applied strangler fig pattern to replace decades-old legacy systems",
+			"Built secure IAM platform in Java Spring Boot + GraphQL",
+			"Architected global payments platform with React + Stripe.js",
+			"Led technical team designing zero-downtime MongoDB migration service",
+			"Delivered enterprise-scale microservices architecture"
+		],
+		technologies: [
+			"Java Spring Boot",
+			"GraphQL",
+			"React",
+			"Stripe.js",
+			"Python",
+			"MongoDB",
+			"Microservices"
+		],
+		featured: true
+	},
+	{
+		id: "trimet",
+		name: "TriMet",
+		role: "Software Engineer, Data Engineering",
+		period: "December 2023 - July 2024",
+		location: "Portland, OR",
+		description:
+			"Built and maintained enterprise Python ETL applications for Oregon's largest public transportation agency.",
+		highlights: [
+			"Built enterprise Python ETL applications integrating Oracle EBS",
+			"Enabled faster delivery and cross-team collaboration",
+			"Championed Agile practices, TDD, and pair programming",
+			"Shifted engineering culture toward modern practices",
+			"Improved iteration velocity and maintainability"
+		],
+		technologies: ["Python", "Oracle EBS", "ETL Pipelines", "SQL", "Agile/TDD"],
+		featured: false
+	},
+	{
+		id: "hillcrest",
 		name: "Hillcrest Ski & Sports",
-		role: "Founder & Principal Consultant (Bagpyp, LLC)",
-		period: "2020 - Present",
+		role: "Software Developer → Principal Consultant",
+		period: "February 2020 - Present",
 		location: "Gresham, OR",
 		description:
-			"Ongoing software development and support for e-commerce platform driving over $1M in annual sales. Current client with continuous maintenance and feature development.",
+			"Built and continuously maintain e-commerce platform driving over $1M in annual sales. Ongoing client with active support and feature development.",
 		highlights: [
 			"Built company's first dynamic e-commerce platform (2020-2021)",
-			"Integrated 23,000+ SKUs with real-time multi-channel fulfillment",
+			"Transformed static site into real-time multi-channel fulfillment system",
+			"Integrated 23,000+ SKUs with automated data pipelines",
 			"Maintain and support RPBC2 licensed software (2020-Present)",
 			"Provide ongoing technical support and feature development",
-			"Drive over $1M in annual e-commerce revenue",
-			"Automated data pipelines for inventory management"
+			"Drive over $1M in annual e-commerce revenue"
 		],
 		technologies: [
 			"React",

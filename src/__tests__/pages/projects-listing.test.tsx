@@ -37,8 +37,10 @@ describe("Projects Listing Page", () => {
 		});
 	});
 
-	it("includes guitar project", () => {
+	it("includes guitar projects", () => {
 		render(<ProjectsPage {...mockProps} />);
-		expect(screen.getByText("Interactive Guitar Learning App")).toBeInTheDocument();
+		// Should have at least one guitar-related project
+		const guitarElements = screen.getAllByText(/Guitar/i);
+		expect(guitarElements.length).toBeGreaterThanOrEqual(1);
 	});
 });

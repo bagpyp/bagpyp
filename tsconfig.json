@@ -22,7 +22,14 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/lib/guitar/*": ["src/projects/guitar/lib/*"],
+      "@/lib/guitar": ["src/projects/guitar/lib"],
+      "@/components/*": ["src/projects/guitar/components/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

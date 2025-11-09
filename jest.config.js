@@ -10,7 +10,9 @@ const customJestConfig = {
 	setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
 	testEnvironment: "jest-environment-jsdom",
 	moduleNameMapper: {
-		"^@/components/(.*)$": "<rootDir>/src/components/$1",
+		"^@/components/(.*)$": "<rootDir>/src/projects/guitar/components/$1",
+		"^@/lib/guitar/(.*)$": "<rootDir>/src/projects/guitar/lib/$1",
+		"^@/lib/guitar$": "<rootDir>/src/projects/guitar/lib",
 		"^@/pages/(.*)$": "<rootDir>/src/pages/$1",
 		"^@/utils/(.*)$": "<rootDir>/src/utils/$1",
 		"^@/interfaces/(.*)$": "<rootDir>/src/interfaces/$1",

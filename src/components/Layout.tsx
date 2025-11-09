@@ -1,9 +1,9 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "../styles/Layout.module.css";
 import LoginLogout from "./LoginLogout";
-import Link from "next/link";
 
 type Props = {
 	children?: ReactNode;

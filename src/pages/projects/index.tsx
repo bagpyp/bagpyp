@@ -12,12 +12,10 @@ type Props = {
 
 const WithStaticProps = ({ items }: Props) => (
 	<Layout title="Projects">
-		<h1>projects 🗽</h1>
+		<h1>Projects</h1>
 		<Projects projects={items} />
 		<p>
-			<Link href="/">
-				<a>home 🏡</a>
-			</Link>
+			<Link href="/">Home</Link>
 		</p>
 	</Layout>
 );

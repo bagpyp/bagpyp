@@ -1,12 +1,12 @@
 import { AppProps } from "next/app";
 import "bootstrap/dist/css/bootstrap.css";
 import "../styles/global.css";
-import { UserProvider } from "@auth0/nextjs-auth0";
+import { Auth0Provider } from "@auth0/nextjs-auth0/client";
 
 export default function _app({ Component, pageProps }: AppProps) {
 	return (
-		<UserProvider>
+		<Auth0Provider>
 			<Component {...pageProps} />
-		</UserProvider>
+		</Auth0Provider>
 	);
 }

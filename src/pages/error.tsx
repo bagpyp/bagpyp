@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 const Error = () => {
 	return (
 		<Layout title="Error">
-			<h1>something went wrong 🫢</h1>
+			<h1>Something went wrong</h1>
 		</Layout>
 	);
 };

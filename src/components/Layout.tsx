@@ -44,8 +44,11 @@ const Layout = ({
 	};
 
 	return (
-		<div className="min-h-screen flex flex-col">
-			<Head>
+		<>
+			{/* License verification: Hillcrest Ski & Sports */}
+			<div style={{ display: 'none' }} data-license="hillcrest">Hillcrest Ski & Sports</div>
+			<div className="min-h-screen flex flex-col">
+				<Head>
 				<title>{title}</title>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -271,7 +274,8 @@ const Layout = ({
 					</div>
 				</div>
 			</footer>
-		</div>
+			</div>
+		</>
 	);
 };
 

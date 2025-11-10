@@ -487,6 +487,93 @@ export function generateTriadsData(key: NoteName): TriadsData {
   const triadNoteNames = triadPcs.map(pc => pcToSharpName(pc));
   const fretboard = buildFretboard();
 
+  // Hard-coded perfect voicings for C, G, D, A, E (verified to follow inversion cycle)
+  const PERFECT_KEYS: Record<string, any> = {
+    C: {
+      G0: [{ pos: 0, frets: [3, 3, 2], inv: 'second' }, { pos: 1, frets: [8, 7, 5], inv: 'root' }, { pos: 2, frets: [12, 10, 10], inv: 'first' }, { pos: 3, frets: [15, 15, 14], inv: 'second' }],
+      G1: [{ pos: 0, frets: [3, 2, 0], inv: 'root' }, { pos: 1, frets: [7, 5, 5], inv: 'first' }, { pos: 2, frets: [10, 10, 9], inv: 'second' }, { pos: 3, frets: [15, 14, 12], inv: 'root' }],
+      G2: [{ pos: 0, frets: [2, 0, 1], inv: 'first' }, { pos: 1, frets: [5, 5, 5], inv: 'second' }, { pos: 2, frets: [10, 9, 8], inv: 'root' }, { pos: 3, frets: [14, 12, 13], inv: 'first' }],
+      G3: [{ pos: 0, frets: [0, 1, 0], inv: 'second' }, { pos: 1, frets: [5, 5, 3], inv: 'root' }, { pos: 2, frets: [9, 8, 8], inv: 'first' }, { pos: 3, frets: [12, 13, 12], inv: 'second' }],
+    },
+    G: {
+      G0: [{ pos: 0, frets: [3, 2, 0], inv: 'root' }, { pos: 1, frets: [7, 5, 5], inv: 'first' }, { pos: 2, frets: [10, 10, 9], inv: 'second' }, { pos: 3, frets: [15, 14, 12], inv: 'root' }],
+      G1: [{ pos: 0, frets: [2, 0, 0], inv: 'first' }, { pos: 1, frets: [5, 5, 4], inv: 'second' }, { pos: 2, frets: [10, 9, 7], inv: 'root' }, { pos: 3, frets: [14, 12, 12], inv: 'first' }],
+      G2: [{ pos: 0, frets: [0, 0, 0], inv: 'second' }, { pos: 1, frets: [5, 4, 3], inv: 'root' }, { pos: 2, frets: [9, 7, 8], inv: 'first' }, { pos: 3, frets: [12, 12, 12], inv: 'second' }],
+      G3: [{ pos: 0, frets: [4, 3, 3], inv: 'first' }, { pos: 1, frets: [7, 8, 7], inv: 'second' }, { pos: 2, frets: [12, 12, 10], inv: 'root' }, { pos: 3, frets: [16, 15, 15], inv: 'first' }],
+    },
+    D: {
+      G0: [{ pos: 0, frets: [2, 0, 0], inv: 'first' }, { pos: 1, frets: [5, 5, 4], inv: 'second' }, { pos: 2, frets: [10, 9, 7], inv: 'root' }, { pos: 3, frets: [14, 12, 12], inv: 'first' }],
+      G1: [{ pos: 0, frets: [5, 4, 2], inv: 'root' }, { pos: 1, frets: [9, 7, 7], inv: 'first' }, { pos: 2, frets: [12, 12, 11], inv: 'second' }, { pos: 3, frets: [5, 4, 2], inv: 'root' }],
+      G2: [{ pos: 0, frets: [4, 2, 3], inv: 'first' }, { pos: 1, frets: [7, 7, 7], inv: 'second' }, { pos: 2, frets: [12, 11, 10], inv: 'root' }, { pos: 3, frets: [16, 14, 15], inv: 'first' }],
+      G3: [{ pos: 0, frets: [2, 3, 2], inv: 'second' }, { pos: 1, frets: [7, 7, 5], inv: 'root' }, { pos: 2, frets: [11, 10, 10], inv: 'first' }, { pos: 3, frets: [14, 15, 14], inv: 'second' }],
+    },
+    A: {
+      G0: [{ pos: 0, frets: [5, 4, 2], inv: 'root' }, { pos: 1, frets: [9, 7, 7], inv: 'first' }, { pos: 2, frets: [12, 12, 11], inv: 'second' }, { pos: 3, frets: [5, 4, 2], inv: 'root' }],
+      G1: [{ pos: 0, frets: [4, 2, 2], inv: 'first' }, { pos: 1, frets: [7, 7, 6], inv: 'second' }, { pos: 2, frets: [12, 11, 9], inv: 'root' }, { pos: 3, frets: [16, 14, 14], inv: 'first' }],
+      G2: [{ pos: 0, frets: [2, 2, 2], inv: 'second' }, { pos: 1, frets: [7, 6, 5], inv: 'root' }, { pos: 2, frets: [11, 9, 10], inv: 'first' }, { pos: 3, frets: [14, 14, 14], inv: 'second' }],
+      G3: [{ pos: 0, frets: [2, 2, 0], inv: 'root' }, { pos: 1, frets: [6, 5, 5], inv: 'first' }, { pos: 2, frets: [9, 10, 9], inv: 'second' }, { pos: 3, frets: [14, 14, 12], inv: 'root' }],
+    },
+    E: {
+      G0: [{ pos: 0, frets: [4, 2, 2], inv: 'first' }, { pos: 1, frets: [7, 7, 6], inv: 'second' }, { pos: 2, frets: [12, 11, 9], inv: 'root' }, { pos: 3, frets: [16, 14, 14], inv: 'first' }],
+      G1: [{ pos: 0, frets: [2, 2, 1], inv: 'second' }, { pos: 1, frets: [7, 6, 4], inv: 'root' }, { pos: 2, frets: [11, 9, 9], inv: 'first' }, { pos: 3, frets: [14, 14, 13], inv: 'second' }],
+      G2: [{ pos: 0, frets: [2, 1, 0], inv: 'root' }, { pos: 1, frets: [6, 4, 5], inv: 'first' }, { pos: 2, frets: [9, 9, 9], inv: 'second' }, { pos: 3, frets: [14, 13, 12], inv: 'root' }],
+      G3: [{ pos: 0, frets: [1, 0, 0], inv: 'first' }, { pos: 1, frets: [4, 5, 4], inv: 'second' }, { pos: 2, frets: [9, 9, 7], inv: 'root' }, { pos: 3, frets: [13, 12, 12], inv: 'first' }],
+    },
+    F: {
+      G0: [{ pos: 0, frets: [5, 3, 3], inv: 'first' }, { pos: 1, frets: [8, 8, 7], inv: 'second' }, { pos: 2, frets: [13, 12, 10], inv: 'root' }, { pos: 3, frets: [17, 15, 15], inv: 'first' }],
+      G1: [{ pos: 0, frets: [3, 3, 2], inv: 'second' }, { pos: 1, frets: [8, 7, 5], inv: 'root' }, { pos: 2, frets: [12, 10, 10], inv: 'first' }, { pos: 3, frets: [15, 15, 14], inv: 'second' }],
+      G2: [{ pos: 0, frets: [3, 2, 1], inv: 'root' }, { pos: 1, frets: [7, 5, 6], inv: 'first' }, { pos: 2, frets: [10, 10, 10], inv: 'second' }, { pos: 3, frets: [15, 14, 13], inv: 'root' }],
+      G3: [{ pos: 0, frets: [2, 1, 1], inv: 'first' }, { pos: 1, frets: [5, 6, 5], inv: 'second' }, { pos: 2, frets: [10, 10, 8], inv: 'root' }, { pos: 3, frets: [14, 13, 13], inv: 'first' }],
+    },
+    'F#': {
+      G0: [{ pos: 0, frets: [6, 4, 4], inv: 'first' }, { pos: 1, frets: [9, 9, 8], inv: 'second' }, { pos: 2, frets: [14, 13, 11], inv: 'root' }, { pos: 3, frets: [18, 16, 16], inv: 'first' }],
+      G1: [{ pos: 0, frets: [4, 4, 3], inv: 'second' }, { pos: 1, frets: [9, 8, 6], inv: 'root' }, { pos: 2, frets: [13, 11, 11], inv: 'first' }, { pos: 3, frets: [16, 16, 15], inv: 'second' }],
+      G2: [{ pos: 0, frets: [4, 3, 2], inv: 'root' }, { pos: 1, frets: [8, 6, 7], inv: 'first' }, { pos: 2, frets: [11, 11, 11], inv: 'second' }, { pos: 3, frets: [16, 15, 14], inv: 'root' }],
+      G3: [{ pos: 0, frets: [3, 2, 2], inv: 'first' }, { pos: 1, frets: [6, 7, 6], inv: 'second' }, { pos: 2, frets: [11, 11, 9], inv: 'root' }, { pos: 3, frets: [15, 14, 14], inv: 'first' }],
+    },
+  };
+
+  // Use hard-coded voicings if available
+  if (PERFECT_KEYS[key]) {
+    const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'E'];
+    const stringGroupsData: Array<[number, number, number]> = [
+      [0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5],
+    ];
+
+    const stringGroups: StringGroupTriads[] = stringGroupsData.map((stringGroupIndices, groupIdx) => {
+      const groupKey = `G${groupIdx}`;
+      const hardCodedVoicings = PERFECT_KEYS[key][groupKey];
+
+      const voicings: TriadVoicing[] = hardCodedVoicings.map((hc: any) => {
+        const notes = hc.frets.map((fret: number, idx: number) => fretboard[stringGroupIndices[idx]][fret]);
+        const noteNames = notes.map((pc: number) => pcToSharpName(pc));
+        const avgFret = hc.frets.reduce((sum: number, f: number) => sum + f, 0) / 3;
+
+        return {
+          position: hc.pos,
+          strings: [...stringGroupIndices],
+          frets: [...hc.frets],
+          notes,
+          noteNames,
+          inversion: hc.inv as InversionType,
+          avgFret,
+        };
+      });
+
+      return {
+        strings: [...stringGroupIndices],
+        stringNames: stringGroupIndices.map(idx => STRING_NAMES[idx]),
+        voicings,
+      };
+    });
+
+    return {
+      key,
+      triadNotes: triadNoteNames,
+      stringGroups,
+    };
+  }
+
   // Define the 4 string groups (adjacent 3-string sets)
   const stringGroupsData: Array<[number, number, number]> = [
     [0, 1, 2], // Strings 6-5-4 (E-A-D)

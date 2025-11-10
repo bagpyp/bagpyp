@@ -3,41 +3,6 @@ import { Project } from "../interfaces";
 // Personal projects - each loads its own React page
 export const projectsData: Project[] = [
 	{
-		id: "guitar-triads",
-		slug: "guitar-major-triads",
-		title: "Guitar Major Triads Visualizer",
-		subtitle: "Interactive Chord Voicing Explorer",
-		description:
-			"Physics-based fretboard visualization of major triads across all string groups with circle of fifths color coding and Web Audio playback.",
-		longDescription:
-			"Comprehensive guitar learning tool featuring major triads visualization with realistic fretboard rendering. Uses exponential fret spacing (Fender 25.5\" scale) and circle of fifths color system. Hover over any note to hear it played through the Web Audio API.",
-		client: "Personal Project",
-		technologies: [
-			"Next.js 14",
-			"TypeScript",
-			"Vitest",
-			"Web Audio API"
-		],
-		features: [
-			"Major triads across 4 string groups (6-5-4, 5-4-3, 4-3-2, 3-2-1)",
-			"Circle of fifths color-coded visualization",
-			"Physics-based exponential fret spacing",
-			"Interactive hover-to-play notes",
-			"Smart position selection algorithm",
-			"188 comprehensive tests"
-		],
-		outcomes: [
-			"Demonstrates mathematical precision",
-			"Creative problem-solving (music theory + physics)",
-			"TDD excellence",
-			"Zero backend required"
-		],
-		images: ["guitar-triads-screenshot.png"],
-		featured: true,
-		year: "2024",
-		category: "Full-Stack"
-	},
-	{
 		id: "graph-dynamics",
 		slug: "graph-theoretic-dynamics",
 		title: "Graph Theoretic Multi-Agent Dynamics",
@@ -74,39 +39,6 @@ export const projectsData: Project[] = [
 		category: "AI/ML"
 	},
 	{
-		id: "guitar-modes",
-		slug: "guitar-modes-3nps",
-		title: "Guitar Modes - 3 Notes Per String",
-		subtitle: "Interactive Modal Scale Visualizer",
-		description:
-			"Visual exploration of all 7 modes (Ionian through Locrian) using 3-notes-per-string patterns with color-coded fretboard display.",
-		longDescription:
-			"Comprehensive modal scale visualization tool showing all 7 modes across the fretboard. Uses 3-notes-per-string patterns for optimal finger positioning. Each mode is color-coded and displayed with physics-based fretboard rendering.",
-		client: "Personal Project",
-		technologies: [
-			"Next.js 14",
-			"TypeScript",
-			"Web Audio API",
-			"Music Theory"
-		],
-		features: [
-			"All 7 modes visualization (Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian)",
-			"3-notes-per-string patterns",
-			"Color-coded scale degrees",
-			"Interactive fretboard",
-			"Mode comparison tool"
-		],
-		outcomes: [
-			"Complete modal theory implementation",
-			"Visual learning tool",
-			"Interactive exploration"
-		],
-		images: ["guitar-modes-screenshot.png"],
-		featured: false,
-		year: "2024",
-		category: "Full-Stack"
-	},
-	{
 		id: "dragontree",
 		slug: "dragontree-iot",
 		title: "Dragontree IoT Monitor",
@@ -139,9 +71,77 @@ export const projectsData: Project[] = [
 			"Full-stack integration"
 		],
 		images: ["desk.JPG", "dragontree.JPG", "arduino.png"],
-		featured: false,
+		featured: true,
 		year: "2020",
 		category: "Infrastructure"
+	},
+	{
+		id: "guitar-triads",
+		slug: "guitar-major-triads",
+		title: "Guitar Major Triads Visualizer",
+		subtitle: "Interactive Chord Voicing Explorer",
+		description:
+			"Physics-based fretboard visualization of major triads across all string groups with circle of fifths color coding and Web Audio playback.",
+		longDescription:
+			"Comprehensive guitar learning tool featuring major triads visualization with realistic fretboard rendering. Uses exponential fret spacing (Fender 25.5\" scale) and circle of fifths color system. Hover over any note to hear it played through the Web Audio API.",
+		client: "Personal Project",
+		technologies: [
+			"Next.js 14",
+			"TypeScript",
+			"Vitest",
+			"Web Audio API"
+		],
+		features: [
+			"Major triads across 4 string groups (6-5-4, 5-4-3, 4-3-2, 3-2-1)",
+			"Circle of fifths color-coded visualization",
+			"Physics-based exponential fret spacing",
+			"Interactive hover-to-play notes",
+			"Smart position selection algorithm",
+			"188 comprehensive tests"
+		],
+		outcomes: [
+			"Demonstrates mathematical precision",
+			"Creative problem-solving (music theory + physics)",
+			"TDD excellence",
+			"Zero backend required"
+		],
+		images: ["guitar-triads-screenshot.png"],
+		featured: true,
+		year: "2024",
+		category: "Full-Stack"
+	},
+	{
+		id: "guitar-modes",
+		slug: "guitar-modes-3nps",
+		title: "Guitar Modes - 3 Notes Per String",
+		subtitle: "Interactive Modal Scale Visualizer",
+		description:
+			"Visual exploration of all 7 modes (Ionian through Locrian) using 3-notes-per-string patterns with color-coded fretboard display.",
+		longDescription:
+			"Comprehensive modal scale visualization tool showing all 7 modes across the fretboard. Uses 3-notes-per-string patterns for optimal finger positioning. Each mode is color-coded and displayed with physics-based fretboard rendering.",
+		client: "Personal Project",
+		technologies: [
+			"Next.js 14",
+			"TypeScript",
+			"Web Audio API",
+			"Music Theory"
+		],
+		features: [
+			"All 7 modes visualization (Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian)",
+			"3-notes-per-string patterns",
+			"Color-coded scale degrees",
+			"Interactive fretboard",
+			"Mode comparison tool"
+		],
+		outcomes: [
+			"Complete modal theory implementation",
+			"Visual learning tool",
+			"Interactive exploration"
+		],
+		images: ["guitar-modes-screenshot.png"],
+		featured: false,
+		year: "2024",
+		category: "Full-Stack"
 	}
 ];
 

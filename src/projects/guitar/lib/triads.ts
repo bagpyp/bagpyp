@@ -277,10 +277,32 @@ export function select4PositionsCoordinated(
     selectedChains.push(inv2Chains[idx].chain);
   }
 
-  // Position 3: Highest chain with paired inversion
+  // Position 3: Highest chain with paired inversion (prefer to avoid fret 17+)
   if (chainsByPattern[bestPairedInv].length > 0) {
     const chains = chainsByPattern[bestPairedInv];
-    selectedChains.push(chains[chains.length - 1].chain);
+
+    // For Position 3, check if highest chain has fret 17+
+    const highestChain = chains[chains.length - 1].chain;
+    const highestHasFret17 = highestChain.some(v => Math.max(...v.frets) > 16);
+
+    if (highestHasFret17 && chains.length >= 3) {
+      // Try second-highest chain (need >= 3 to avoid conflict with Position 0)
+      const secondHighestChain = chains[chains.length - 2].chain;
+      const secondHighestHasFret17 = secondHighestChain.some(v => Math.max(...v.frets) > 16);
+
+      if (!secondHighestHasFret17) {
+        selectedChains.push(secondHighestChain);
+      } else {
+        selectedChains.push(highestChain); // No better option
+      }
+    } else if (highestHasFret17 && chains.length === 2) {
+      // Only 2 chains and highest has fret 17+
+      // Use independent selection for all groups to avoid fret 17+ when possible
+      return allGroupVoicings.map(v => select4Positions(v));
+    } else {
+      // No fret 17+ issue or not enough chains, use highest
+      selectedChains.push(highestChain);
+    }
   }
 
   // Convert chains to grouped format
@@ -310,16 +332,128 @@ export function select4Positions(
     return sortedVoicings.map((v, idx) => ({ ...v, position: idx }));
   }
 
-  // Use quartile-based selection for even distribution
-  // Position 0: 0th percentile (lowest)
-  // Position 1: 33rd percentile
-  // Position 2: 67th percentile
-  // Position 3: 100th percentile (highest)
+  // NEW APPROACH: Prioritize inversion sequence pattern
+  // The cyclic pattern is: first -> second -> root -> first -> ...
+  const INVERSION_CYCLE: InversionType[] = ['first', 'second', 'root'];
+
+  // Group voicings by inversion
+  const byInversion: Record<InversionType, typeof sortedVoicings> = {
+    root: [],
+    first: [],
+    second: [],
+    unknown: [],
+  };
+
+  sortedVoicings.forEach(v => {
+    byInversion[v.inversion].push(v);
+  });
+
+  // Select Position 0 (lowest voicing overall)
+  const pos0 = sortedVoicings[0];
+  const startInversionIdx = INVERSION_CYCLE.indexOf(pos0.inversion);
+
+  // If Position 0 has unknown inversion, fall back to old algorithm
+  if (startInversionIdx === -1) {
+    return selectByQuartiles(sortedVoicings);
+  }
+
+  // Determine target inversions for each position based on the cycle
+  const targetInversions: InversionType[] = [
+    INVERSION_CYCLE[startInversionIdx],           // Position 0
+    INVERSION_CYCLE[(startInversionIdx + 1) % 3], // Position 1
+    INVERSION_CYCLE[(startInversionIdx + 2) % 3], // Position 2
+    INVERSION_CYCLE[(startInversionIdx + 3) % 3], // Position 3 (wraps)
+  ];
+
+  const selected: TriadVoicing[] = [];
+
+  // Select voicings for each position
+  for (let posIdx = 0; posIdx < 4; posIdx++) {
+    const targetInv = targetInversions[posIdx];
+    const candidates = byInversion[targetInv];
+
+    if (candidates.length === 0) {
+      // No voicing with target inversion - fall back to old algorithm
+      return selectByQuartiles(sortedVoicings);
+    }
+
+    let selectedVoicing: typeof candidates[0];
+
+    if (posIdx === 0) {
+      // Position 0: use lowest overall (already set as pos0)
+      selectedVoicing = pos0;
+    } else if (posIdx === 3) {
+      // Position 3: prefer second-highest to avoid fret 17+, within target inversion
+      let candidateIdx = candidates.length - 1;
+      const highest = candidates[candidateIdx];
+      const highestMaxFret = Math.max(...highest.frets);
+
+      if (highestMaxFret > 16 && candidates.length >= 2) {
+        const secondHighest = candidates[candidates.length - 2];
+        const secondHighestMaxFret = Math.max(...secondHighest.frets);
+        if (secondHighestMaxFret <= 16) {
+          candidateIdx = candidates.length - 2;
+        }
+      }
+      selectedVoicing = candidates[candidateIdx];
+    } else {
+      // Positions 1 & 2: Select from candidates based on proximity to target avgFret
+      // IMPORTANT: Must maintain monotonic ordering (each position > previous)
+      const prevAvgFret = selected[selected.length - 1].avgFret;
+
+      // Filter candidates that are higher than previous position
+      const validCandidates = candidates.filter(c => c.avgFret > prevAvgFret);
+
+      if (validCandidates.length === 0) {
+        // No valid candidates - fall back to old algorithm
+        return selectByQuartiles(sortedVoicings);
+      }
+
+      // Target avgFret is based on position in the fretboard
+      const targetAvgFret = posIdx === 1
+        ? sortedVoicings[Math.round(n / 4)].avgFret  // ~25th percentile
+        : sortedVoicings[Math.floor(n / 2)].avgFret; // ~50th percentile
+
+      // Find candidate closest to target avgFret (among valid candidates)
+      selectedVoicing = validCandidates.reduce((closest, current) => {
+        const closestDist = Math.abs(closest.avgFret - targetAvgFret);
+        const currentDist = Math.abs(current.avgFret - targetAvgFret);
+        return currentDist < closestDist ? current : closest;
+      });
+    }
+
+    selected.push({ ...selectedVoicing, position: posIdx });
+  }
+
+  return selected;
+}
+
+/**
+ * Fallback: Old quartile-based selection (no inversion constraint)
+ */
+function selectByQuartiles(
+  sortedVoicings: Omit<TriadVoicing, 'position'>[]
+): TriadVoicing[] {
+  const n = sortedVoicings.length;
+
+  // For Position 3, prefer second-highest to avoid fret 17+
+  let pos3Index = n - 1;
+  const highestVoicing = sortedVoicings[n - 1];
+  const highestMaxFret = Math.max(...highestVoicing.frets);
+
+  if (highestMaxFret > 16 && n >= 5) {
+    const secondHighest = sortedVoicings[n - 2];
+    const secondHighestMaxFret = Math.max(...secondHighest.frets);
+    if (secondHighestMaxFret <= 16) {
+      pos3Index = n - 2;
+    }
+  }
+
   let indices = [
-    0,  // Lowest
-    Math.max(1, Math.floor(n / 3)),  // Lower third (adjusted for better mid-range coverage)
-    Math.max(2, Math.floor((2 * n) / 3)),  // Upper third
-    n - 1  // Highest
+    0,
+    Math.round(n / 4),
+    Math.floor(n / 2),
+    pos3Index
   ];
 
   // Ensure all indices are unique

@@ -74,6 +74,12 @@ export default function MajorTriads() {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input field
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
       // Check for Ctrl+key (flats)
       if (e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey) {
         const flatNote = CTRL_KEY_TO_FLAT_MAP[e.key.toLowerCase()];
@@ -88,7 +94,9 @@ export default function MajorTriads() {
       if (!e.ctrlKey && !e.metaKey && !e.altKey) {
         const note = KEY_TO_NOTE_MAP[e.key];
         if (note) {
+          e.preventDefault(); // Prevent any default behavior
           setSelectedKey(note);
+          return;
         }
       }
     };

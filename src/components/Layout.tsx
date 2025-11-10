@@ -50,6 +50,20 @@ const Layout = ({
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 				<meta name="description" content={description} />
+
+				{/* Open Graph / Social Media Meta Tags */}
+				<meta property="og:type" content="website" />
+				<meta property="og:title" content={title} />
+				<meta property="og:description" content={description} />
+				<meta property="og:image" content="https://bagpyp.net/img/logo.svg" />
+				<meta property="og:url" content="https://bagpyp.net" />
+
+				{/* Twitter Card Meta Tags */}
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:title" content={title} />
+				<meta name="twitter:description" content={description} />
+				<meta name="twitter:image" content="https://bagpyp.net/img/logo.svg" />
+
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link
 					rel="preconnect"

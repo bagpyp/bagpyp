@@ -25,25 +25,23 @@ export type FeaturedItemConfig = {
  */
 export const featuredItems: FeaturedItemConfig[] = [
 	// AI Case Studies - Top 3
-	{ type: "case-study", id: "mayo-clinic" },
 	{ type: "case-study", id: "ebay" },
+	{ type: "case-study", id: "mayo-clinic" },
 	{ type: "case-study", id: "trust-and-will" },
 
-	// TriMet Experience
+	// Ford and TriMet Experience
+	{ type: "case-study", id: "ford" },
 	{ type: "case-study", id: "trimet" },
-
-	// Ongoing Client - CRITICAL: Must be visible for Hillcrest software check
-	{ type: "case-study", id: "hillcrest" },
 
 	// Thought Leadership
 	{ type: "blog", id: "reliability-testing" },
 
-	// More Projects
-	{ type: "project", id: "graph-dynamics" },
-
 	// More Blog Content
 	{ type: "blog", id: "agentic-architecture" },
 	{ type: "blog", id: "agentic-algebra" },
+
+	// More Projects
+	{ type: "project", id: "graph-dynamics" },
 ];
 
 /**

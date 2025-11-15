@@ -6,6 +6,7 @@ import {
   calculateFretYPositions,
   getNoteYPosition,
   getNoteAtPosition,
+  getOctaveAtPosition,
 } from '../lib/fretboard-physics';
 
 describe('Fretboard Physics', () => {
@@ -185,6 +186,85 @@ describe('Fretboard Physics', () => {
       const expectedRatio = Math.pow(2, 1/12); // ≈ 1.0595
 
       expect(ratio).toBeCloseTo(expectedRatio, 2);
+    });
+  });
+
+  describe('getOctaveAtPosition', () => {
+    it('should return correct octaves for open strings', () => {
+      // Standard tuning: E2, A2, D3, G3, B3, E4
+      expect(getOctaveAtPosition(0, 0)).toBe(2); // 6th string (E2)
+      expect(getOctaveAtPosition(1, 0)).toBe(2); // 5th string (A2)
+      expect(getOctaveAtPosition(2, 0)).toBe(3); // 4th string (D3)
+      expect(getOctaveAtPosition(3, 0)).toBe(3); // 3rd string (G3)
+      expect(getOctaveAtPosition(4, 0)).toBe(3); // 2nd string (B3)
+      expect(getOctaveAtPosition(5, 0)).toBe(4); // 1st string (E4)
+    });
+
+    it('should return correct octave at 12th fret (one octave up)', () => {
+      // Each string at 12th fret should be one octave higher
+      expect(getOctaveAtPosition(0, 12)).toBe(3); // 6th string E3
+      expect(getOctaveAtPosition(1, 12)).toBe(3); // 5th string A3
+      expect(getOctaveAtPosition(2, 12)).toBe(4); // 4th string D4
+      expect(getOctaveAtPosition(3, 12)).toBe(4); // 3rd string G4
+      expect(getOctaveAtPosition(4, 12)).toBe(4); // 2nd string B4
+      expect(getOctaveAtPosition(5, 12)).toBe(5); // 1st string E5
+    });
+
+    it('should increase octave correctly across frets', () => {
+      // Starting from 6th string (E2, MIDI 40)
+      expect(getOctaveAtPosition(0, 0)).toBe(2);  // E2 (MIDI 40)
+      expect(getOctaveAtPosition(0, 7)).toBe(2);  // B2 (MIDI 47) - still in octave 2
+      expect(getOctaveAtPosition(0, 8)).toBe(3);  // C3 (MIDI 48) - octave 3 starts at C
+      expect(getOctaveAtPosition(0, 12)).toBe(3); // E3 (MIDI 52) - octave 3
+      expect(getOctaveAtPosition(0, 18)).toBe(3); // A#3 (MIDI 58) - still in octave 3
+    });
+
+    it('should return same octave for all notes in same octave range', () => {
+      // All notes from MIDI 60-71 should be in octave 4
+      // 4th string, frets 10-21 (D3 fret 0 is MIDI 50, so fret 10 = MIDI 60)
+      const octave10 = getOctaveAtPosition(2, 10); // D4 (MIDI 60)
+      const octave11 = getOctaveAtPosition(2, 11); // D#4 (MIDI 61)
+      const octave21 = getOctaveAtPosition(2, 21); // C#5 (MIDI 71)
+
+      expect(octave10).toBe(4);
+      expect(octave11).toBe(4);
+      expect(octave21).toBe(4);
+    });
+
+    it('should match octaves between same notes on different strings', () => {
+      // E4 appears on:
+      // - 5th string, fret 7 (A2 + 7 = E3... wait, that's E3)
+      // - 1st string, open (E4)
+      // Let's find matching E4 notes
+      const e4_string1 = getOctaveAtPosition(5, 0); // 1st string open = E4
+      const e4_string2 = getOctaveAtPosition(4, 5); // 2nd string fret 5 = E4
+
+      expect(e4_string1).toBe(4);
+      expect(e4_string2).toBe(4);
+    });
+
+    it('should handle guitar range correctly (octaves 2-5)', () => {
+      // Test full guitar range
+      // Lowest note: 6th string open (E2)
+      expect(getOctaveAtPosition(0, 0)).toBe(2);
+
+      // Highest practical note: 1st string, fret 18 (A#5/Bb5)
+      // E4 (MIDI 64) + 18 frets = MIDI 82 = A#5
+      const highestOctave = getOctaveAtPosition(5, 18);
+      expect(highestOctave).toBe(5);
+
+      // All octaves in between should exist
+      const octavesFound = new Set<number>();
+      for (let string = 0; string < 6; string++) {
+        for (let fret = 0; fret <= 18; fret++) {
+          octavesFound.add(getOctaveAtPosition(string, fret));
+        }
+      }
+
+      expect(octavesFound.has(2)).toBe(true);
+      expect(octavesFound.has(3)).toBe(true);
+      expect(octavesFound.has(4)).toBe(true);
+      expect(octavesFound.has(5)).toBe(true);
     });
   });
 });

@@ -122,6 +122,12 @@ export function getNoteYPosition(
 const STANDARD_TUNING_PITCH_CLASSES = [4, 9, 2, 7, 11, 4]; // E A D G B E
 
 /**
+ * Standard guitar tuning in MIDI note numbers
+ * Index 0 = 6th string (E2 = MIDI 40), Index 5 = 1st string (E4 = MIDI 64)
+ */
+const STRING_TUNING_MIDI = [40, 45, 50, 55, 59, 64]; // E2, A2, D3, G3, B3, E4
+
+/**
  * Note names for each pitch class
  */
 const PITCH_CLASS_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -138,4 +144,23 @@ export function getNoteAtPosition(stringIndex: number, fret: number): { pitchCla
   const pitchClass = (openStringPc + fret) % 12;
   const noteName = PITCH_CLASS_NAMES[pitchClass];
   return { pitchClass, noteName };
+}
+
+/**
+ * Get the octave number for a note at a specific string and fret
+ * Uses MIDI note numbers where octave = floor(midiNote / 12) - 1
+ *
+ * Examples:
+ * - 6th string open (E2, MIDI 40) = octave 2
+ * - 1st string open (E4, MIDI 64) = octave 4
+ * - 1st string fret 12 (E5, MIDI 76) = octave 5
+ *
+ * @param stringIndex - String index (0 = 6th string/low E, 5 = 1st string/high E)
+ * @param fret - Fret number (0 = open string)
+ * @returns Octave number (typically 2-5 for standard guitar range)
+ */
+export function getOctaveAtPosition(stringIndex: number, fret: number): number {
+  const openStringMidi = STRING_TUNING_MIDI[stringIndex];
+  const midiNote = openStringMidi + fret;
+  return Math.floor(midiNote / 12) - 1;
 }

@@ -2,10 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import type { TriadVoicing } from '../lib/triads';
-import { calculateFretYPositions, getNoteYPosition, getStringThickness, getNoteAtPosition } from '../lib/fretboard-physics';
-import { getNoteColor, getAllNoteColorsInCircleOfFifths } from '../lib/note-colors';
+import { calculateFretYPositions, getNoteYPosition, getStringThickness, getNoteAtPosition, getOctaveAtPosition } from '../lib/fretboard-physics';
+import { getNoteColor, getNoteColorWithOctave, getAllNoteColorsInCircleOfFifths } from '../lib/note-colors';
 import { playNote, playChord, stopAllSounds, resumeAudioContext } from '../lib/sound';
 import { DIMENSIONS, calculateAllStringYPositions } from '../lib/fretboard-dimensions';
+
+/**
+ * Configuration: Whether to apply octave-based color shifts to all notes
+ * Set to false to apply only to triad notes (not chromatic background)
+ */
+const APPLY_OCTAVE_TO_ALL_NOTES = true;
 
 interface LongFretboardDiagramProps {
   voicings: TriadVoicing[]; // All 4 positions for this string group
@@ -268,8 +274,11 @@ export default function LongFretboardDiagram({
             {allStringYPositions.map((y, globalStringIdx) => {
               return Array.from({ length: numFrets + 1 }).map((_, fretIdx) => {
                 const x = getNoteXPosition(fretIdx);
-                const { noteName } = getNoteAtPosition(globalStringIdx, fretIdx);
-                const noteColor = getNoteColor(noteName);
+                const { pitchClass, noteName } = getNoteAtPosition(globalStringIdx, fretIdx);
+                const octave = getOctaveAtPosition(globalStringIdx, fretIdx);
+                const noteColor = APPLY_OCTAVE_TO_ALL_NOTES
+                  ? getNoteColorWithOctave(pitchClass, octave)
+                  : getNoteColor(noteName);
 
                 return (
                   <g key={`chromatic-${globalStringIdx}-${fretIdx}`}>
@@ -357,7 +366,8 @@ export default function LongFretboardDiagram({
                   const notePc = voicing.notes[localStringIdx];
                   const intervalName = getIntervalName(notePc, triadPcs);
                   const noteName = voicing.noteNames[localStringIdx];
-                  const noteColor = getNoteColor(noteName);
+                  const octave = getOctaveAtPosition(globalStringIdx, fret);
+                  const noteColor = getNoteColorWithOctave(notePc, octave);
                   const isRoot = intervalName === 'root';
 
                   const isDirectHover =

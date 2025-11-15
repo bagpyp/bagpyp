@@ -4,6 +4,7 @@ import {
   getAllNoteColorsInCircleOfFifths,
   getKeyNoteColors,
   getPitchClassColor,
+  getNoteColorWithOctave,
 } from '../lib/note-colors';
 
 describe('Note Color System', () => {
@@ -264,6 +265,118 @@ describe('Note Color System', () => {
         expect(color.bg).toMatch(/^#[0-9a-fA-F]{6}$/);
         expect(color.text).toMatch(/^#[0-9a-fA-F]{6}$/);
       });
+    });
+  });
+
+  describe('getNoteColorWithOctave', () => {
+    it('should return valid color for all pitch classes and octaves', () => {
+      for (let pc = 0; pc < 12; pc++) {
+        for (let octave = 2; octave <= 5; octave++) {
+          const color = getNoteColorWithOctave(pc, octave);
+          expect(color).toBeDefined();
+          expect(color.bg).toMatch(/^#[0-9a-fA-F]{6}$/);
+          expect(color.text).toMatch(/^#[0-9a-fA-F]{6}$/);
+          expect(color.name).toBeTruthy();
+        }
+      }
+    });
+
+    it('should preserve pitch class identity (hue) across octaves', () => {
+      // C in different octaves should all be reddish
+      const c2 = getNoteColorWithOctave(0, 2);
+      const c3 = getNoteColorWithOctave(0, 3);
+      const c4 = getNoteColorWithOctave(0, 4);
+      const c5 = getNoteColorWithOctave(0, 5);
+
+      // All should have same name (C)
+      expect(c2.name).toBe('C');
+      expect(c3.name).toBe('C');
+      expect(c4.name).toBe('C');
+      expect(c5.name).toBe('C');
+
+      // Colors should be different but similar (same hue family)
+      expect(c2.bg).not.toBe(c3.bg);
+      expect(c3.bg).not.toBe(c4.bg);
+      expect(c4.bg).not.toBe(c5.bg);
+    });
+
+    it('should make lower octaves darker than higher octaves', () => {
+      // Helper to convert hex to brightness (very simple approximation)
+      const getBrightness = (hex: string): number => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return (r + g + b) / 3;
+      };
+
+      // Test for C (pitch class 0)
+      const c2 = getNoteColorWithOctave(0, 2);
+      const c3 = getNoteColorWithOctave(0, 3);
+      const c4 = getNoteColorWithOctave(0, 4);
+      const c5 = getNoteColorWithOctave(0, 5);
+
+      const brightness2 = getBrightness(c2.bg);
+      const brightness3 = getBrightness(c3.bg);
+      const brightness4 = getBrightness(c4.bg);
+      const brightness5 = getBrightness(c5.bg);
+
+      // Higher octaves should generally be brighter
+      expect(brightness3).toBeGreaterThan(brightness2);
+      expect(brightness5).toBeGreaterThan(brightness4);
+    });
+
+    it('should return base color when includeOctaves is false', () => {
+      const baseColor = getPitchClassColor(0); // C base color
+      const colorWithoutOctave = getNoteColorWithOctave(0, 3, { includeOctaves: false });
+
+      expect(colorWithoutOctave.bg).toBe(baseColor.bg);
+      expect(colorWithoutOctave.text).toBe(baseColor.text);
+      expect(colorWithoutOctave.name).toBe(baseColor.name);
+    });
+
+    it('should keep text color consistent across octaves', () => {
+      // Text color should not change with octave (for readability)
+      const c2 = getNoteColorWithOctave(0, 2);
+      const c3 = getNoteColorWithOctave(0, 3);
+      const c4 = getNoteColorWithOctave(0, 4);
+      const c5 = getNoteColorWithOctave(0, 5);
+
+      expect(c2.text).toBe(c3.text);
+      expect(c3.text).toBe(c4.text);
+      expect(c4.text).toBe(c5.text);
+    });
+
+    it('should produce visibly different colors for guitar range (octaves 2-5)', () => {
+      // For each pitch class, all 4 octaves should have distinct colors
+      for (let pc = 0; pc < 12; pc++) {
+        const colors = [2, 3, 4, 5].map(octave => getNoteColorWithOctave(pc, octave).bg);
+        const uniqueColors = new Set(colors);
+
+        // All 4 octaves should produce different colors
+        expect(uniqueColors.size).toBe(4);
+      }
+    });
+
+    it('should handle extreme octaves gracefully', () => {
+      // Test octaves outside typical guitar range
+      const c1 = getNoteColorWithOctave(0, 1); // Very low
+      const c6 = getNoteColorWithOctave(0, 6); // Very high
+
+      expect(c1).toBeDefined();
+      expect(c6).toBeDefined();
+      expect(c1.bg).toMatch(/^#[0-9a-fA-F]{6}$/);
+      expect(c6.bg).toMatch(/^#[0-9a-fA-F]{6}$/);
+    });
+
+    it('should maintain color distinction between different pitch classes in same octave', () => {
+      // All 12 pitch classes in octave 4 should be different
+      const octave4Colors = [];
+      for (let pc = 0; pc < 12; pc++) {
+        octave4Colors.push(getNoteColorWithOctave(pc, 4).bg);
+      }
+
+      const uniqueColors = new Set(octave4Colors);
+      expect(uniqueColors.size).toBe(12);
     });
   });
 });

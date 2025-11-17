@@ -311,13 +311,13 @@ export default function TriadSettingsPanel({
 									</button>
 									<button
 										onClick={() => updateSetting("chordType", "minor")}
-										disabled
-										className="flex-1 px-2 py-1.5 text-xs rounded cursor-not-allowed opacity-50"
+										className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
 										style={{
-											backgroundColor: "#E5E7EB",
-											color: "#9CA3AF"
+											backgroundColor:
+												settings.chordType === "minor" ? "#34C759" : "#E5E7EB",
+											color:
+												settings.chordType === "minor" ? "#FFFFFF" : "#4B5563"
 										}}
-										title="Coming soon"
 									>
 										Minor
 									</button>

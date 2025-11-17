@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import LongFretboardDiagram from './LongFretboardDiagram';
-import { generateTriadsData } from '../lib/triads';
-import type { TriadsData } from '../lib/triads';
+import { generateChordData } from '../lib/chords';
+import type { ChordData } from '../lib/chords';
+import { buildChord } from '../lib/chord-types';
 import { nameToPc } from '../lib';
 import { getAllNoteColorsInCircleOfFifths, getNoteColor } from '../lib/note-colors';
 import { DIMENSIONS } from '../lib/fretboard-dimensions';
@@ -51,20 +52,30 @@ export default function MajorTriads() {
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
-    return generateTriadsData(selectedKey as NoteName);
-  }, [selectedKey]);
+    const chordData = generateChordData(selectedKey as NoteName, settings.chordType);
+    // If chord generation fails (e.g., some open string constraints), fall back to major
+    if (!chordData) {
+      const fallbackData = generateChordData(selectedKey as NoteName, 'major');
+      // If even major fails, we have a problem
+      if (!fallbackData) {
+        throw new Error(`No chord data available for ${selectedKey}`);
+      }
+      return fallbackData;
+    }
+    return chordData;
+  }, [selectedKey, settings.chordType]);
 
   // Calculate which notes are in the current triad (1, 3, 5)
-  const getTriadNotes = (rootKey: string): { root: number; third: number; fifth: number } => {
-    const rootPc = nameToPc(rootKey as any);
+  const getTriadNotes = (rootKey: string, chordType: 'major' | 'minor'): { root: number; third: number; fifth: number } => {
+    const chordPcs = buildChord(rootKey as NoteName, chordType);
     return {
-      root: rootPc,
-      third: (rootPc + 4) % 12,  // Major third = 4 semitones
-      fifth: (rootPc + 7) % 12,  // Perfect fifth = 7 semitones
+      root: chordPcs[0],
+      third: chordPcs[1],
+      fifth: chordPcs[2],
     };
   };
 
-  const triadNotes = getTriadNotes(selectedKey);
+  const triadNotes = getTriadNotes(selectedKey, settings.chordType);
 
   // Get interval label for a note (1, 3, 5, or null)
   const getIntervalLabel = (noteName: string): '1' | '3' | '5' | null => {
@@ -438,9 +449,9 @@ export default function MajorTriads() {
             {[...triadsData.stringGroups].reverse().map((group, groupIdx) => {
               // Convert triad note names to pitch classes
               const triadPcs: [number, number, number] = [
-                nameToPc(triadsData.triadNotes[0] as any),
-                nameToPc(triadsData.triadNotes[1] as any),
-                nameToPc(triadsData.triadNotes[2] as any),
+                nameToPc(triadsData.chordNotes[0] as any),
+                nameToPc(triadsData.chordNotes[1] as any),
+                nameToPc(triadsData.chordNotes[2] as any),
               ];
 
               // Reversed index for labels (0→3, 1→2, 2→1, 3→0)

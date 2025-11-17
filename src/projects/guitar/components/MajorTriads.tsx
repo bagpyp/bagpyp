@@ -75,7 +75,8 @@ export default function MajorTriads() {
     };
   };
 
-  const triadNotes = getTriadNotes(selectedKey, settings.chordType);
+  // @ts-ignore
+	const triadNotes = getTriadNotes(selectedKey, settings.chordType);
 
   // Get interval label for a note (1, 3, 5, or null)
   const getIntervalLabel = (noteName: string): '1' | '3' | '5' | null => {
@@ -122,6 +123,53 @@ export default function MajorTriads() {
 
   return (
     <div className="space-y-3 p-2 w-full">
+      {/* Chord Type Selector */}
+      <div className="flex justify-center p-4">
+        <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
+          {(() => {
+            const labels = getChordTypeLabels(settings.chordLabelNotation);
+            return (
+              <>
+                <button
+                  onClick={() => setSettings({ ...settings, chordType: 'major' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === 'major'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  {labels.major}
+                </button>
+                <button
+                  onClick={() => setSettings({ ...settings, chordType: 'minor' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === 'minor'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  {labels.minor}
+                </button>
+                <button
+                  disabled
+                  className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
+                  title="Coming soon"
+                >
+                  {labels.dim}
+                </button>
+                <button
+                  disabled
+                  className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
+                  title="Coming soon"
+                >
+                  {labels.aug}
+                </button>
+              </>
+            );
+          })()}
+        </div>
+      </div>
+
       {/* Circle of Fifths Visual Selector with Settings Icon */}
       <div className="w-full max-w-[970px] mx-auto relative">
           <svg
@@ -261,53 +309,6 @@ export default function MajorTriads() {
               </svg>
             </g>
           </svg>
-
-          {/* Chord Type Selector */}
-          <div className="mt-4 flex justify-center">
-            <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
-              {(() => {
-                const labels = getChordTypeLabels(settings.chordLabelNotation);
-                return (
-                  <>
-                    <button
-                      onClick={() => setSettings({ ...settings, chordType: 'major' })}
-                      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                        settings.chordType === 'major'
-                          ? 'bg-primary-600 text-white'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                      }`}
-                    >
-                      {labels.major}
-                    </button>
-                    <button
-                      onClick={() => setSettings({ ...settings, chordType: 'minor' })}
-                      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                        settings.chordType === 'minor'
-                          ? 'bg-primary-600 text-white'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
-                      }`}
-                    >
-                      {labels.minor}
-                    </button>
-                    <button
-                      disabled
-                      className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
-                      title="Coming soon"
-                    >
-                      {labels.dim}
-                    </button>
-                    <button
-                      disabled
-                      className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
-                      title="Coming soon"
-                    >
-                      {labels.aug}
-                    </button>
-                  </>
-                );
-              })()}
-            </div>
-          </div>
 
           {/* Settings Panel Dropdown - Opens to the left */}
           {isSettingsOpen && (

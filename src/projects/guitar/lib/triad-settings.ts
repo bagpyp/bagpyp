@@ -3,6 +3,7 @@
  */
 
 export type InversionNotation = 'symbols' | 'figured-bass';
+export type ChordLabelNotation = 'standard' | 'jazz' | 'classical';
 
 export interface TriadSettings {
   // Visual display options
@@ -15,9 +16,10 @@ export interface TriadSettings {
 
   // Notation options
   inversionNotation: InversionNotation; // 'symbols' (△, ¹, ²) or 'figured-bass' (6/4, etc.)
+  chordLabelNotation: ChordLabelNotation; // How to display chord type labels
 
-  // Chord type (not yet implemented)
-  chordType: 'major' | 'minor';     // Major or minor triads (minor not yet implemented)
+  // Chord type (moved to main display, not in settings anymore)
+  chordType: 'major' | 'minor' | 'dim' | 'aug';     // Chord type (dim and aug not yet implemented)
 }
 
 /**
@@ -29,6 +31,7 @@ export const DEFAULT_TRIAD_SETTINGS: TriadSettings = {
   showRootHalos: true,
   enableHoverSound: true,
   inversionNotation: 'symbols',
+  chordLabelNotation: 'standard',
   chordType: 'major',
 };
 
@@ -62,3 +65,48 @@ export function getInversionSymbol(
     return inversion === 'root' ? '' : inversion === 'first' ? '⁶' : '⁶₄';
   }
 }
+
+/**
+ * Get chord type labels based on notation preference
+ */
+export function getChordTypeLabels(notation: ChordLabelNotation): Record<string, string> {
+  switch (notation) {
+    case 'standard':
+      return {
+        major: 'Major',
+        minor: 'Minor',
+        dim: 'Dim',
+        aug: 'Aug',
+      };
+    case 'jazz':
+      return {
+        major: 'maj',
+        minor: 'min',
+        dim: 'dim',
+        aug: 'aug',
+      };
+    case 'classical':
+      return {
+        major: 'M',
+        minor: 'm',
+        dim: '°',
+        aug: '+',
+      };
+    default:
+      return {
+        major: 'Major',
+        minor: 'Minor',
+        dim: 'Dim',
+        aug: 'Aug',
+      };
+  }
+}
+
+/**
+ * Labels for chord label notation types
+ */
+export const CHORD_LABEL_NOTATION_LABELS: Record<ChordLabelNotation, string> = {
+  'standard': 'Standard (Major, Minor)',
+  'jazz': 'Jazz (maj, min)',
+  'classical': 'Classical (M, m, °, +)',
+};

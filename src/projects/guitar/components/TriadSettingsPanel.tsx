@@ -291,35 +291,47 @@ export default function TriadSettingsPanel({
 								</div>
 							</div>
 
-							{/* Chord Type (not yet functional) */}
+							{/* Chord Label Notation */}
 							<div className="space-y-1 p-2">
 								<label className="text-[10px] font-medium text-slate-500 dark:text-slate-500 uppercase">
-									Type
+									Chord Labels
 								</label>
-								<div className="flex gap-2">
+								<div className="flex flex-col gap-1">
 									<button
-										onClick={() => updateSetting("chordType", "major")}
-										className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
+										onClick={() => updateSetting("chordLabelNotation", "standard")}
+										className="px-2 py-1.5 text-xs rounded transition-colors font-medium text-left"
 										style={{
 											backgroundColor:
-												settings.chordType === "major" ? "#34C759" : "#E5E7EB",
+												settings.chordLabelNotation === "standard" ? "#34C759" : "#E5E7EB",
 											color:
-												settings.chordType === "major" ? "#FFFFFF" : "#4B5563"
+												settings.chordLabelNotation === "standard" ? "#FFFFFF" : "#4B5563"
 										}}
 									>
-										Major
+										Standard
 									</button>
 									<button
-										onClick={() => updateSetting("chordType", "minor")}
-										className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
+										onClick={() => updateSetting("chordLabelNotation", "jazz")}
+										className="px-2 py-1.5 text-xs rounded transition-colors font-medium text-left"
 										style={{
 											backgroundColor:
-												settings.chordType === "minor" ? "#34C759" : "#E5E7EB",
+												settings.chordLabelNotation === "jazz" ? "#34C759" : "#E5E7EB",
 											color:
-												settings.chordType === "minor" ? "#FFFFFF" : "#4B5563"
+												settings.chordLabelNotation === "jazz" ? "#FFFFFF" : "#4B5563"
 										}}
 									>
-										Minor
+										Jazz (maj, min)
+									</button>
+									<button
+										onClick={() => updateSetting("chordLabelNotation", "classical")}
+										className="px-2 py-1.5 text-xs rounded transition-colors font-medium text-left"
+										style={{
+											backgroundColor:
+												settings.chordLabelNotation === "classical" ? "#34C759" : "#E5E7EB",
+											color:
+												settings.chordLabelNotation === "classical" ? "#FFFFFF" : "#4B5563"
+										}}
+									>
+										Classical (M, m, °, +)
 									</button>
 								</div>
 							</div>

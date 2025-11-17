@@ -9,7 +9,7 @@ import { nameToPc } from '../lib';
 import { getAllNoteColorsInCircleOfFifths, getNoteColor } from '../lib/note-colors';
 import { DIMENSIONS } from '../lib/fretboard-dimensions';
 import type { NoteName } from '../lib/types';
-import { DEFAULT_TRIAD_SETTINGS } from '../lib/triad-settings';
+import { DEFAULT_TRIAD_SETTINGS, getChordTypeLabels } from '../lib/triad-settings';
 import type { TriadSettings } from '../lib/triad-settings';
 
 // Circle of fifths order
@@ -262,6 +262,53 @@ export default function MajorTriads() {
             </g>
           </svg>
 
+          {/* Chord Type Selector */}
+          <div className="mt-4 flex justify-center">
+            <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
+              {(() => {
+                const labels = getChordTypeLabels(settings.chordLabelNotation);
+                return (
+                  <>
+                    <button
+                      onClick={() => setSettings({ ...settings, chordType: 'major' })}
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                        settings.chordType === 'major'
+                          ? 'bg-primary-600 text-white'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                      }`}
+                    >
+                      {labels.major}
+                    </button>
+                    <button
+                      onClick={() => setSettings({ ...settings, chordType: 'minor' })}
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                        settings.chordType === 'minor'
+                          ? 'bg-primary-600 text-white'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                      }`}
+                    >
+                      {labels.minor}
+                    </button>
+                    <button
+                      disabled
+                      className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
+                      title="Coming soon"
+                    >
+                      {labels.dim}
+                    </button>
+                    <button
+                      disabled
+                      className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
+                      title="Coming soon"
+                    >
+                      {labels.aug}
+                    </button>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+
           {/* Settings Panel Dropdown - Opens to the left */}
           {isSettingsOpen && (
             <div className="absolute top-24 right-0 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
@@ -404,35 +451,6 @@ export default function MajorTriads() {
                       }}
                     >
                       ⁶₄
-                    </button>
-                  </div>
-                </div>
-
-                {/* Chord Type */}
-                <div className="space-y-1 p-2">
-                  <label className="text-[10px] font-medium text-slate-500 dark:text-slate-500 uppercase">
-                    Type
-                  </label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setSettings({ ...settings, chordType: 'major' })}
-                      className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
-                      style={{
-                        backgroundColor: settings.chordType === 'major' ? '#34C759' : '#E5E7EB',
-                        color: settings.chordType === 'major' ? '#FFFFFF' : '#4B5563'
-                      }}
-                    >
-                      Major
-                    </button>
-                    <button
-                      onClick={() => setSettings({...settings, chordType: 'minor'})}
-                      className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
-                      style={{
-                        backgroundColor: settings.chordType === 'minor' ? '#34C759' : '#E5E7EB',
-                        color: settings.chordType === 'minor' ? '#FFFFFF' : '#4B5563'
-                      }}
-                    >
-                      Minor
                     </button>
                   </div>
                 </div>

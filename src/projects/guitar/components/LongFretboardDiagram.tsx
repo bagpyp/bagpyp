@@ -6,18 +6,15 @@ import { calculateFretYPositions, getNoteYPosition, getStringThickness, getNoteA
 import { getNoteColor, getNoteColorWithOctave, getAllNoteColorsInCircleOfFifths } from '../lib/note-colors';
 import { playNote, playChord, stopAllSounds, resumeAudioContext } from '../lib/sound';
 import { DIMENSIONS, calculateAllStringYPositions } from '../lib/fretboard-dimensions';
-
-/**
- * Configuration: Whether to apply octave-based color shifts to all notes
- * Set to false to apply only to triad notes (not chromatic background)
- */
-const APPLY_OCTAVE_TO_ALL_NOTES = true;
+import { DEFAULT_TRIAD_SETTINGS, getInversionSymbol } from '../lib/triad-settings';
+import type { TriadSettings } from '../lib/triad-settings';
 
 interface LongFretboardDiagramProps {
   voicings: TriadVoicing[]; // All 4 positions for this string group
   stringNames: string[]; // e.g., ["G", "B", "E"] for strings 3-2-1
   stringGroupLabel: string; // e.g., "Strings 3-2-1 (G-B-E)"
   triadPcs: [number, number, number]; // [root, third, fifth] pitch classes
+  settings?: TriadSettings; // Display settings (optional, uses defaults if not provided)
 }
 
 /**
@@ -49,6 +46,7 @@ export default function LongFretboardDiagram({
   stringNames,
   stringGroupLabel,
   triadPcs,
+  settings = DEFAULT_TRIAD_SETTINGS,
 }: LongFretboardDiagramProps) {
   const [hoveredDot, setHoveredDot] = useState<{
     voicingIdx: number;
@@ -78,8 +76,12 @@ export default function LongFretboardDiagram({
     };
   }, []);
 
-  // Play sound when hovering over a specific note
+  // Play sound when hovering over a specific note (if enabled)
   useEffect(() => {
+    if (!settings.enableHoverSound) {
+      return; // Sound disabled
+    }
+
     if (hoveredDot !== null) {
       const voicing = voicings[hoveredDot.voicingIdx];
       const globalStringIdx = stringGroupIndices[hoveredDot.stringIdx];
@@ -89,7 +91,7 @@ export default function LongFretboardDiagram({
     } else {
       stopAllSounds();
     }
-  }, [hoveredDot, voicings, stringGroupIndices]);
+  }, [hoveredDot, voicings, stringGroupIndices, settings.enableHoverSound]);
 
   // Play chord when clicking on a position area
   const handlePositionClick = (position: number) => {
@@ -270,45 +272,47 @@ export default function LongFretboardDiagram({
           })}
 
           {/* Chromatic background - all notes on ALL 6 strings (faint) */}
-          <g>
-            {allStringYPositions.map((y, globalStringIdx) => {
-              return Array.from({ length: numFrets + 1 }).map((_, fretIdx) => {
-                const x = getNoteXPosition(fretIdx);
-                const { pitchClass, noteName } = getNoteAtPosition(globalStringIdx, fretIdx);
-                const octave = getOctaveAtPosition(globalStringIdx, fretIdx);
-                const noteColor = APPLY_OCTAVE_TO_ALL_NOTES
-                  ? getNoteColorWithOctave(pitchClass, octave)
-                  : getNoteColor(noteName);
+          {settings.showChromaticNotes && (
+            <g>
+              {allStringYPositions.map((y, globalStringIdx) => {
+                return Array.from({ length: numFrets + 1 }).map((_, fretIdx) => {
+                  const x = getNoteXPosition(fretIdx);
+                  const { pitchClass, noteName } = getNoteAtPosition(globalStringIdx, fretIdx);
+                  const octave = getOctaveAtPosition(globalStringIdx, fretIdx);
+                  const noteColor = settings.showOctaveColors
+                    ? getNoteColorWithOctave(pitchClass, octave)
+                    : getNoteColor(noteName);
 
-                return (
-                  <g key={`chromatic-${globalStringIdx}-${fretIdx}`}>
-                    {/* Chromatic note dot */}
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r={DIMENSIONS.chromaticNoteRadius}
-                      fill={noteColor.bg}
-                      opacity={0.3}
-                    />
-                    {/* Note name text */}
-                    <text
-                      x={x}
-                      y={y}
-                      fill={noteColor.text}
-                      fontSize={DIMENSIONS.chromaticNoteFontSize}
-                      fontWeight="bold"
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      pointerEvents="none"
-                      opacity={0.3}
-                    >
-                      {noteName}
-                    </text>
-                  </g>
-                );
-              });
-            })}
-          </g>
+                  return (
+                    <g key={`chromatic-${globalStringIdx}-${fretIdx}`}>
+                      {/* Chromatic note dot */}
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={DIMENSIONS.chromaticNoteRadius}
+                        fill={noteColor.bg}
+                        opacity={0.3}
+                      />
+                      {/* Note name text */}
+                      <text
+                        x={x}
+                        y={y}
+                        fill={noteColor.text}
+                        fontSize={DIMENSIONS.chromaticNoteFontSize}
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        pointerEvents="none"
+                        opacity={0.3}
+                      >
+                        {noteName}
+                      </text>
+                    </g>
+                  );
+                });
+              })}
+            </g>
+          )}
 
           {/* Layer 1: Position hover detection areas (background) */}
           <g>
@@ -367,7 +371,9 @@ export default function LongFretboardDiagram({
                   const intervalName = getIntervalName(notePc, triadPcs);
                   const noteName = voicing.noteNames[localStringIdx];
                   const octave = getOctaveAtPosition(globalStringIdx, fret);
-                  const noteColor = getNoteColorWithOctave(notePc, octave);
+                  const noteColor = settings.showOctaveColors
+                    ? getNoteColorWithOctave(notePc, octave)
+                    : getNoteColor(noteName);
                   const isRoot = intervalName === 'root';
 
                   const isDirectHover =
@@ -407,7 +413,7 @@ export default function LongFretboardDiagram({
                       transform={`translate(${offsetX}, 0)`}
                     >
                       {/* Root note golden halo */}
-                      {isRoot && (
+                      {isRoot && settings.showRootHalos && (
                         <g pointerEvents="none">
                           {/* Outer glow ring */}
                           <circle
@@ -488,13 +494,8 @@ export default function LongFretboardDiagram({
             const xPositions = voicing.frets.map(fret => getNoteXPosition(fret));
             const averageX = xPositions.reduce((sum, x) => sum + x, 0) / xPositions.length;
 
-            // Map inversion to music theory symbol
-            // Root position: △ (triangle/delta)
-            // First inversion: ¹ (superscript 1)
-            // Second inversion: ² (superscript 2)
-            const inversionSymbol = voicing.inversion === 'root' ? '△' :
-                                   voicing.inversion === 'first' ? '¹' :
-                                   '²';
+            // Get inversion symbol based on notation preference
+            const inversionSymbol = getInversionSymbol(voicing.inversion, settings.inversionNotation);
 
             return (
               <text
@@ -505,7 +506,8 @@ export default function LongFretboardDiagram({
                 fontSize={DIMENSIONS.inversionSymbolFontSize}
                 fontWeight="bold"
                 textAnchor="middle"
-                dominantBaseline="middle"
+                dominantBaseline="hanging"
+                style={{ pointerEvents: 'none' }}
               >
                 {inversionSymbol}
               </text>

@@ -182,12 +182,12 @@ export const DIMENSIONS = {
   },
 
   get inversionSymbolFontSize() {
-    return 24 * FRETBOARD_CONFIG.ELEMENT_SIZE_SCALE;
+    return 42 * FRETBOARD_CONFIG.ELEMENT_SIZE_SCALE; // Increased from 24 to 42 (1.75x larger)
   },
 
   // Inversion symbol positioning
   get inversionSymbolYOffset() {
-    return 10 * FRETBOARD_CONFIG.FRETBOARD_WIDTH_SCALE;
+    return 28 * FRETBOARD_CONFIG.FRETBOARD_WIDTH_SCALE; // Increased from 10 to 28 to fit larger symbols
   },
 
   // Stroke widths

@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import LongFretboardDiagram from './LongFretboardDiagram';
+import TriadSettingsPanel from './TriadSettingsPanel';
 import { generateTriadsData } from '../lib/triads';
 import type { TriadsData } from '../lib/triads';
 import { nameToPc } from '../lib';
 import { getAllNoteColorsInCircleOfFifths, getNoteColor } from '../lib/note-colors';
 import { DIMENSIONS } from '../lib/fretboard-dimensions';
 import type { NoteName } from '../lib/types';
+import { DEFAULT_TRIAD_SETTINGS } from '../lib/triad-settings';
+import type { TriadSettings } from '../lib/triad-settings';
 
 // Circle of fifths order
 const CIRCLE_OF_FIFTHS_KEYS = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
@@ -44,6 +47,7 @@ const STRING_GROUP_LABELS = [
 
 export default function MajorTriads() {
   const [selectedKey, setSelectedKey] = useState<string>('C');
+  const [settings, setSettings] = useState<TriadSettings>(DEFAULT_TRIAD_SETTINGS);
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
@@ -106,7 +110,10 @@ export default function MajorTriads() {
   }, []);
 
   return (
-    <div className="space-y-2 p-2 w-full">
+    <div className="space-y-3 p-2 w-full">
+      {/* Settings Panel - Fixed Position */}
+      <TriadSettingsPanel settings={settings} onSettingsChange={setSettings} />
+
       {/* Circle of Fifths Visual Selector */}
       <div className="w-full max-w-[900px] mx-auto">
           <svg
@@ -225,7 +232,7 @@ export default function MajorTriads() {
       {/* Triads display - stacked vertically */}
       {triadsData && (
         <div className="w-full">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0">
             {[...triadsData.stringGroups].reverse().map((group, groupIdx) => {
               // Convert triad note names to pitch classes
               const triadPcs: [number, number, number] = [
@@ -244,6 +251,7 @@ export default function MajorTriads() {
                     stringNames={group.stringNames}
                     stringGroupLabel={STRING_GROUP_LABELS[labelIdx]}
                     triadPcs={triadPcs}
+                    settings={settings}
                   />
                 </div>
               );

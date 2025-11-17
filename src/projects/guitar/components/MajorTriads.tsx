@@ -77,8 +77,10 @@ export default function MajorTriads() {
   }, [selectedKey, settings.chordType]);
 
   // Calculate which notes are in the current triad (1, 3, 5)
-  const getTriadNotes = (rootKey: string, chordType: 'major' | 'minor'): { root: number; third: number; fifth: number } => {
-    const chordPcs = buildChord(rootKey as NoteName, chordType);
+  const getTriadNotes = (rootKey: string, chordType: 'major' | 'minor' | 'dim' | 'aug'): { root: number; third: number; fifth: number } => {
+    // For now, only major and minor are implemented, so fall back to major for dim/aug
+    const actualChordType = (chordType === 'major' || chordType === 'minor') ? chordType : 'major';
+    const chordPcs = buildChord(rootKey as NoteName, actualChordType);
     return {
       root: chordPcs[0],
       third: chordPcs[1],
@@ -86,8 +88,7 @@ export default function MajorTriads() {
     };
   };
 
-  // @ts-ignore
-	const triadNotes = getTriadNotes(selectedKey, settings.chordType);
+  const triadNotes = getTriadNotes(selectedKey, settings.chordType);
 
   // Get interval label for a note (1, 3, 5, or null)
   const getIntervalLabel = (noteName: string): '1' | '3' | '5' | null => {

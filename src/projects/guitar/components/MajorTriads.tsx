@@ -11,6 +11,7 @@ import { DIMENSIONS } from '../lib/fretboard-dimensions';
 import type { NoteName } from '../lib/types';
 import { DEFAULT_TRIAD_SETTINGS, getChordTypeLabels } from '../lib/triad-settings';
 import type { TriadSettings } from '../lib/triad-settings';
+import { playChord, resumeAudioContext } from '../lib/sound';
 
 // Circle of fifths order
 const CIRCLE_OF_FIFTHS_KEYS = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
@@ -38,6 +39,15 @@ const CTRL_KEY_TO_FLAT_MAP: Record<string, string> = {
   'b': 'A#',  // Bb = A#
 };
 
+// Keyboard mappings for playing triads
+// Each group has 4 keys for positions 0-3
+const TRIAD_PLAY_KEYS: Record<number, string[]> = {
+  0: ['7', '8', '9', '0'],     // Group 0 (G-B-E)
+  1: ['u', 'i', 'o', 'p'],     // Group 1 (D-G-B)
+  2: ['j', 'k', 'l', ';'],     // Group 2 (A-D-G)
+  3: ['m', ',', '.', '/'],     // Group 3 (E-A-D)
+};
+
 const STRING_GROUP_LABELS = [
   'Strings 3-2-1 (G-B-E)',
   'Strings 4-3-2 (D-G-B)',
@@ -49,6 +59,7 @@ export default function MajorTriads() {
   const [selectedKey, setSelectedKey] = useState<string>('C');
   const [settings, setSettings] = useState<TriadSettings>(DEFAULT_TRIAD_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
@@ -87,13 +98,75 @@ export default function MajorTriads() {
     return null;
   };
 
+  // Play a triad position
+  const playTriadPosition = async (groupIdx: number, positionIdx: number) => {
+    await resumeAudioContext();
+
+    if (!triadsData || groupIdx < 0 || groupIdx >= triadsData.stringGroups.length) {
+      return;
+    }
+
+    // Groups are displayed in reverse order (3,2,1,0) but we need to access them correctly
+    const displayGroupIdx = 3 - groupIdx; // Convert display index to data index
+    const group = triadsData.stringGroups[displayGroupIdx];
+
+    if (!group || positionIdx < 0 || positionIdx >= group.voicings.length) {
+      return;
+    }
+
+    const voicing = group.voicings[positionIdx];
+    const notes = voicing.strings.map((stringIdx, i) => ({
+      stringIndex: stringIdx,
+      fret: voicing.frets[i]
+    }));
+
+    playChord(notes, 2.0);
+  };
+
   // Keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
       // Ignore if user is typing in an input field
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return;
+      }
+
+      // Check for help modal
+      if (e.key === '?') {
+        e.preventDefault();
+        setShowHelpModal(true);
+        return;
+      }
+
+      // Check for chord type toggles (1-4)
+      if (e.key === '1') {
+        e.preventDefault();
+        setSettings({ ...settings, chordType: 'major' });
+        return;
+      } else if (e.key === '2') {
+        e.preventDefault();
+        setSettings({ ...settings, chordType: 'minor' });
+        return;
+      } else if (e.key === '3') {
+        e.preventDefault();
+        // Diminished not yet implemented
+        return;
+      } else if (e.key === '4') {
+        e.preventDefault();
+        // Augmented not yet implemented
+        return;
+      }
+
+      // Check for triad playing keys
+      for (const [groupStr, keys] of Object.entries(TRIAD_PLAY_KEYS)) {
+        const groupIdx = parseInt(groupStr);
+        const positionIdx = keys.indexOf(e.key);
+        if (positionIdx !== -1) {
+          e.preventDefault();
+          await playTriadPosition(groupIdx, positionIdx);
+          return;
+        }
       }
 
       // Check for Ctrl+key (flats)
@@ -119,12 +192,139 @@ export default function MajorTriads() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [settings, triadsData]);
+
+  // Help Modal Component
+  const HelpModal = () => {
+    if (!showHelpModal) return null;
+
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        onClick={() => setShowHelpModal(false)}
+      >
+        {/* Semi-transparent backdrop */}
+        <div className="absolute inset-0 bg-black bg-opacity-40" />
+
+        {/* Modal content */}
+        <div
+          className="relative bg-white dark:bg-slate-800 rounded-lg shadow-xl p-6 max-w-2xl max-h-[90vh] overflow-auto m-4"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => setShowHelpModal(false)}
+            className="absolute top-4 right-4 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">
+            Keyboard Shortcuts
+          </h2>
+
+          <div className="space-y-4">
+            {/* Key Selection */}
+            <div>
+              <h3 className="font-semibold text-lg mb-2 text-slate-800 dark:text-slate-200">
+                Key Selection
+              </h3>
+              <div className="space-y-1 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">a-g</span>
+                  <span className="text-slate-600 dark:text-slate-400">Natural notes (C, D, E, F, G, A, B)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">Shift + a-g</span>
+                  <span className="text-slate-600 dark:text-slate-400">Sharp notes (C#, D#, F#, G#, A#)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">Ctrl + d,e,g,a,b</span>
+                  <span className="text-slate-600 dark:text-slate-400">Flat notes (Db, Eb, Gb, Ab, Bb)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Chord Type */}
+            <div>
+              <h3 className="font-semibold text-lg mb-2 text-slate-800 dark:text-slate-200">
+                Chord Type
+              </h3>
+              <div className="space-y-1 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">1</span>
+                  <span className="text-slate-600 dark:text-slate-400">Major</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">2</span>
+                  <span className="text-slate-600 dark:text-slate-400">Minor</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">3</span>
+                  <span className="text-slate-600 dark:text-slate-400">Diminished (coming soon)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">4</span>
+                  <span className="text-slate-600 dark:text-slate-400">Augmented (coming soon)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Play Triads */}
+            <div>
+              <h3 className="font-semibold text-lg mb-2 text-slate-800 dark:text-slate-200">
+                Play Triads
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-500 mb-2">
+                Press keys to play triad positions (left = lowest/closest to nut)
+              </p>
+              <div className="space-y-1 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">7 8 9 0</span>
+                  <span className="text-slate-600 dark:text-slate-400">Strings 3-2-1 (G-B-E)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">u i o p</span>
+                  <span className="text-slate-600 dark:text-slate-400">Strings 4-3-2 (D-G-B)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">j k l ;</span>
+                  <span className="text-slate-600 dark:text-slate-400">Strings 5-4-3 (A-D-G)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">m , . /</span>
+                  <span className="text-slate-600 dark:text-slate-400">Strings 6-5-4 (E-A-D)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Help */}
+            <div>
+              <h3 className="font-semibold text-lg mb-2 text-slate-800 dark:text-slate-200">
+                Help
+              </h3>
+              <div className="space-y-1 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">?</span>
+                  <span className="text-slate-600 dark:text-slate-400">Show this help menu</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-3 p-2 w-full">
-      {/* Chord Type Selector */}
-      <div className="flex justify-center p-4">
+      {/* Help Modal */}
+      <HelpModal />
+
+      {/* Chord Type Selector with Help Icon */}
+      <div className="flex items-center justify-between p-4">
+        <div className="flex-1" /> {/* Spacer */}
         <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
           {(() => {
             const labels = getChordTypeLabels(settings.chordLabelNotation);
@@ -167,6 +367,29 @@ export default function MajorTriads() {
               </>
             );
           })()}
+        </div>
+        <div className="flex-1 flex justify-end">
+          {/* Question mark icon button */}
+          <button
+            onClick={() => setShowHelpModal(true)}
+            className="p-2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
+            title="Keyboard shortcuts (?)"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
         </div>
       </div>
 

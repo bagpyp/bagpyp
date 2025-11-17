@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { generateTriadsData } from '../lib/triads';
 
 describe('A# positions relative to A', () => {

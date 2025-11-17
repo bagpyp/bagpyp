@@ -1,0 +1,3776 @@
+{
+  "C": {
+    "triadNotes": [
+      "C",
+      "E",
+      "G"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              3,
+              2
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              7,
+              5
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              10,
+              10
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "E",
+              "G",
+              "C"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              15,
+              14
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G",
+              "C",
+              "E"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              2,
+              0
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              5,
+              5
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "E",
+              "G",
+              "C"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              10,
+              9
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              14,
+              12
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C",
+              "E",
+              "G"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              0,
+              1
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "E",
+              "G",
+              "C"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              5,
+              5,
+              5
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              9,
+              8
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              12,
+              13
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "E",
+              "G",
+              "C"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              0,
+              1,
+              0
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G",
+              "C",
+              "E"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              5,
+              5,
+              3
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C",
+              "E",
+              "G"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              9,
+              8,
+              8
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "E",
+              "G",
+              "C"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              12,
+              13,
+              12
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G",
+              "C",
+              "E"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "C#": {
+    "triadNotes": [
+      "C#",
+      "F",
+      "G#"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              4,
+              3
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G#",
+              "C#",
+              "F"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              8,
+              6
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C#",
+              "F",
+              "G#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              11,
+              11
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F",
+              "G#",
+              "C#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              16,
+              15
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G#",
+              "C#",
+              "F"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              3,
+              1
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C#",
+              "F",
+              "G#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              6,
+              6
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F",
+              "G#",
+              "C#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              11,
+              10
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G#",
+              "C#",
+              "F"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              15,
+              13
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C#",
+              "F",
+              "G#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              1,
+              2
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F",
+              "G#",
+              "C#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              6,
+              6
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G#",
+              "C#",
+              "F"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              10,
+              9
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C#",
+              "F",
+              "G#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              13,
+              14
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F",
+              "G#",
+              "C#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              1,
+              2,
+              1
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G#",
+              "C#",
+              "F"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              6,
+              4
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "C#",
+              "F",
+              "G#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              9,
+              9
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F",
+              "G#",
+              "C#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              13,
+              14,
+              13
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "G#",
+              "C#",
+              "F"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "D": {
+    "triadNotes": [
+      "D",
+      "F#",
+      "A"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              0,
+              0
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F#",
+              "A",
+              "D"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              5,
+              5,
+              4
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              9,
+              7
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              12,
+              12
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F#",
+              "A",
+              "D"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              5,
+              4,
+              2
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              7,
+              7
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F#",
+              "A",
+              "D"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              12,
+              11
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              17,
+              16,
+              14
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D",
+              "F#",
+              "A"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              2,
+              3
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F#",
+              "A",
+              "D"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              7,
+              7
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              11,
+              10
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              14,
+              15
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F#",
+              "A",
+              "D"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              3,
+              2
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A",
+              "D",
+              "F#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              7,
+              5
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D",
+              "F#",
+              "A"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              10,
+              10
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "F#",
+              "A",
+              "D"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              15,
+              14
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A",
+              "D",
+              "F#"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "D#": {
+    "triadNotes": [
+      "D#",
+      "G",
+      "A#"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              1,
+              1
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G",
+              "A#",
+              "D#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              6,
+              5
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A#",
+              "D#",
+              "G"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              10,
+              8
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D#",
+              "G",
+              "A#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              13,
+              13
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G",
+              "A#",
+              "D#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              1,
+              1,
+              0
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A#",
+              "D#",
+              "G"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              5,
+              3
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D#",
+              "G",
+              "A#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              13,
+              15
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G",
+              "D#",
+              "A#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              13,
+              13,
+              12
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A#",
+              "D#",
+              "G"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              5,
+              3,
+              4
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G",
+              "A#",
+              "D#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              8,
+              8
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A#",
+              "D#",
+              "G"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              12,
+              11
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D#",
+              "G",
+              "A#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              17,
+              15,
+              16
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G",
+              "A#",
+              "D#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              4,
+              3
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A#",
+              "D#",
+              "G"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              8,
+              6
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "D#",
+              "G",
+              "A#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              11,
+              11
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G",
+              "A#",
+              "D#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              16,
+              15
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "A#",
+              "D#",
+              "G"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "E": {
+    "triadNotes": [
+      "E",
+      "G#",
+      "B"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              2,
+              2
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G#",
+              "B",
+              "E"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              7,
+              6
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "B",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              11,
+              9
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "E",
+              "G#",
+              "B"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              14,
+              14
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G#",
+              "B",
+              "E"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              2,
+              1
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "B",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              6,
+              4
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "E",
+              "G#",
+              "B"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              9,
+              9
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G#",
+              "B",
+              "E"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              14,
+              13
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "B",
+              "E",
+              "G#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              1,
+              0
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "E",
+              "G#",
+              "B"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              4,
+              5
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G#",
+              "B",
+              "E"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              9,
+              9,
+              9
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "B",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              13,
+              12
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "E",
+              "G#",
+              "B"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              1,
+              0,
+              0
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G#",
+              "B",
+              "E"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              4,
+              5,
+              4
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "B",
+              "E",
+              "G#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              9,
+              9,
+              7
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "E",
+              "G#",
+              "B"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              13,
+              12,
+              12
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "G#",
+              "B",
+              "E"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "F": {
+    "triadNotes": [
+      "F",
+      "A",
+      "C"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              5,
+              3,
+              3
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A",
+              "C",
+              "F"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              8,
+              7
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C",
+              "F",
+              "A"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              12,
+              10
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              17,
+              15,
+              15
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A",
+              "C",
+              "F"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              3,
+              2
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C",
+              "F",
+              "A"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              7,
+              5
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              10,
+              10
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A",
+              "C",
+              "F"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              15,
+              14
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C",
+              "F",
+              "A"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              2,
+              1
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              5,
+              6
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A",
+              "C",
+              "F"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              10,
+              10
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C",
+              "F",
+              "A"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              14,
+              13
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F",
+              "A",
+              "C"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              1,
+              1
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A",
+              "C",
+              "F"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              5,
+              6,
+              5
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C",
+              "F",
+              "A"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              10,
+              8
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F",
+              "A",
+              "C"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              13,
+              13
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A",
+              "C",
+              "F"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "F#": {
+    "triadNotes": [
+      "F#",
+      "A#",
+      "C#"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              6,
+              4,
+              4
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A#",
+              "C#",
+              "F#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              9,
+              8
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C#",
+              "F#",
+              "A#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              14,
+              13,
+              11
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F#",
+              "A#",
+              "C#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              18,
+              16,
+              16
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A#",
+              "C#",
+              "F#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              4,
+              3
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C#",
+              "F#",
+              "A#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              8,
+              6
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F#",
+              "A#",
+              "C#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              11,
+              11
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A#",
+              "C#",
+              "F#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              16,
+              15
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C#",
+              "F#",
+              "A#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              3,
+              2
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F#",
+              "A#",
+              "C#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              6,
+              7
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A#",
+              "C#",
+              "F#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              11,
+              11
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C#",
+              "F#",
+              "A#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              15,
+              14
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F#",
+              "A#",
+              "C#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              2,
+              2
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A#",
+              "C#",
+              "F#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              7,
+              6
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "C#",
+              "F#",
+              "A#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              11,
+              9
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "F#",
+              "A#",
+              "C#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              14,
+              14
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "A#",
+              "C#",
+              "F#"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "G": {
+    "triadNotes": [
+      "G",
+      "B",
+      "D"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              2,
+              0
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              5,
+              5
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "B",
+              "D",
+              "G"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              10,
+              9
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              14,
+              12
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G",
+              "B",
+              "D"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              0,
+              0
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "B",
+              "D",
+              "G"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              5,
+              5,
+              4
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              9,
+              7
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              12,
+              12
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "B",
+              "D",
+              "G"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              0,
+              0,
+              0
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              5,
+              4,
+              3
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              9,
+              7,
+              8
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "B",
+              "D",
+              "G"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              12,
+              12,
+              12
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D",
+              "G",
+              "B"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              3,
+              3
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "B",
+              "D",
+              "G"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              8,
+              7
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D",
+              "G",
+              "B"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              12,
+              10
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G",
+              "B",
+              "D"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              15,
+              15
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "B",
+              "D",
+              "G"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "G#": {
+    "triadNotes": [
+      "G#",
+      "C",
+      "D#"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              3,
+              1
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G#",
+              "C",
+              "D#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              6,
+              6
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C",
+              "D#",
+              "G#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              11,
+              10
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D#",
+              "G#",
+              "C"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              15,
+              13
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G#",
+              "C",
+              "D#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              1,
+              1
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C",
+              "D#",
+              "G#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              6,
+              5
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D#",
+              "G#",
+              "C"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              10,
+              8
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G#",
+              "C",
+              "D#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              13,
+              13
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C",
+              "D#",
+              "G#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              1,
+              1,
+              1
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D#",
+              "G#",
+              "C"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              5,
+              4
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G#",
+              "C",
+              "D#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              8,
+              9
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C",
+              "D#",
+              "G#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              13,
+              13,
+              13
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D#",
+              "G#",
+              "C"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              5,
+              4,
+              4
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C",
+              "D#",
+              "G#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              9,
+              8
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "D#",
+              "G#",
+              "C"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              13,
+              11
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "G#",
+              "C",
+              "D#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              17,
+              16,
+              16
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C",
+              "D#",
+              "G#"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "A": {
+    "triadNotes": [
+      "A",
+      "C#",
+      "E"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              5,
+              4,
+              2
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              7,
+              7
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C#",
+              "E",
+              "A"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              12,
+              11
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "E",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              17,
+              16,
+              14
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A",
+              "C#",
+              "E"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              2,
+              2
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C#",
+              "E",
+              "A"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              7,
+              6
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "E",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              11,
+              9
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              14,
+              14
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C#",
+              "E",
+              "A"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              2,
+              2
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "E",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              6,
+              5
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              9,
+              10
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C#",
+              "E",
+              "A"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              14,
+              14
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "E",
+              "A",
+              "C#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              2,
+              0
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A",
+              "C#",
+              "E"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              5,
+              5
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "C#",
+              "E",
+              "A"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              9,
+              10,
+              9
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "E",
+              "A",
+              "C#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              14,
+              12
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A",
+              "C#",
+              "E"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "A#": {
+    "triadNotes": [
+      "A#",
+      "D",
+      "F"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              1,
+              1,
+              0
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F",
+              "A#",
+              "D"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              6,
+              5,
+              3
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A#",
+              "D",
+              "F"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              8,
+              8
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D",
+              "F",
+              "A#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              13,
+              13,
+              12
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F",
+              "A#",
+              "D"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              5,
+              3,
+              3
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D",
+              "F",
+              "A#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              8,
+              7
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F",
+              "A#",
+              "D"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              12,
+              10
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A#",
+              "D",
+              "F"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              17,
+              15,
+              15
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D",
+              "F",
+              "A#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              3,
+              3
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F",
+              "A#",
+              "D"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              7,
+              6
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A#",
+              "D",
+              "F"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              12,
+              10,
+              11
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D",
+              "F",
+              "A#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              15,
+              15
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F",
+              "A#",
+              "D"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              3,
+              3,
+              1
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A#",
+              "D",
+              "F"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              6,
+              6
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D",
+              "F",
+              "A#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              10,
+              11,
+              10
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F",
+              "A#",
+              "D"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              15,
+              15,
+              13
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "A#",
+              "D",
+              "F"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "B": {
+    "triadNotes": [
+      "B",
+      "D#",
+      "F#"
+    ],
+    "groups": [
+      {
+        "groupIndex": 0,
+        "strings": [
+          0,
+          1,
+          2
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              2,
+              2,
+              1
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F#",
+              "B",
+              "D#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              7,
+              6,
+              4
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              9,
+              9
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D#",
+              "F#",
+              "B"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              14,
+              14,
+              13
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F#",
+              "B",
+              "D#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 1,
+        "strings": [
+          1,
+          2,
+          3
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              6,
+              4,
+              4
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D#",
+              "F#",
+              "B"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              9,
+              8
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F#",
+              "B",
+              "D#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              14,
+              13,
+              11
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              6,
+              9,
+              11
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D#",
+              "B",
+              "F#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 2,
+        "strings": [
+          2,
+          3,
+          4
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              4,
+              4
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F#",
+              "B",
+              "D#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              9,
+              8,
+              7
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              13,
+              11,
+              12
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D#",
+              "F#",
+              "B"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              16,
+              16
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F#",
+              "B",
+              "D#"
+            ]
+          }
+        ]
+      },
+      {
+        "groupIndex": 3,
+        "strings": [
+          3,
+          4,
+          5
+        ],
+        "voicings": [
+          {
+            "position": 0,
+            "frets": [
+              4,
+              4,
+              2
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          },
+          {
+            "position": 1,
+            "frets": [
+              8,
+              7,
+              7
+            ],
+            "inversion": "first",
+            "noteNames": [
+              "D#",
+              "F#",
+              "B"
+            ]
+          },
+          {
+            "position": 2,
+            "frets": [
+              11,
+              12,
+              11
+            ],
+            "inversion": "second",
+            "noteNames": [
+              "F#",
+              "B",
+              "D#"
+            ]
+          },
+          {
+            "position": 3,
+            "frets": [
+              16,
+              16,
+              14
+            ],
+            "inversion": "root",
+            "noteNames": [
+              "B",
+              "D#",
+              "F#"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+=== TEST DATA FORMAT ===
+
+export const MAJOR_TRIAD_POSITIONS = {
+  'C': {
+    triadNotes: ['C', 'E', 'G'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [3, 3, 2], inversion: 'second' },
+          { position: 1, frets: [8, 7, 5], inversion: 'root' },
+          { position: 2, frets: [12, 10, 10], inversion: 'first' },
+          { position: 3, frets: [15, 15, 14], inversion: 'second' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [3, 2, 0], inversion: 'root' },
+          { position: 1, frets: [7, 5, 5], inversion: 'first' },
+          { position: 2, frets: [10, 10, 9], inversion: 'second' },
+          { position: 3, frets: [15, 14, 12], inversion: 'root' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [2, 0, 1], inversion: 'first' },
+          { position: 1, frets: [5, 5, 5], inversion: 'second' },
+          { position: 2, frets: [10, 9, 8], inversion: 'root' },
+          { position: 3, frets: [14, 12, 13], inversion: 'first' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [0, 1, 0], inversion: 'second' },
+          { position: 1, frets: [5, 5, 3], inversion: 'root' },
+          { position: 2, frets: [9, 8, 8], inversion: 'first' },
+          { position: 3, frets: [12, 13, 12], inversion: 'second' },
+        ]
+      },
+    ]
+  },
+  'C#': {
+    triadNotes: ['C#', 'F', 'G#'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [4, 4, 3], inversion: 'second' },
+          { position: 1, frets: [9, 8, 6], inversion: 'root' },
+          { position: 2, frets: [13, 11, 11], inversion: 'first' },
+          { position: 3, frets: [16, 16, 15], inversion: 'second' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [4, 3, 1], inversion: 'root' },
+          { position: 1, frets: [8, 6, 6], inversion: 'first' },
+          { position: 2, frets: [11, 11, 10], inversion: 'second' },
+          { position: 3, frets: [16, 15, 13], inversion: 'root' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [3, 1, 2], inversion: 'first' },
+          { position: 1, frets: [6, 6, 6], inversion: 'second' },
+          { position: 2, frets: [11, 10, 9], inversion: 'root' },
+          { position: 3, frets: [15, 13, 14], inversion: 'first' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [1, 2, 1], inversion: 'second' },
+          { position: 1, frets: [6, 6, 4], inversion: 'root' },
+          { position: 2, frets: [10, 9, 9], inversion: 'first' },
+          { position: 3, frets: [13, 14, 13], inversion: 'second' },
+        ]
+      },
+    ]
+  },
+  'D': {
+    triadNotes: ['D', 'F#', 'A'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [2, 0, 0], inversion: 'first' },
+          { position: 1, frets: [5, 5, 4], inversion: 'second' },
+          { position: 2, frets: [10, 9, 7], inversion: 'root' },
+          { position: 3, frets: [14, 12, 12], inversion: 'first' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [5, 4, 2], inversion: 'root' },
+          { position: 1, frets: [9, 7, 7], inversion: 'first' },
+          { position: 2, frets: [12, 12, 11], inversion: 'second' },
+          { position: 3, frets: [17, 16, 14], inversion: 'root' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [4, 2, 3], inversion: 'first' },
+          { position: 1, frets: [7, 7, 7], inversion: 'second' },
+          { position: 2, frets: [12, 11, 10], inversion: 'root' },
+          { position: 3, frets: [16, 14, 15], inversion: 'first' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [2, 3, 2], inversion: 'second' },
+          { position: 1, frets: [7, 7, 5], inversion: 'root' },
+          { position: 2, frets: [11, 10, 10], inversion: 'first' },
+          { position: 3, frets: [14, 15, 14], inversion: 'second' },
+        ]
+      },
+    ]
+  },
+  'D#': {
+    triadNotes: ['D#', 'G', 'A#'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [3, 1, 1], inversion: 'first' },
+          { position: 1, frets: [6, 6, 5], inversion: 'second' },
+          { position: 2, frets: [11, 10, 8], inversion: 'root' },
+          { position: 3, frets: [15, 13, 13], inversion: 'first' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [1, 1, 0], inversion: 'second' },
+          { position: 1, frets: [6, 5, 3], inversion: 'root' },
+          { position: 2, frets: [10, 13, 15], inversion: 'first' },
+          { position: 3, frets: [13, 13, 12], inversion: 'second' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [5, 3, 4], inversion: 'first' },
+          { position: 1, frets: [8, 8, 8], inversion: 'second' },
+          { position: 2, frets: [13, 12, 11], inversion: 'root' },
+          { position: 3, frets: [17, 15, 16], inversion: 'first' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [3, 4, 3], inversion: 'second' },
+          { position: 1, frets: [8, 8, 6], inversion: 'root' },
+          { position: 2, frets: [12, 11, 11], inversion: 'first' },
+          { position: 3, frets: [15, 16, 15], inversion: 'second' },
+        ]
+      },
+    ]
+  },
+  'E': {
+    triadNotes: ['E', 'G#', 'B'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [4, 2, 2], inversion: 'first' },
+          { position: 1, frets: [7, 7, 6], inversion: 'second' },
+          { position: 2, frets: [12, 11, 9], inversion: 'root' },
+          { position: 3, frets: [16, 14, 14], inversion: 'first' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [2, 2, 1], inversion: 'second' },
+          { position: 1, frets: [7, 6, 4], inversion: 'root' },
+          { position: 2, frets: [11, 9, 9], inversion: 'first' },
+          { position: 3, frets: [14, 14, 13], inversion: 'second' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [2, 1, 0], inversion: 'root' },
+          { position: 1, frets: [6, 4, 5], inversion: 'first' },
+          { position: 2, frets: [9, 9, 9], inversion: 'second' },
+          { position: 3, frets: [14, 13, 12], inversion: 'root' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [1, 0, 0], inversion: 'first' },
+          { position: 1, frets: [4, 5, 4], inversion: 'second' },
+          { position: 2, frets: [9, 9, 7], inversion: 'root' },
+          { position: 3, frets: [13, 12, 12], inversion: 'first' },
+        ]
+      },
+    ]
+  },
+  'F': {
+    triadNotes: ['F', 'A', 'C'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [5, 3, 3], inversion: 'first' },
+          { position: 1, frets: [8, 8, 7], inversion: 'second' },
+          { position: 2, frets: [13, 12, 10], inversion: 'root' },
+          { position: 3, frets: [17, 15, 15], inversion: 'first' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [3, 3, 2], inversion: 'second' },
+          { position: 1, frets: [8, 7, 5], inversion: 'root' },
+          { position: 2, frets: [12, 10, 10], inversion: 'first' },
+          { position: 3, frets: [15, 15, 14], inversion: 'second' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [3, 2, 1], inversion: 'root' },
+          { position: 1, frets: [7, 5, 6], inversion: 'first' },
+          { position: 2, frets: [10, 10, 10], inversion: 'second' },
+          { position: 3, frets: [15, 14, 13], inversion: 'root' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [2, 1, 1], inversion: 'first' },
+          { position: 1, frets: [5, 6, 5], inversion: 'second' },
+          { position: 2, frets: [10, 10, 8], inversion: 'root' },
+          { position: 3, frets: [14, 13, 13], inversion: 'first' },
+        ]
+      },
+    ]
+  },
+  'F#': {
+    triadNotes: ['F#', 'A#', 'C#'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [6, 4, 4], inversion: 'first' },
+          { position: 1, frets: [9, 9, 8], inversion: 'second' },
+          { position: 2, frets: [14, 13, 11], inversion: 'root' },
+          { position: 3, frets: [18, 16, 16], inversion: 'first' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [4, 4, 3], inversion: 'second' },
+          { position: 1, frets: [9, 8, 6], inversion: 'root' },
+          { position: 2, frets: [13, 11, 11], inversion: 'first' },
+          { position: 3, frets: [16, 16, 15], inversion: 'second' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [4, 3, 2], inversion: 'root' },
+          { position: 1, frets: [8, 6, 7], inversion: 'first' },
+          { position: 2, frets: [11, 11, 11], inversion: 'second' },
+          { position: 3, frets: [16, 15, 14], inversion: 'root' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [3, 2, 2], inversion: 'first' },
+          { position: 1, frets: [6, 7, 6], inversion: 'second' },
+          { position: 2, frets: [11, 11, 9], inversion: 'root' },
+          { position: 3, frets: [15, 14, 14], inversion: 'first' },
+        ]
+      },
+    ]
+  },
+  'G': {
+    triadNotes: ['G', 'B', 'D'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [3, 2, 0], inversion: 'root' },
+          { position: 1, frets: [7, 5, 5], inversion: 'first' },
+          { position: 2, frets: [10, 10, 9], inversion: 'second' },
+          { position: 3, frets: [15, 14, 12], inversion: 'root' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [2, 0, 0], inversion: 'first' },
+          { position: 1, frets: [5, 5, 4], inversion: 'second' },
+          { position: 2, frets: [10, 9, 7], inversion: 'root' },
+          { position: 3, frets: [14, 12, 12], inversion: 'first' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [0, 0, 0], inversion: 'second' },
+          { position: 1, frets: [5, 4, 3], inversion: 'root' },
+          { position: 2, frets: [9, 7, 8], inversion: 'first' },
+          { position: 3, frets: [12, 12, 12], inversion: 'second' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [4, 3, 3], inversion: 'first' },
+          { position: 1, frets: [7, 8, 7], inversion: 'second' },
+          { position: 2, frets: [12, 12, 10], inversion: 'root' },
+          { position: 3, frets: [16, 15, 15], inversion: 'first' },
+        ]
+      },
+    ]
+  },
+  'G#': {
+    triadNotes: ['G#', 'C', 'D#'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [4, 3, 1], inversion: 'root' },
+          { position: 1, frets: [8, 6, 6], inversion: 'first' },
+          { position: 2, frets: [11, 11, 10], inversion: 'second' },
+          { position: 3, frets: [16, 15, 13], inversion: 'root' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [3, 1, 1], inversion: 'first' },
+          { position: 1, frets: [6, 6, 5], inversion: 'second' },
+          { position: 2, frets: [11, 10, 8], inversion: 'root' },
+          { position: 3, frets: [15, 13, 13], inversion: 'first' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [1, 1, 1], inversion: 'second' },
+          { position: 1, frets: [6, 5, 4], inversion: 'root' },
+          { position: 2, frets: [10, 8, 9], inversion: 'first' },
+          { position: 3, frets: [13, 13, 13], inversion: 'second' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [5, 4, 4], inversion: 'first' },
+          { position: 1, frets: [8, 9, 8], inversion: 'second' },
+          { position: 2, frets: [13, 13, 11], inversion: 'root' },
+          { position: 3, frets: [17, 16, 16], inversion: 'first' },
+        ]
+      },
+    ]
+  },
+  'A': {
+    triadNotes: ['A', 'C#', 'E'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [5, 4, 2], inversion: 'root' },
+          { position: 1, frets: [9, 7, 7], inversion: 'first' },
+          { position: 2, frets: [12, 12, 11], inversion: 'second' },
+          { position: 3, frets: [17, 16, 14], inversion: 'root' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [4, 2, 2], inversion: 'first' },
+          { position: 1, frets: [7, 7, 6], inversion: 'second' },
+          { position: 2, frets: [12, 11, 9], inversion: 'root' },
+          { position: 3, frets: [16, 14, 14], inversion: 'first' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [2, 2, 2], inversion: 'second' },
+          { position: 1, frets: [7, 6, 5], inversion: 'root' },
+          { position: 2, frets: [11, 9, 10], inversion: 'first' },
+          { position: 3, frets: [14, 14, 14], inversion: 'second' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [2, 2, 0], inversion: 'root' },
+          { position: 1, frets: [6, 5, 5], inversion: 'first' },
+          { position: 2, frets: [9, 10, 9], inversion: 'second' },
+          { position: 3, frets: [14, 14, 12], inversion: 'root' },
+        ]
+      },
+    ]
+  },
+  'A#': {
+    triadNotes: ['A#', 'D', 'F'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [1, 1, 0], inversion: 'second' },
+          { position: 1, frets: [6, 5, 3], inversion: 'root' },
+          { position: 2, frets: [10, 8, 8], inversion: 'first' },
+          { position: 3, frets: [13, 13, 12], inversion: 'second' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [5, 3, 3], inversion: 'first' },
+          { position: 1, frets: [8, 8, 7], inversion: 'second' },
+          { position: 2, frets: [13, 12, 10], inversion: 'root' },
+          { position: 3, frets: [17, 15, 15], inversion: 'first' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [3, 3, 3], inversion: 'second' },
+          { position: 1, frets: [8, 7, 6], inversion: 'root' },
+          { position: 2, frets: [12, 10, 11], inversion: 'first' },
+          { position: 3, frets: [15, 15, 15], inversion: 'second' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [3, 3, 1], inversion: 'root' },
+          { position: 1, frets: [7, 6, 6], inversion: 'first' },
+          { position: 2, frets: [10, 11, 10], inversion: 'second' },
+          { position: 3, frets: [15, 15, 13], inversion: 'root' },
+        ]
+      },
+    ]
+  },
+  'B': {
+    triadNotes: ['B', 'D#', 'F#'],
+    groups: [
+      { // Group 0
+        strings: [0, 1, 2],
+        voicings: [
+          { position: 0, frets: [2, 2, 1], inversion: 'second' },
+          { position: 1, frets: [7, 6, 4], inversion: 'root' },
+          { position: 2, frets: [11, 9, 9], inversion: 'first' },
+          { position: 3, frets: [14, 14, 13], inversion: 'second' },
+        ]
+      },
+      { // Group 1
+        strings: [1, 2, 3],
+        voicings: [
+          { position: 0, frets: [6, 4, 4], inversion: 'first' },
+          { position: 1, frets: [9, 9, 8], inversion: 'second' },
+          { position: 2, frets: [14, 13, 11], inversion: 'root' },
+          { position: 3, frets: [6, 9, 11], inversion: 'first' },
+        ]
+      },
+      { // Group 2
+        strings: [2, 3, 4],
+        voicings: [
+          { position: 0, frets: [4, 4, 4], inversion: 'second' },
+          { position: 1, frets: [9, 8, 7], inversion: 'root' },
+          { position: 2, frets: [13, 11, 12], inversion: 'first' },
+          { position: 3, frets: [16, 16, 16], inversion: 'second' },
+        ]
+      },
+      { // Group 3
+        strings: [3, 4, 5],
+        voicings: [
+          { position: 0, frets: [4, 4, 2], inversion: 'root' },
+          { position: 1, frets: [8, 7, 7], inversion: 'first' },
+          { position: 2, frets: [11, 12, 11], inversion: 'second' },
+          { position: 3, frets: [16, 16, 14], inversion: 'root' },
+        ]
+      },
+    ]
+  },
+};

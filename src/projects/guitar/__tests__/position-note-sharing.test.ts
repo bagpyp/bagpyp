@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 
 import { findAllTriadVoicings, select4PositionsCoordinated, buildMajorTriad } from '../lib/triads';
 import { buildFretboard } from '../lib/core';

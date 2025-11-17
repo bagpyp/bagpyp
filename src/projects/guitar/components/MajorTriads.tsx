@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import LongFretboardDiagram from './LongFretboardDiagram';
-import TriadSettingsPanel from './TriadSettingsPanel';
 import { generateTriadsData } from '../lib/triads';
 import type { TriadsData } from '../lib/triads';
 import { nameToPc } from '../lib';
@@ -48,6 +47,7 @@ const STRING_GROUP_LABELS = [
 export default function MajorTriads() {
   const [selectedKey, setSelectedKey] = useState<string>('C');
   const [settings, setSettings] = useState<TriadSettings>(DEFAULT_TRIAD_SETTINGS);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
@@ -111,15 +111,12 @@ export default function MajorTriads() {
 
   return (
     <div className="space-y-3 p-2 w-full">
-      {/* Settings Panel - Fixed Position */}
-      <TriadSettingsPanel settings={settings} onSettingsChange={setSettings} />
-
-      {/* Circle of Fifths Visual Selector */}
-      <div className="w-full max-w-[900px] mx-auto">
+      {/* Circle of Fifths Visual Selector with Settings Icon */}
+      <div className="w-full max-w-[970px] mx-auto relative">
           <svg
             width="100%"
             height="100"
-            viewBox="0 0 900 100"
+            viewBox="0 0 970 100"
             preserveAspectRatio="xMidYMid meet"
           >
             {/* SVG Filters for golden glow */}
@@ -226,7 +223,212 @@ export default function MajorTriads() {
                 </g>
               );
             })}
+
+            {/* Settings Icon - Same size/shape as notes */}
+            <g onClick={() => setIsSettingsOpen(!isSettingsOpen)} style={{ cursor: 'pointer' }}>
+              <circle
+                cx={905} // Position after F (65 + 12 * 70)
+                cy={50}
+                r={DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier}
+                fill="#64748b"
+                opacity={isSettingsOpen ? 1 : 0.8}
+              />
+              <svg
+                x={905 - 10}
+                y={40}
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </g>
           </svg>
+
+          {/* Settings Panel Dropdown - Opens to the left */}
+          {isSettingsOpen && (
+            <div className="absolute top-24 right-0 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
+              <div className="space-2">
+                {/* Toggles */}
+                <div className="px-3">
+                  {/* Show Chromatic Notes */}
+                  <div
+                    onClick={() => setSettings({ ...settings, showChromaticNotes: !settings.showChromaticNotes })}
+                    className="flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: settings.showChromaticNotes ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: settings.showChromaticNotes ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease'
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Chromatic notes
+                    </span>
+                  </div>
+
+                  {/* Show Octave Colors */}
+                  <div
+                    onClick={() => setSettings({ ...settings, showOctaveColors: !settings.showOctaveColors })}
+                    className="flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: settings.showOctaveColors ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: settings.showOctaveColors ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease'
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Octave brightness
+                    </span>
+                  </div>
+
+                  {/* Show Root Halos */}
+                  <div
+                    onClick={() => setSettings({ ...settings, showRootHalos: !settings.showRootHalos })}
+                    className="flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: settings.showRootHalos ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: settings.showRootHalos ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease'
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Root halos
+                    </span>
+                  </div>
+
+                  {/* Enable Hover Sound */}
+                  <div
+                    onClick={() => setSettings({ ...settings, enableHoverSound: !settings.enableHoverSound })}
+                    className="flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: settings.enableHoverSound ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: settings.enableHoverSound ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease'
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Hover sound
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-200 dark:border-slate-700 my-2" />
+
+                {/* Inversion Notation */}
+                <div className="space-y-1 p-2">
+                  <label className="text-[10px] font-medium text-slate-500 dark:text-slate-500 uppercase">
+                    Notation
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSettings({ ...settings, inversionNotation: 'symbols' })}
+                      className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
+                      style={{
+                        backgroundColor: settings.inversionNotation === 'symbols' ? '#34C759' : '#E5E7EB',
+                        color: settings.inversionNotation === 'symbols' ? '#FFFFFF' : '#4B5563'
+                      }}
+                    >
+                      △¹²
+                    </button>
+                    <button
+                      onClick={() => setSettings({ ...settings, inversionNotation: 'figured-bass' })}
+                      className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
+                      style={{
+                        backgroundColor: settings.inversionNotation === 'figured-bass' ? '#34C759' : '#E5E7EB',
+                        color: settings.inversionNotation === 'figured-bass' ? '#FFFFFF' : '#4B5563'
+                      }}
+                    >
+                      ⁶₄
+                    </button>
+                  </div>
+                </div>
+
+                {/* Chord Type */}
+                <div className="space-y-1 p-2">
+                  <label className="text-[10px] font-medium text-slate-500 dark:text-slate-500 uppercase">
+                    Type
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSettings({ ...settings, chordType: 'major' })}
+                      className="flex-1 px-2 py-1.5 text-xs rounded transition-colors font-medium"
+                      style={{
+                        backgroundColor: settings.chordType === 'major' ? '#34C759' : '#E5E7EB',
+                        color: settings.chordType === 'major' ? '#FFFFFF' : '#4B5563'
+                      }}
+                    >
+                      Major
+                    </button>
+                    <button
+                      disabled
+                      className="flex-1 px-2 py-1.5 text-xs rounded cursor-not-allowed opacity-50"
+                      style={{
+                        backgroundColor: '#E5E7EB',
+                        color: '#9CA3AF'
+                      }}
+                      title="Coming soon"
+                    >
+                      Minor
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
 
       {/* Triads display - stacked vertically */}

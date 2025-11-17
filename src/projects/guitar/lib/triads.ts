@@ -503,12 +503,12 @@ export function generateTriadsData(key: NoteName): TriadsData {
     },
     D: {
       G0: [{ pos: 0, frets: [2, 0, 0], inv: 'first' }, { pos: 1, frets: [5, 5, 4], inv: 'second' }, { pos: 2, frets: [10, 9, 7], inv: 'root' }, { pos: 3, frets: [14, 12, 12], inv: 'first' }],
-      G1: [{ pos: 0, frets: [5, 4, 2], inv: 'root' }, { pos: 1, frets: [9, 7, 7], inv: 'first' }, { pos: 2, frets: [12, 12, 11], inv: 'second' }, { pos: 3, frets: [5, 4, 2], inv: 'root' }],
+      G1: [{ pos: 0, frets: [5, 4, 2], inv: 'root' }, { pos: 1, frets: [9, 7, 7], inv: 'first' }, { pos: 2, frets: [12, 12, 11], inv: 'second' }, { pos: 3, frets: [17, 16, 14], inv: 'root' }],
       G2: [{ pos: 0, frets: [4, 2, 3], inv: 'first' }, { pos: 1, frets: [7, 7, 7], inv: 'second' }, { pos: 2, frets: [12, 11, 10], inv: 'root' }, { pos: 3, frets: [16, 14, 15], inv: 'first' }],
       G3: [{ pos: 0, frets: [2, 3, 2], inv: 'second' }, { pos: 1, frets: [7, 7, 5], inv: 'root' }, { pos: 2, frets: [11, 10, 10], inv: 'first' }, { pos: 3, frets: [14, 15, 14], inv: 'second' }],
     },
     A: {
-      G0: [{ pos: 0, frets: [5, 4, 2], inv: 'root' }, { pos: 1, frets: [9, 7, 7], inv: 'first' }, { pos: 2, frets: [12, 12, 11], inv: 'second' }, { pos: 3, frets: [5, 4, 2], inv: 'root' }],
+      G0: [{ pos: 0, frets: [5, 4, 2], inv: 'root' }, { pos: 1, frets: [9, 7, 7], inv: 'first' }, { pos: 2, frets: [12, 12, 11], inv: 'second' }, { pos: 3, frets: [17, 16, 14], inv: 'root' }],
       G1: [{ pos: 0, frets: [4, 2, 2], inv: 'first' }, { pos: 1, frets: [7, 7, 6], inv: 'second' }, { pos: 2, frets: [12, 11, 9], inv: 'root' }, { pos: 3, frets: [16, 14, 14], inv: 'first' }],
       G2: [{ pos: 0, frets: [2, 2, 2], inv: 'second' }, { pos: 1, frets: [7, 6, 5], inv: 'root' }, { pos: 2, frets: [11, 9, 10], inv: 'first' }, { pos: 3, frets: [14, 14, 14], inv: 'second' }],
       G3: [{ pos: 0, frets: [2, 2, 0], inv: 'root' }, { pos: 1, frets: [6, 5, 5], inv: 'first' }, { pos: 2, frets: [9, 10, 9], inv: 'second' }, { pos: 3, frets: [14, 14, 12], inv: 'root' }],
@@ -531,6 +531,12 @@ export function generateTriadsData(key: NoteName): TriadsData {
       G2: [{ pos: 0, frets: [4, 3, 2], inv: 'root' }, { pos: 1, frets: [8, 6, 7], inv: 'first' }, { pos: 2, frets: [11, 11, 11], inv: 'second' }, { pos: 3, frets: [16, 15, 14], inv: 'root' }],
       G3: [{ pos: 0, frets: [3, 2, 2], inv: 'first' }, { pos: 1, frets: [6, 7, 6], inv: 'second' }, { pos: 2, frets: [11, 11, 9], inv: 'root' }, { pos: 3, frets: [15, 14, 14], inv: 'first' }],
     },
+    'A#': {
+      G0: [{ pos: 0, frets: [1, 1, 0], inv: 'second' }, { pos: 1, frets: [6, 5, 3], inv: 'root' }, { pos: 2, frets: [10, 8, 8], inv: 'first' }, { pos: 3, frets: [13, 13, 12], inv: 'second' }],
+      G1: [{ pos: 0, frets: [5, 3, 3], inv: 'first' }, { pos: 1, frets: [8, 8, 7], inv: 'second' }, { pos: 2, frets: [13, 12, 10], inv: 'root' }, { pos: 3, frets: [17, 15, 15], inv: 'first' }],
+      G2: [{ pos: 0, frets: [3, 3, 3], inv: 'second' }, { pos: 1, frets: [8, 7, 6], inv: 'root' }, { pos: 2, frets: [12, 10, 11], inv: 'first' }, { pos: 3, frets: [15, 15, 15], inv: 'second' }],
+      G3: [{ pos: 0, frets: [3, 3, 1], inv: 'root' }, { pos: 1, frets: [7, 6, 6], inv: 'first' }, { pos: 2, frets: [10, 11, 10], inv: 'second' }, { pos: 3, frets: [15, 15, 13], inv: 'root' }],
+    },
   };
 
   // Use hard-coded voicings if available
@@ -543,6 +549,20 @@ export function generateTriadsData(key: NoteName): TriadsData {
     const stringGroups: StringGroupTriads[] = stringGroupsData.map((stringGroupIndices, groupIdx) => {
       const groupKey = `G${groupIdx}`;
       const hardCodedVoicings = PERFECT_KEYS[key][groupKey];
+
+      // Validation: Check for duplicate positions
+      const fretStrings = hardCodedVoicings.map((hc: any) => hc.frets.join(','));
+      const uniqueFretStrings = new Set(fretStrings);
+      if (uniqueFretStrings.size !== fretStrings.length) {
+        console.warn(`Warning: Key ${key}, Group ${groupIdx} has duplicate positions in hard-coded data!`);
+        const seen = new Set();
+        fretStrings.forEach((fs, idx) => {
+          if (seen.has(fs)) {
+            console.warn(`  Position ${idx} [${fs}] is a duplicate`);
+          }
+          seen.add(fs);
+        });
+      }
 
       const voicings: TriadVoicing[] = hardCodedVoicings.map((hc: any) => {
         const notes = hc.frets.map((fret: number, idx: number) => fretboard[stringGroupIndices[idx]][fret]);

@@ -1,8 +1,7 @@
+import { describe, it, expect } from 'vitest';
 /**
  * Test that inversion sequences follow the cyclic pattern: [..., 1, 2, ∆, 1, 2, ∆, ...]
  */
-
-import { describe, it, expect } from '@jest/globals';
 import { generateTriadsData } from '../lib/triads';
 import type { NoteName } from '../lib/types';
 import type { InversionType } from '../lib/triads';

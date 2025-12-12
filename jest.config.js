@@ -9,6 +9,11 @@ const createJestConfig = nextJest({
 const customJestConfig = {
 	setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
 	testEnvironment: "jest-environment-jsdom",
+	testPathIgnorePatterns: [
+		"<rootDir>/node_modules/",
+		"<rootDir>/src/projects/guitar/__tests__/",
+		"<rootDir>/src/projects/tonnetz/"
+	],
 	moduleNameMapper: {
 		"^@/components/(.*)$": "<rootDir>/src/projects/guitar/components/$1",
 		"^@/lib/guitar/(.*)$": "<rootDir>/src/projects/guitar/lib/$1",

@@ -45,7 +45,8 @@ export const featuredItems: FeaturedItemConfig[] = [
 	// More Projects
 	{ type: "project", id: "graph-dynamics" },
 
-	// Guitar Project
+	// Music Theory Projects
+	{ type: "project", id: "tonnetz-lattice" },
 	{ type: "project", id: "guitar-triads" },
 ];
 

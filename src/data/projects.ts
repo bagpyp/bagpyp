@@ -3,6 +3,43 @@ import { Project } from "../interfaces";
 // Personal projects - each loads its own React page
 export const projectsData: Project[] = [
 	{
+		id: "tonnetz-lattice",
+		slug: "tonnetz-lattice",
+		title: "Tonnetz Lattice",
+		subtitle: "Neo-Riemannian Harmonic Space Explorer",
+		description:
+			"Interactive visualization of the Tonnetz harmonic lattice for exploring chord relationships in neo-Riemannian music theory with Web Audio synthesis.",
+		longDescription:
+			"A sophisticated music theory tool that visualizes all 12 pitch classes in a 2D Tonnetz grid where musical intervals follow predictable geometric patterns: Major 3rds move right, minor 3rds move down, and Perfect 5ths are diagonal. Build and play chord progressions, explore harmonic relationships, and save your compositions.",
+		client: "Personal Project",
+		technologies: [
+			"React 19",
+			"TypeScript",
+			"Canvas API",
+			"Web Audio API",
+			"Neo-Riemannian Theory"
+		],
+		features: [
+			"Interactive pan and zoom with inertia",
+			"Major and minor triad visualization",
+			"Chord progression builder with playback",
+			"Configurable key center and label modes",
+			"Save/load/export progressions as JSON",
+			"Preset chord progression library",
+			"MIDI-based pitch representation"
+		],
+		outcomes: [
+			"Advanced music theory visualization",
+			"Real-time audio synthesis",
+			"Mathematical approach to harmony",
+			"Elegant state management with React Context"
+		],
+		images: ["tonnetz-lattice.png"],
+		featured: true,
+		year: "2024",
+		category: "Full-Stack"
+	},
+	{
 		id: "graph-dynamics",
 		slug: "graph-theoretic-dynamics",
 		title: "Graph Theoretic Multi-Agent Dynamics",

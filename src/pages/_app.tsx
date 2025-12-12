@@ -1,5 +1,6 @@
 import { AppProps } from "next/app";
 import "../styles/global.css";
+import "../projects/tonnetz/App.css";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { GoogleAnalytics } from "@next/third-parties/google";
 

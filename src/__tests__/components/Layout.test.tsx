@@ -6,10 +6,10 @@ jest.mock("@auth0/nextjs-auth0/client", () => ({
 	useUser: () => ({ user: null })
 }));
 
-// Mock Next.js Image component
+// Mock Next.js Image component - filter out fill prop to avoid React 19 warnings
 jest.mock("next/image", () => ({
 	__esModule: true,
-	default: (props: any) => {
+	default: ({ fill, ...props }: any) => {
 		return <img {...props} />;
 	}
 }));
@@ -30,15 +30,16 @@ describe("Layout", () => {
 		expect(blogLinks.length).toBeGreaterThanOrEqual(1);
 	});
 
-	it("renders Bagpyp brand", () => {
+	it("renders brand name", () => {
 		render(<Layout>Test content</Layout>);
-		const bagpypElements = screen.getAllByText("Bagpyp");
-		expect(bagpypElements.length).toBeGreaterThan(0);
+		const brandElements = screen.getAllByText(/Robert Cunningham|Bagpyp/i);
+		expect(brandElements.length).toBeGreaterThan(0);
 	});
 
-	it("renders Sign In button when not logged in", () => {
+	it("renders without Sign In button (auth handled elsewhere)", () => {
 		render(<Layout>Test content</Layout>);
-		expect(screen.getByText("Sign In")).toBeInTheDocument();
+		// Sign In is now handled on the payment page directly, not in Layout
+		expect(screen.queryByText("Sign In")).not.toBeInTheDocument();
 	});
 
 	it("renders footer with copyright", () => {

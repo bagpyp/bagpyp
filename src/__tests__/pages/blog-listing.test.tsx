@@ -7,10 +7,10 @@ jest.mock("@auth0/nextjs-auth0/client", () => ({
 	useUser: () => ({ user: null })
 }));
 
-// Mock Next.js Image
+// Mock Next.js Image - filter out fill prop to avoid React 19 warnings
 jest.mock("next/image", () => ({
 	__esModule: true,
-	default: (props: any) => <img {...props} />
+	default: ({ fill, ...props }: any) => <img {...props} />
 }));
 
 describe("Blog Listing Page", () => {

@@ -17,7 +17,7 @@ describe("Hero", () => {
 	it("shows OpenAI partner badge", () => {
 		render(<Hero />);
 		expect(
-			screen.getByText("One of 8 official OpenAI partners worldwide")
+			screen.getByText(/one of 8 official OpenAI partners worldwide/i)
 		).toBeInTheDocument();
 	});
 

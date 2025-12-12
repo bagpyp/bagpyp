@@ -16,7 +16,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -25,10 +25,18 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/lib/guitar/*": ["src/projects/guitar/lib/*"],
-      "@/lib/guitar": ["src/projects/guitar/lib"],
-      "@/components/*": ["src/projects/guitar/components/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@/lib/guitar/*": [
+        "src/projects/guitar/lib/*"
+      ],
+      "@/lib/guitar": [
+        "src/projects/guitar/lib"
+      ],
+      "@/components/*": [
+        "src/projects/guitar/components/*"
+      ]
     }
   },
   "include": [

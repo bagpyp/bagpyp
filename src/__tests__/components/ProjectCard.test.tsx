@@ -2,10 +2,10 @@ import { render, screen } from "@testing-library/react";
 import ProjectCard from "../../components/ProjectCard";
 import { Project } from "../../interfaces";
 
-// Mock Next.js Image
+// Mock Next.js Image - filter out fill prop to avoid React 19 warnings
 jest.mock("next/image", () => ({
 	__esModule: true,
-	default: (props: any) => <img {...props} />
+	default: ({ fill, ...props }: any) => <img {...props} />
 }));
 
 describe("ProjectCard", () => {

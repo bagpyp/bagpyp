@@ -34,7 +34,7 @@ export const projectsData: Project[] = [
 			"Mathematical approach to harmony",
 			"Elegant state management with React Context"
 		],
-		images: ["tonnetz-lattice.png"],
+		images: ["tonnetz-main.png"],
 		featured: true,
 		year: "2024",
 		category: "Full-Stack"

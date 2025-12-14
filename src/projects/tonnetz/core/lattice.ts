@@ -119,7 +119,7 @@ export function getVisibleRange(
 }
 
 /**
- * Convert screen coordinates to world coordinates
+ * Convert screen coordinates to world coordinates (flat, no tilt)
  */
 export function screenToWorld(
   screenPoint: Point,
@@ -130,6 +130,44 @@ export function screenToWorld(
   return {
     x: camera.x + (screenPoint.x - canvasWidth / 2) / camera.zoom,
     y: camera.y + (screenPoint.y - canvasHeight / 2) / camera.zoom,
+  };
+}
+
+/**
+ * Convert screen coordinates to world coordinates accounting for tilt and rotation.
+ * Finds the world point on the z=0 plane that projects to the given screen point.
+ * This is the inverse of project3D(worldX, worldY, 0, tilt, camera, width, height).
+ */
+export function screenToWorld3D(
+  screenPoint: Point,
+  camera: { x: number; y: number; zoom: number; tilt: number; rotation: number },
+  canvasWidth: number,
+  canvasHeight: number
+): Point {
+  const tiltRad = (camera.tilt * Math.PI) / 180;
+  const rotRad = (camera.rotation * Math.PI) / 180;
+  const cosT = Math.cos(tiltRad);
+  const cosR = Math.cos(rotRad);
+  const sinR = Math.sin(rotRad);
+
+  // Reverse screen transform: get rotated coordinates
+  const rotX = (screenPoint.x - canvasWidth / 2) / camera.zoom;
+  const projectedY = (screenPoint.y - canvasHeight / 2) / camera.zoom;
+
+  // Reverse tilt (for z=0 plane): projectedY = rotY * cosT
+  // Avoid division by zero when fully tilted (cosT -> 0)
+  const rotY = cosT > 0.01 ? projectedY / cosT : projectedY;
+
+  // Reverse rotation: apply inverse rotation matrix
+  // [cosR  sinR] * [rotX]   [dx]
+  // [-sinR cosR]   [rotY] = [dy]
+  const dx = rotX * cosR + rotY * sinR;
+  const dy = -rotX * sinR + rotY * cosR;
+
+  // Reverse camera translation
+  return {
+    x: dx + camera.x,
+    y: dy + camera.y,
   };
 }
 

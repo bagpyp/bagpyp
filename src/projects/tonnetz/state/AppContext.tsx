@@ -8,6 +8,8 @@ import type {
   TrianglePathPoint,
   TrianglePath,
   PitchClass,
+  SeventhQuality,
+  Point,
 } from './types';
 import {
   DEFAULT_SETTINGS,
@@ -24,6 +26,8 @@ type Action =
   | { type: 'PAN'; dx: number; dy: number }
   | { type: 'ZOOM'; factor: number; centerX: number; centerY: number }
   | { type: 'RECENTER' }
+  | { type: 'SET_TILT'; tilt: number }
+  | { type: 'SET_ROTATION'; rotation: number }
   | { type: 'SET_LABEL_MODE'; mode: AppSettings['labelMode'] }
   | { type: 'SET_KEY_CENTER'; keyCenter: PitchClass }
   | { type: 'TOGGLE_SHARPS' }
@@ -31,9 +35,11 @@ type Action =
   | { type: 'TOGGLE_PATCH_BOUNDARIES' }
   | { type: 'TOGGLE_MAJOR_TRIANGLES' }
   | { type: 'TOGGLE_MINOR_TRIANGLES' }
+  | { type: 'TOGGLE_GRID_LINES' }
   | { type: 'SET_HOVERED_CELL'; cell: GridCell | null }
   | { type: 'SET_HOVERED_TRIANGLE'; triangle: { rootCell: GridCell; type: 'major' | 'minor' } | null }
   | { type: 'ADD_TRIANGLE_TO_PATH'; rootCell: GridCell; triType: 'major' | 'minor' }
+  | { type: 'ADD_POINT_TO_PATH'; point: TrianglePathPoint }
   | { type: 'UNDO_PATH' }
   | { type: 'CLEAR_PATH' }
   | { type: 'SAVE_PATH'; name: string; color: string }
@@ -41,7 +47,13 @@ type Action =
   | { type: 'DELETE_SAVED_PATH'; id: string }
   | { type: 'SET_PLAYING'; isPlaying: boolean }
   | { type: 'SET_TEMPO'; tempo: number }
-  | { type: 'SET_SETTINGS'; settings: Partial<AppSettings> };
+  | { type: 'SET_PLAYING_INDEX'; index: number }
+  | { type: 'SET_SETTINGS'; settings: Partial<AppSettings> }
+  | { type: 'SHOW_CHORD_WHEEL'; pathIndex: number; position: Point }
+  | { type: 'HIDE_CHORD_WHEEL' }
+  | { type: 'UPGRADE_TO_SEVENTH'; pathIndex: number; quality: SeventhQuality }
+  | { type: 'REMOVE_SEVENTH'; pathIndex: number }
+  | { type: 'SET_SEVENTH_PREVIEW'; quality: SeventhQuality | null };
 
 // Initial state
 const initialState: AppState = {
@@ -53,6 +65,8 @@ const initialState: AppState = {
   hoveredTriangle: null,
   isPlaying: false,
   tempo: 120,
+  playingIndex: -1,
+  chordWheel: null,
 };
 
 // Reducer
@@ -77,6 +91,7 @@ function appReducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         camera: {
+          ...state.camera,
           x: action.centerX + (state.camera.x - action.centerX) * zoomRatio,
           y: action.centerY + (state.camera.y - action.centerY) * zoomRatio,
           zoom: newZoom,
@@ -88,6 +103,18 @@ function appReducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         camera: DEFAULT_CAMERA,
+      };
+
+    case 'SET_TILT':
+      return {
+        ...state,
+        camera: { ...state.camera, tilt: Math.max(0, Math.min(75, action.tilt)) },
+      };
+
+    case 'SET_ROTATION':
+      return {
+        ...state,
+        camera: { ...state.camera, rotation: action.rotation % 360 },
       };
 
     case 'SET_LABEL_MODE':
@@ -132,6 +159,12 @@ function appReducer(state: AppState, action: Action): AppState {
         settings: { ...state.settings, showMinorTriangles: !state.settings.showMinorTriangles },
       };
 
+    case 'TOGGLE_GRID_LINES':
+      return {
+        ...state,
+        settings: { ...state.settings, showGridLines: !state.settings.showGridLines },
+      };
+
     case 'SET_HOVERED_CELL':
       return { ...state, hoveredCell: action.cell };
 
@@ -166,6 +199,13 @@ function appReducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         currentPath: [...state.currentPath, newPoint],
+      };
+    }
+
+    case 'ADD_POINT_TO_PATH': {
+      return {
+        ...state,
+        currentPath: [...state.currentPath, action.point],
       };
     }
 
@@ -213,11 +253,103 @@ function appReducer(state: AppState, action: Action): AppState {
     case 'SET_TEMPO':
       return { ...state, tempo: action.tempo };
 
+    case 'SET_PLAYING_INDEX':
+      return { ...state, playingIndex: action.index };
+
     case 'SET_SETTINGS':
       return {
         ...state,
         settings: { ...state.settings, ...action.settings },
       };
+
+    case 'SHOW_CHORD_WHEEL':
+      return {
+        ...state,
+        chordWheel: {
+          visible: true,
+          pathIndex: action.pathIndex,
+          position: action.position,
+        },
+      };
+
+    case 'HIDE_CHORD_WHEEL':
+      return {
+        ...state,
+        chordWheel: null,
+      };
+
+    case 'UPGRADE_TO_SEVENTH': {
+      const { pathIndex, quality } = action;
+      if (pathIndex < 0 || pathIndex >= state.currentPath.length) {
+        return state;
+      }
+      const point = state.currentPath[pathIndex];
+      // Calculate the extended interval based on quality (7ths and 6ths)
+      const extendedIntervals: Record<SeventhQuality, number> = {
+        maj7: 11,
+        min7: 10,
+        dom7: 10,
+        minMaj7: 11,
+        halfDim7: 10,
+        dim7: 9,
+        augMaj7: 11,
+        '6': 9,
+        'm6': 9,
+      };
+      const seventhInterval = extendedIntervals[quality];
+      const seventhPitchClass = mod12(point.rootPC + seventhInterval);
+      const seventhMidiPitch = point.midiPitches[0] + seventhInterval;
+
+      const updatedPoint: TrianglePathPoint = {
+        ...point,
+        seventhQuality: quality,
+        seventhPitchClass: seventhPitchClass as PitchClass,
+        seventhMidiPitch,
+      };
+
+      const newPath = [...state.currentPath];
+      newPath[pathIndex] = updatedPoint;
+
+      return {
+        ...state,
+        currentPath: newPath,
+        chordWheel: null,
+      };
+    }
+
+    case 'REMOVE_SEVENTH': {
+      const { pathIndex } = action;
+      if (pathIndex < 0 || pathIndex >= state.currentPath.length) {
+        return state;
+      }
+      const point = state.currentPath[pathIndex];
+      const updatedPoint: TrianglePathPoint = {
+        ...point,
+        seventhQuality: undefined,
+        seventhPitchClass: undefined,
+        seventhMidiPitch: undefined,
+      };
+
+      const newPath = [...state.currentPath];
+      newPath[pathIndex] = updatedPoint;
+
+      return {
+        ...state,
+        currentPath: newPath,
+        chordWheel: null,
+      };
+    }
+
+    case 'SET_SEVENTH_PREVIEW': {
+      if (!state.chordWheel) return state;
+      return {
+        ...state,
+        chordWheel: {
+          ...state.chordWheel,
+          hoveredPreview: action.quality ?? undefined,
+        },
+      };
+    }
 
     default:
       return state;
@@ -262,6 +394,8 @@ export function useCamera() {
     zoom: (factor: number, centerX: number, centerY: number) =>
       dispatch({ type: 'ZOOM', factor, centerX, centerY }),
     recenter: () => dispatch({ type: 'RECENTER' }),
+    setTilt: (tilt: number) => dispatch({ type: 'SET_TILT', tilt }),
+    setRotation: (rotation: number) => dispatch({ type: 'SET_ROTATION', rotation }),
   };
 }
 
@@ -302,8 +436,10 @@ export function usePlayback() {
   return {
     isPlaying: state.isPlaying,
     tempo: state.tempo,
+    playingIndex: state.playingIndex,
     setPlaying: (isPlaying: boolean) => dispatch({ type: 'SET_PLAYING', isPlaying }),
     setTempo: (tempo: number) => dispatch({ type: 'SET_TEMPO', tempo }),
+    setPlayingIndex: (index: number) => dispatch({ type: 'SET_PLAYING_INDEX', index }),
   };
 }
 
@@ -316,5 +452,21 @@ export function useHover() {
       dispatch({ type: 'SET_HOVERED_CELL', cell }),
     setHoveredTriangle: (triangle: { rootCell: GridCell; type: 'major' | 'minor' } | null) =>
       dispatch({ type: 'SET_HOVERED_TRIANGLE', triangle }),
+  };
+}
+
+export function useChordWheel() {
+  const { state, dispatch } = useApp();
+  return {
+    chordWheel: state.chordWheel,
+    showChordWheel: (pathIndex: number, position: Point) =>
+      dispatch({ type: 'SHOW_CHORD_WHEEL', pathIndex, position }),
+    hideChordWheel: () => dispatch({ type: 'HIDE_CHORD_WHEEL' }),
+    upgradeToSeventh: (pathIndex: number, quality: SeventhQuality) =>
+      dispatch({ type: 'UPGRADE_TO_SEVENTH', pathIndex, quality }),
+    removeSeventh: (pathIndex: number) =>
+      dispatch({ type: 'REMOVE_SEVENTH', pathIndex }),
+    setSeventhPreview: (quality: SeventhQuality | null) =>
+      dispatch({ type: 'SET_SEVENTH_PREVIEW', quality }),
   };
 }

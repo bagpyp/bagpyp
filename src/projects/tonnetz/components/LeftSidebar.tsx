@@ -6,7 +6,7 @@ type Tab = 'settings' | 'library';
 
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 500;
-const DEFAULT_WIDTH = 260;
+const DEFAULT_WIDTH = 340;
 
 export function LeftSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);

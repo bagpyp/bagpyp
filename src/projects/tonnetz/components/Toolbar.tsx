@@ -1,19 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePath, usePlayback } from '../state/AppContext';
 import { chordName } from '../core/musicMath';
+import { getSeventhChordName } from '../core/seventhChords';
 import { playPath, playChordPreviewMidi, initAudio } from '../audio/synth';
 
 export function Toolbar() {
   const { currentPath, savedPaths, undoPath, clearPath, savePath, loadPath, deleteSavedPath } = usePath();
-  const { isPlaying, tempo, setPlaying, setTempo } = usePlayback();
+  const { isPlaying, tempo, playingIndex, setPlaying, setTempo, setPlayingIndex } = usePlayback();
   const [pathName, setPathName] = useState('');
-  const [currentStep, setCurrentStep] = useState(-1);
+  const [repeat, setRepeat] = useState(false);
   const playingRef = useRef(false);
+  const repeatRef = useRef(false);
 
-  // Sync ref with state
+  // Sync refs with state
   useEffect(() => {
     playingRef.current = isPlaying;
   }, [isPlaying]);
+
+  useEffect(() => {
+    repeatRef.current = repeat;
+  }, [repeat]);
 
   const handleSave = () => {
     if (currentPath.length > 0 && pathName.trim()) {
@@ -29,20 +35,22 @@ export function Toolbar() {
 
     await initAudio();
     setPlaying(true);
-    setCurrentStep(0);
+    setPlayingIndex(0);
 
-    await playPath(currentPath, tempo / 2, (step) => {
-      if (!playingRef.current) return;
-      setCurrentStep(step);
-    });
+    do {
+      await playPath(currentPath, tempo / 2, (step) => {
+        if (!playingRef.current) return;
+        setPlayingIndex(step);
+      });
+    } while (repeatRef.current && playingRef.current);
 
     setPlaying(false);
-    setCurrentStep(-1);
+    setPlayingIndex(-1);
   };
 
   const handleStop = () => {
     setPlaying(false);
-    setCurrentStep(-1);
+    setPlayingIndex(-1);
   };
 
   const handlePreview = (midiPitches: [number, number, number]) => {
@@ -85,8 +93,11 @@ export function Toolbar() {
 
   // Convert path to chord names for display
   const pathDisplay = currentPath.map((p, i) => {
-    const name = chordName(p.rootPC, p.type, 0, true);
-    const isActive = i === currentStep;
+    // Use 7th chord name if upgraded, otherwise use triad name
+    const name = p.seventhQuality
+      ? getSeventhChordName(p.rootPC, p.seventhQuality, true)
+      : chordName(p.rootPC, p.type, 0, true);
+    const isActive = i === playingIndex;
     return { name, isActive };
   });
 
@@ -160,6 +171,13 @@ export function Toolbar() {
               ■ Stop
             </button>
           )}
+          <button
+            className={`repeat-button ${repeat ? 'active' : ''}`}
+            onClick={() => setRepeat(!repeat)}
+            title={repeat ? 'Repeat on' : 'Repeat off'}
+          >
+            🔁
+          </button>
         </div>
         <div className="tempo-control">
           <label>

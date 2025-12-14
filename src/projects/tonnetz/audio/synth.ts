@@ -1,10 +1,22 @@
-import type { PitchClass, TrianglePathPoint } from '../state/types';
+import type { PitchClass, TrianglePathPoint, MidiRange } from '../state/types';
+import { DEFAULT_MIDI_RANGE } from '../state/types';
+import { clampToRange } from '../core/voicing';
 
 /**
  * Simple WebAudio synthesizer for playing triads
  */
 
 let audioContext: AudioContext | null = null;
+
+// Configurable playback range (can be narrower than the full piano range)
+let playbackRange: MidiRange = DEFAULT_MIDI_RANGE;
+
+/**
+ * Set the MIDI range for playback clamping
+ */
+export function setPlaybackRange(range: MidiRange): void {
+  playbackRange = range;
+}
 
 // Get or create audio context
 function getAudioContext(): AudioContext {
@@ -20,13 +32,9 @@ function pcToFrequency(pc: PitchClass, octave: number = 4): number {
   return 440 * Math.pow(2, semitonesFromA4 / 12);
 }
 
-// MIDI note to frequency with soft clamping (C1=24 to C7=96)
-const MIN_MIDI = 24; // C1
-const MAX_MIDI = 96; // C7
-
+// MIDI note to frequency with range clamping via voicing utilities
 function midiToFrequency(midiNote: number): number {
-  // Soft clamp to playable range
-  const clampedMidi = Math.max(MIN_MIDI, Math.min(MAX_MIDI, midiNote));
+  const clampedMidi = clampToRange(midiNote, playbackRange);
   // MIDI 69 = A4 = 440Hz
   return 440 * Math.pow(2, (clampedMidi - 69) / 12);
 }
@@ -134,10 +142,10 @@ export function playTriad(
 }
 
 /**
- * Play a triad using MIDI note numbers (position-based pitch)
+ * Play a chord using MIDI note numbers (supports triads and 7th chords)
  */
-export function playTriadMidi(
-  midiPitches: [number, number, number],
+export function playChordMidi(
+  midiPitches: number[],
   duration: number = 0.5,
   volume: number = 0.2
 ): void {
@@ -157,7 +165,8 @@ export function playTriadMidi(
   masterGain.gain.setValueAtTime(volume * env.sustain, now + duration - env.release);
   masterGain.gain.linearRampToValueAtTime(0, now + duration);
 
-  // Play each note of the triad
+  // Play each note of the chord
+  const noteVolume = 0.5 / Math.sqrt(midiPitches.length); // Balance volume for more notes
   midiPitches.forEach((midiNote) => {
     const osc = ctx.createOscillator();
     osc.type = 'triangle';
@@ -165,7 +174,7 @@ export function playTriadMidi(
 
     // Individual note gain
     const noteGain = ctx.createGain();
-    noteGain.gain.value = 0.5; // Each note at half volume
+    noteGain.gain.value = noteVolume;
 
     osc.connect(noteGain);
     noteGain.connect(masterGain);
@@ -176,7 +185,20 @@ export function playTriadMidi(
 }
 
 /**
+ * Play a triad using MIDI note numbers (position-based pitch)
+ * @deprecated Use playChordMidi instead for 7th chord support
+ */
+export function playTriadMidi(
+  midiPitches: [number, number, number],
+  duration: number = 0.5,
+  volume: number = 0.2
+): void {
+  playChordMidi(midiPitches, duration, volume);
+}
+
+/**
  * Play a path of triangles (chords) with timing
+ * Supports both triads and 7th chords
  */
 export async function playPath(
   path: TrianglePathPoint[],
@@ -203,8 +225,14 @@ export async function playPath(
       onStep(i);
     }
 
-    // Play the triad using position-based MIDI pitches
-    playTriadMidi(point.midiPitches, noteDuration, 0.25);
+    // Build the full chord: triad + optional 7th
+    const chordPitches: number[] = [...point.midiPitches];
+    if (point.seventhMidiPitch !== undefined) {
+      chordPitches.push(point.seventhMidiPitch);
+    }
+
+    // Play the chord using position-based MIDI pitches
+    playChordMidi(chordPitches, noteDuration, 0.25);
 
     // Wait for next beat
     await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000));

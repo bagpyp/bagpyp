@@ -1,734 +1,271 @@
 [
   {
-    "name": "Axis / Pop-Punk (I\u2013V\u2013vi\u2013IV)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "G",
-        [
-          59,
-          62,
-          67
-        ]
-      ],
-      [
-        "Am",
-        [
-          60,
-          64,
-          69
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ]
-    ]
+    "name": "Lady Bird / Dameron Turnaround",
+    "chords": ["Cmaj7", "Ebmaj7", "Abmaj7", "Dbmaj7", "Cmaj7"],
+    "source": "Tadd Dameron turnaround flavor (normalized to C)",
+    "genre": "jazz",
+    "tags": ["planing", "major 7ths", "surprise"],
+    "mode": "major"
   },
   {
-    "name": "50s Doo-Wop (I\u2013vi\u2013IV\u2013V)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "Am",
-        [
-          60,
-          64,
-          69
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ],
-      [
-        "G",
-        [
-          59,
-          62,
-          67
-        ]
-      ]
-    ]
+    "name": "Chromatic mediants (maj7 color)",
+    "chords": ["Cmaj7", "Abmaj7", "Emaj7", "Cmaj7"],
+    "source": "Chromatic mediant color progression (normalized)",
+    "genre": "film",
+    "tags": ["chromatic mediant", "lush", "maj7"],
+    "mode": "major"
   },
   {
-    "name": "Pachelbel / Canon (I\u2013V\u2013vi\u2013iii\u2013IV\u2013I\u2013IV\u2013V)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "G",
-        [
-          59,
-          62,
-          67
-        ]
-      ],
-      [
-        "Am",
-        [
-          60,
-          64,
-          69
-        ]
-      ],
-      [
-        "Em",
-        [
-          59,
-          64,
-          67
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ],
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ],
-      [
-        "G",
-        [
-          59,
-          62,
-          67
-        ]
-      ]
-    ]
+    "name": "Pachelbel Canon",
+    "chords": ["C", "G/B", "Am", "Em", "F", "C/E", "F", "G"],
+    "source": "Canon in D – Johann Pachelbel (transposed to C)",
+    "genre": "classical",
+    "tags": ["descending bass", "baroque", "wedding", "iconic"],
+    "mode": "major",
+    "originalKey": "D",
+    "bassLineMidi": [36, 35, 33, 31, 29, 28, 29, 31],
+    "topLineMidi": [64, 62, 60, 59, 57, 55, 57, 59]
   },
   {
-    "name": "Heart & Soul / Turnaround (I\u2013vi\u2013ii\u2013V)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "Am",
-        [
-          60,
-          64,
-          69
-        ]
-      ],
-      [
-        "Dm",
-        [
-          62,
-          65,
-          69
-        ]
-      ],
-      [
-        "G",
-        [
-          62,
-          67,
-          71
-        ]
-      ]
-    ]
+    "name": "Major key line cliché",
+    "chords": ["C", "Cmaj7/B", "C7/Bb", "F/A", "Fm/Ab", "C/G", "G7", "C"],
+    "source": "Classic major line cliché (descending bass, normalized to C)",
+    "genre": "standards",
+    "tags": ["line cliché", "chromatic bass", "major"],
+    "mode": "major",
+    "bassLineMidi": [36, 35, 34, 33, 32, 31, 31, 36]
   },
   {
-    "name": "Jazz ii\u2013V\u2013I",
-    "mode": "C_major",
-    "seq": [
-      [
-        "Dm",
-        [
-          50,
-          53,
-          57
-        ]
-      ],
-      [
-        "G",
-        [
-          50,
-          55,
-          59
-        ]
-      ],
-      [
-        "C",
-        [
-          52,
-          55,
-          60
-        ]
-      ]
-    ]
+    "name": "Minor key line cliché",
+    "chords": ["Am", "AmMaj7", "Am7", "Am6", "Dm7", "E7", "Am"],
+    "source": "Classic minor line cliché (normalized to Am)",
+    "genre": "standards",
+    "tags": ["line cliché", "chromatic", "minor"],
+    "mode": "minor"
   },
   {
-    "name": "Three-chord Rock/Folk (I\u2013IV\u2013V)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ],
-      [
-        "G",
-        [
-          59,
-          62,
-          67
-        ]
-      ]
-    ]
+    "name": "Tritone backdoor chain",
+    "chords": ["Dm7", "Db7", "Cmaj7", "Fm7", "Bb7", "Cmaj7"],
+    "source": "Two cadences: tritone ii-V then backdoor (normalized)",
+    "genre": "jazz",
+    "tags": ["chromatic", "backdoor", "tritone"],
+    "mode": "major"
   },
   {
-    "name": "Royal Road (IV\u2013V\u2013iii\u2013vi)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "F",
-        [
-          53,
-          57,
-          60
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ],
-      [
-        "Em",
-        [
-          55,
-          59,
-          64
-        ]
-      ],
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ]
-    ]
+    "name": "Andalusian cadence",
+    "chords": ["Am", "G", "F", "E7"],
+    "source": "Traditional Andalusian cadence (i–bVII–bVI–V)",
+    "genre": "world",
+    "tags": ["andalusian", "phrygian flavor", "minor"],
+    "mode": "minor"
   },
   {
-    "name": "Borrowed bVII lift (I\u2013bVII\u2013IV\u2013I)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "Bb",
-        [
-          58,
-          62,
-          65
-        ]
-      ],
-      [
-        "F",
-        [
-          57,
-          60,
-          65
-        ]
-      ],
-      [
-        "C",
-        [
-          55,
-          60,
-          64
-        ]
-      ]
-    ]
+    "name": "Circle-of-fifths (diatonic 7ths)",
+    "chords": ["Cmaj7", "Fmaj7", "Bm7b5", "Em7", "Am7", "Dm7", "G7", "Cmaj7"],
+    "source": "Common-practice/jazz circle motion (normalized to C)",
+    "genre": "jazz",
+    "tags": ["circle", "diatonic 7ths", "smooth"],
+    "mode": "major"
   },
   {
-    "name": "Minor plagal color (I\u2013IV\u2013iv\u2013I)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ],
-      [
-        "Fm",
-        [
-          60,
-          65,
-          68
-        ]
-      ],
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ]
-    ]
+    "name": "Rhythm Changes (bridge dominants)",
+    "chords": ["E7", "A7", "D7", "G7", "C7", "F7", "B7", "E7"],
+    "source": "Rhythm changes bridge (dominant cycle, normalized)",
+    "genre": "jazz",
+    "tags": ["cycle of dominants", "bridge", "tension"],
+    "mode": "major"
   },
   {
-    "name": "Creep move (I\u2013III\u2013IV\u2013iv)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "E",
-        [
-          59,
-          64,
-          68
-        ]
-      ],
-      [
-        "F",
-        [
-          60,
-          65,
-          69
-        ]
-      ],
-      [
-        "Fm",
-        [
-          60,
-          65,
-          68
-        ]
-      ]
-    ]
+    "name": "Bird Blues (Parker-style)",
+    "chords": ["Cmaj7", "E7", "A7", "D7", "Dm7", "G7", "Cmaj7", "A7", "Dm7", "G7", "Cmaj7", "G7"],
+    "source": "Bebop dominant chain flavor (normalized to C)",
+    "genre": "jazz",
+    "tags": ["bebop", "dominant chain", "turnaround"],
+    "mode": "major"
   },
   {
-    "name": "Secondary dominant (I\u2013V/V\u2013V\u2013I)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ],
-      [
-        "D",
-        [
-          62,
-          66,
-          69
-        ]
-      ],
-      [
-        "G",
-        [
-          62,
-          67,
-          71
-        ]
-      ],
-      [
-        "C",
-        [
-          64,
-          67,
-          72
-        ]
-      ]
-    ]
+    "name": "Bossa / Jobim ii–V chain",
+    "chords": ["Dm7", "G7", "Cmaj7", "Cmaj7", "Fmaj7", "Fmaj7", "Bm7b5", "E7", "Am7"],
+    "source": "Common bossa nova harmonic skeleton (normalized)",
+    "genre": "latin",
+    "tags": ["bossa", "ii-V", "smooth"],
+    "mode": "major"
   },
   {
-    "name": "Circle in major (vi\u2013ii\u2013V\u2013I)",
-    "mode": "C_major",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "Dm",
-        [
-          57,
-          62,
-          65
-        ]
-      ],
-      [
-        "G",
-        [
-          59,
-          62,
-          67
-        ]
-      ],
-      [
-        "C",
-        [
-          60,
-          64,
-          67
-        ]
-      ]
-    ]
+    "name": "12-Bar Blues",
+    "chords": ["C7", "F7", "C7", "C7", "F7", "F7", "C7", "C7", "G7", "F7", "C7", "G7"],
+    "source": "Traditional 12-bar blues (normalized to C)",
+    "genre": "blues",
+    "tags": ["12-bar", "blues", "dominant 7ths"],
+    "mode": "major"
   },
   {
-    "name": "Andalusian (i\u2013bVII\u2013bVI\u2013V) in Am",
-    "mode": "A_minor",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ],
-      [
-        "F",
-        [
-          53,
-          57,
-          60
-        ]
-      ],
-      [
-        "E",
-        [
-          52,
-          56,
-          59
-        ]
-      ]
-    ]
+    "name": "Jazz Blues (quick change + ii–V)",
+    "chords": ["C7", "F7", "C7", "C7", "F7", "F7", "C7", "A7", "Dm7", "G7", "C7", "G7"],
+    "source": "Common jazz-blues form (normalized to C)",
+    "genre": "jazz",
+    "tags": ["blues", "quick change", "ii-V"],
+    "mode": "major"
   },
   {
-    "name": "Minor cadence (i\u2013iv\u2013V\u2013i) in Am",
-    "mode": "A_minor",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "Dm",
-        [
-          57,
-          62,
-          65
-        ]
-      ],
-      [
-        "E",
-        [
-          56,
-          59,
-          64
-        ]
-      ],
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ]
-    ]
+    "name": "Stepwise diatonic 7ths",
+    "chords": ["Cmaj7", "Dm7", "Em7", "Fmaj7", "G7", "Am7", "Bm7b5", "Cmaj7"],
+    "source": "Diatonic 7th-chord walk (normalized to C)",
+    "genre": "ambient",
+    "tags": ["diatonic", "lush", "walk"],
+    "mode": "major"
   },
   {
-    "name": "Modal minor loop (i\u2013bVI\u2013bVII\u2013i) in Am",
-    "mode": "A_minor",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "F",
-        [
-          57,
-          60,
-          65
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ],
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ]
-    ]
+    "name": "Minor walk with borrowed colors",
+    "chords": ["Am7", "Dm7", "G7", "Cmaj7", "Fmaj7", "Bm7b5", "E7", "Am7"],
+    "source": "Minor-centric cycle with a bright lift (normalized to Am/C)",
+    "genre": "jazz",
+    "tags": ["minor", "cycle", "resolution"],
+    "mode": "minor"
   },
   {
-    "name": "Hotel California feel in Am",
-    "mode": "A_minor",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "E",
-        [
-          56,
-          59,
-          64
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ],
-      [
-        "Dm",
-        [
-          53,
-          57,
-          62
-        ]
-      ],
-      [
-        "F",
-        [
-          53,
-          57,
-          60
-        ]
-      ],
-      [
-        "C",
-        [
-          52,
-          55,
-          60
-        ]
-      ],
-      [
-        "Dm",
-        [
-          53,
-          57,
-          62
-        ]
-      ],
-      [
-        "E",
-        [
-          52,
-          56,
-          59
-        ]
-      ]
-    ]
+    "name": "ii–V–I with tritone sub",
+    "chords": ["Dm7", "Db7", "Cmaj7"],
+    "source": "Jazz reharmonization (tritone substitution)",
+    "genre": "jazz",
+    "tags": ["ii-V-I", "tritone sub", "chromatic"],
+    "mode": "major"
   },
   {
-    "name": "Minor pop loop (i\u2013bVII\u2013bVI\u2013bVII) in Am",
-    "mode": "A_minor",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ],
-      [
-        "F",
-        [
-          53,
-          57,
-          60
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ]
-    ]
+    "name": "Backdoor cadence",
+    "chords": ["Fm7", "Bb7", "Cmaj7"],
+    "source": "Common jazz/pop cadence (ivm7–bVII7–I)",
+    "genre": "jazz",
+    "tags": ["backdoor", "ivm7-bVII7-I"],
+    "mode": "major"
   },
   {
-    "name": "Andalusian (natural minor v) in Am",
-    "mode": "A_minor",
-    "seq": [
-      [
-        "Am",
-        [
-          57,
-          60,
-          64
-        ]
-      ],
-      [
-        "G",
-        [
-          55,
-          59,
-          62
-        ]
-      ],
-      [
-        "F",
-        [
-          53,
-          57,
-          60
-        ]
-      ],
-      [
-        "Em",
-        [
-          52,
-          55,
-          59
-        ]
-      ]
-    ]
+    "name": "Rhythm Changes (A section)",
+    "chords": ["Cmaj7", "A7", "Dm7", "G7", "Em7", "A7", "Dm7", "G7"],
+    "source": "'I Got Rhythm' changes – George Gershwin (normalized to C)",
+    "genre": "jazz",
+    "tags": ["rhythm changes", "A section", "turnarounds"],
+    "mode": "major",
+    "originalKey": "Bb"
+  },
+  {
+    "name": "Secondary dominant into ii–V–I",
+    "chords": ["Cmaj7", "A7", "Dm7", "G7", "Cmaj7"],
+    "source": "Common functional expansion",
+    "genre": "jazz",
+    "tags": ["secondary dominant", "ii-V-I"],
+    "mode": "major"
+  },
+  {
+    "name": "Backdoor into ii–V–I",
+    "chords": ["Fm7", "Bb7", "Cmaj7", "Am7", "Dm7", "G7", "Cmaj7"],
+    "source": "Common cadence chaining (normalized to C)",
+    "genre": "jazz",
+    "tags": ["backdoor", "turnaround", "ii-V-I"],
+    "mode": "major"
+  },
+  {
+    "name": "Gospel cadence (IV–iv–I)",
+    "chords": ["Fmaj7", "Fm7", "Cmaj7"],
+    "source": "Common gospel/R&B cadence (normalized to C)",
+    "genre": "rnb",
+    "tags": ["gospel", "borrowed iv", "warm"],
+    "mode": "major"
+  },
+  {
+    "name": "Chromatic approach to ii–V",
+    "chords": ["Cmaj7", "C#dim7", "Dm7", "G7", "Cmaj7"],
+    "source": "Common chromatic passing diminished move (normalized to C)",
+    "genre": "jazz",
+    "tags": ["chromatic", "passing diminished", "ii-V-I"],
+    "mode": "major"
+  },
+  {
+    "name": "Diminished passing dominant chain",
+    "chords": ["Cmaj7", "E7", "Edim7", "Dm7", "G7", "Cmaj7"],
+    "source": "Dominant to diminished to target (normalized)",
+    "genre": "jazz",
+    "tags": ["diminished passing", "dominant", "resolution"],
+    "mode": "major"
+  },
+  {
+    "name": "Deceptive cadence loop",
+    "chords": ["G7", "Am7", "Dm7", "G7", "Cmaj7"],
+    "source": "Functional deceptive pull into turnaround (normalized)",
+    "genre": "jazz",
+    "tags": ["deceptive", "turnaround", "ii-V-I"],
+    "mode": "major"
+  },
+  {
+    "name": "Jazz Turnaround (all 7ths)",
+    "chords": ["Cmaj7", "Am7", "Dm7", "G7"],
+    "source": "Jazz standard turnaround (Imaj7–vi7–ii7–V7)",
+    "genre": "jazz",
+    "tags": ["turnaround", "ii-V", "smooth voice leading"],
+    "mode": "major"
+  },
+  {
+    "name": "ii–V–I (major)",
+    "chords": ["Dm7", "G7", "Cmaj7"],
+    "source": "Core jazz cadence",
+    "genre": "jazz",
+    "tags": ["ii-V-I", "resolution"],
+    "mode": "major"
+  },
+  {
+    "name": "Minor ii–V–i",
+    "chords": ["Bm7b5", "E7", "Am"],
+    "source": "Core minor-key cadence",
+    "genre": "jazz",
+    "tags": ["minor", "ii-V-i", "resolution"],
+    "mode": "minor"
+  },
+  {
+    "name": "Minor ii–V–i (mMaj7 color)",
+    "chords": ["Bm7b5", "E7", "AmMaj7"],
+    "source": "Minor-key cadence with tonic maj7 color (normalized to Am)",
+    "genre": "jazz",
+    "tags": ["minor", "ii-V-i", "mMaj7 color"],
+    "mode": "minor"
+  },
+  {
+    "name": "Heart & Soul",
+    "chords": ["C", "Am", "Dm", "G"],
+    "source": "Common American songbook progression",
+    "genre": "standards",
+    "tags": ["turnaround", "I-vi-ii-V"],
+    "mode": "major"
+  },
+  {
+    "name": "Axis (I–V–vi–IV)",
+    "chords": ["C", "G", "Am", "F"],
+    "source": "Common pop/rock progression",
+    "genre": "pop",
+    "tags": ["four-chords", "pop", "I-V-vi-IV"],
+    "mode": "major"
+  },
+  {
+    "name": "Sensitive Pop (vi–IV–I–V)",
+    "chords": ["Am", "F", "C", "G"],
+    "source": "Common pop/rock progression",
+    "genre": "pop",
+    "tags": ["four-chords", "vi-IV-I-V"],
+    "mode": "major"
+  },
+  {
+    "name": "50s Doo-Wop",
+    "chords": ["C", "Am", "F", "G"],
+    "source": "Common '50s progression (I–vi–IV–V)",
+    "genre": "pop",
+    "tags": ["doo-wop", "classic", "I-vi-IV-V"],
+    "mode": "major"
+  },
+  {
+    "name": "Fully diminished pivot",
+    "chords": ["Cmaj7", "C#dim7", "Dm7", "G7", "Cmaj7"],
+    "source": "Diminished symmetry as connector (normalized)",
+    "genre": "jazz",
+    "tags": ["diminished", "connector", "ii-V-I"],
+    "mode": "major"
   }
 ]

@@ -1,47 +1,64 @@
-import type { TrianglePathPoint, GridCell, PitchClass } from '../state/types';
+import type { TrianglePathPoint, GridCell, PitchClass, MidiRange } from '../state/types';
+import { DEFAULT_MIDI_RANGE } from '../state/types';
 import { mod12 } from '../core/musicMath';
+import {
+  parseChordSymbol,
+  getPitchClassesForChord,
+  getDisplayType,
+} from '../core/chordParser';
+import { voiceChord, voiceChordSmooth } from '../core/voicing';
 import progressionsData from './triad_progressions_C_and_Am.json';
 
-export interface ProgressionData {
-  name: string;
-  mode: string;
-  seq: [string, [number, number, number]][];
-}
+// =============================================================================
+// New JSON format (with metadata)
+// =============================================================================
 
-export interface Progression {
-  id: string;
+/**
+ * Raw progression data from JSON
+ */
+export interface ProgressionJsonData {
   name: string;
-  mode: 'C_major' | 'A_minor';
-  points: TrianglePathPoint[];
+  chords: string[];
+  source?: string;
+  genre?: string;
+  tags?: string[];
+  mode?: 'major' | 'minor';
+  originalKey?: string;
+  bassLineMidi?: (number | null)[];
+  topLineMidi?: (number | null)[];
 }
 
 /**
- * Parse chord name to get root pitch class and type
- * e.g., "C" -> { rootPC: 0, type: 'major' }
- *       "Am" -> { rootPC: 9, type: 'minor' }
- *       "F#m" -> { rootPC: 6, type: 'minor' }
+ * Processed progression with computed path points
  */
-const NOTE_TO_PC: Record<string, number> = {
-  'C': 0, 'C#': 1, 'Db': 1,
-  'D': 2, 'D#': 3, 'Eb': 3,
-  'E': 4, 'Fb': 4, 'E#': 5,
-  'F': 5, 'F#': 6, 'Gb': 6,
-  'G': 7, 'G#': 8, 'Ab': 8,
-  'A': 9, 'A#': 10, 'Bb': 10,
-  'B': 11, 'Cb': 11, 'B#': 0,
-};
-
-function parseChordName(name: string): { rootPC: PitchClass; type: 'major' | 'minor' } {
-  // Check if minor (ends with 'm' but not 'dim' or 'maj')
-  const isMinor = name.endsWith('m') && !name.endsWith('dim') && !name.endsWith('maj');
-
-  // Extract root note (remove trailing 'm' if minor)
-  const rootName = isMinor ? name.slice(0, -1) : name;
-
-  const rootPC = (NOTE_TO_PC[rootName] ?? 0) as PitchClass;
-
-  return { rootPC, type: isMinor ? 'minor' : 'major' };
+export interface Progression {
+  id: string;
+  name: string;
+  chords: string[];           // Original chord symbols
+  source?: string;            // Description/origin
+  genre?: string;             // Genre category
+  tags: string[];             // Searchable tags
+  mode: 'major' | 'minor';    // Tonal center
+  originalKey?: string;       // Original key before normalization
+  points: TrianglePathPoint[];
 }
+
+// =============================================================================
+// Available genres and tags (computed from data)
+// =============================================================================
+
+export const ALL_GENRES: string[] = [];
+export const ALL_TAGS: string[] = [];
+
+// =============================================================================
+// Grid/MIDI utilities
+// =============================================================================
+
+/**
+ * Target center MIDI pitch (middle C = 60)
+ * All progressions will be shifted to center around this
+ */
+const CENTER_MIDI = 60;
 
 /**
  * Find grid cell for a given MIDI pitch
@@ -51,12 +68,10 @@ function parseChordName(name: string): { rootPC: PitchClass; type: 'major' | 'mi
 function midiToGrid(midi: number): GridCell {
   const target = midi - 60; // 4*col + 3*row = target
 
-  // Search for solutions within reasonable bounds
   let bestCell: GridCell = { row: 0, col: 0 };
   let bestDist = Infinity;
 
   for (let col = -9; col <= 11; col++) {
-    // row = (target - 4*col) / 3
     const remainder = target - 4 * col;
     if (remainder % 3 === 0) {
       const row = remainder / 3;
@@ -74,79 +89,224 @@ function midiToGrid(midi: number): GridCell {
 }
 
 /**
- * Find the root MIDI from chord pitches given the known root pitch class
+ * Center a progression's MIDI pitches around CENTER_MIDI (60)
+ * Shifts all pitches by whole octaves so the average pitch is close to 60
  */
-function findRootMidi(midiPitches: [number, number, number], rootPC: PitchClass): number {
-  // Find the pitch that matches the root pitch class
-  for (const pitch of midiPitches) {
-    if (mod12(pitch) === rootPC) {
-      return pitch;
+function centerProgression(points: TrianglePathPoint[]): TrianglePathPoint[] {
+  if (points.length === 0) return points;
+
+  // Calculate average MIDI pitch across all notes
+  let totalPitch = 0;
+  let noteCount = 0;
+
+  for (const point of points) {
+    for (const midi of point.midiPitches) {
+      totalPitch += midi;
+      noteCount++;
+    }
+    if (point.seventhMidiPitch !== undefined) {
+      totalPitch += point.seventhMidiPitch;
+      noteCount++;
     }
   }
-  // Fallback to lowest note
-  return Math.min(...midiPitches);
+
+  const avgPitch = totalPitch / noteCount;
+
+  // Calculate octave shift needed (in semitones, multiple of 12)
+  const octaveShift = Math.round((CENTER_MIDI - avgPitch) / 12) * 12;
+
+  // If shift is 0, no change needed
+  if (octaveShift === 0) return points;
+
+  // Apply shift to all pitches and recalculate grid cells
+  return points.map(point => {
+    const newMidiPitches: [number, number, number] = [
+      point.midiPitches[0] + octaveShift,
+      point.midiPitches[1] + octaveShift,
+      point.midiPitches[2] + octaveShift,
+    ];
+
+    // Find new root cell based on shifted bass note
+    const rootMidi = newMidiPitches[0];
+    const rootCell = midiToGrid(rootMidi);
+
+    const newPoint: TrianglePathPoint = {
+      ...point,
+      rootCell,
+      midiPitches: newMidiPitches,
+    };
+
+    // Shift 7th/6th pitch if present
+    if (point.seventhMidiPitch !== undefined) {
+      newPoint.seventhMidiPitch = point.seventhMidiPitch + octaveShift;
+    }
+
+    return newPoint;
+  });
 }
 
+// =============================================================================
+// Progression parsing
+// =============================================================================
+
 /**
- * Convert progression data to our path format
+ * Parse chord symbols into TrianglePathPoint array with voice leading
  */
-function convertProgression(data: ProgressionData, index: number): Progression {
-  const points: TrianglePathPoint[] = data.seq.map(([chordName, midiPitches]) => {
-    const midi = midiPitches as [number, number, number];
+function parseProgressionChords(
+  chords: string[],
+  bassHints?: (number | null)[],
+  topHints?: (number | null)[],
+  range: MidiRange = DEFAULT_MIDI_RANGE
+): TrianglePathPoint[] {
+  const points: TrianglePathPoint[] = [];
+  let previousVoicing: number[] | undefined;
 
-    // Parse chord name to get root and type (don't guess from MIDI)
-    const { rootPC, type } = parseChordName(chordName);
+  for (let i = 0; i < chords.length; i++) {
+    const chordSymbol = chords[i];
+    const parsed = parseChordSymbol(chordSymbol);
 
-    // Find the actual root MIDI note from the pitches
-    const rootMidi = findRootMidi(midi, rootPC);
+    // Get pitch classes for this chord
+    const pitchClasses = getPitchClassesForChord(parsed);
+
+    // Get display type for triangle rendering
+    const displayType = getDisplayType(parsed);
+
+    // Get voice-leading hints if available
+    const bassHint = bassHints?.[i] ?? undefined;
+    const topHint = topHints?.[i] ?? undefined;
+
+    // Voice the chord
+    let midiPitches: number[];
+    if (previousVoicing && !bassHint && !topHint) {
+      midiPitches = voiceChordSmooth(pitchClasses, previousVoicing, range);
+    } else {
+      midiPitches = voiceChord(pitchClasses, range, bassHint, topHint);
+    }
+    previousVoicing = midiPitches;
+
+    // Find root MIDI (bass note if slash chord, otherwise first pitch class match)
+    const rootMidi = parsed.bassPC !== undefined
+      ? midiPitches.find(m => mod12(m) === parsed.bassPC) ?? midiPitches[0]
+      : midiPitches.find(m => mod12(m) === parsed.rootPC) ?? midiPitches[0];
 
     const rootCell = midiToGrid(rootMidi);
 
-    const third = type === 'major' ? 4 : 3;
-    const pitchClasses: [PitchClass, PitchClass, PitchClass] = [
-      rootPC,
-      mod12(rootPC + third) as PitchClass,
-      mod12(rootPC + 7) as PitchClass,
+    // Build pitch classes tuple (first 3 notes)
+    const pitchClassesTuple: [PitchClass, PitchClass, PitchClass] = [
+      pitchClasses[0],
+      pitchClasses[1],
+      pitchClasses[2],
     ];
 
-    return {
+    // Build MIDI pitches tuple
+    const midiPitchesTuple: [number, number, number] = [
+      midiPitches[0] ?? rootMidi,
+      midiPitches[1] ?? rootMidi + 4,
+      midiPitches[2] ?? rootMidi + 7,
+    ];
+
+    const point: TrianglePathPoint = {
       rootCell,
-      type,
-      rootPC,
-      pitchClasses,
-      midiPitches: midi,
+      type: displayType,
+      rootPC: parsed.rootPC,
+      pitchClasses: pitchClassesTuple,
+      midiPitches: midiPitchesTuple,
     };
-  });
+
+    // Add 7th chord properties if present
+    if (parsed.seventhQuality && pitchClasses.length >= 4) {
+      point.seventhQuality = parsed.seventhQuality;
+      point.seventhPitchClass = pitchClasses[3];
+      point.seventhMidiPitch = midiPitches[3];
+    }
+
+    points.push(point);
+  }
+
+  return points;
+}
+
+/**
+ * Convert raw JSON data to Progression object
+ */
+function convertProgression(data: ProgressionJsonData, index: number): Progression {
+  // Parse chords and apply centering so progression is near middle C
+  const rawPoints = parseProgressionChords(
+    data.chords,
+    data.bassLineMidi,
+    data.topLineMidi
+  );
+  const centeredPoints = centerProgression(rawPoints);
 
   return {
-    id: `preset-${index}`,
+    id: `prog-${index}`,
     name: data.name,
-    mode: data.mode as 'C_major' | 'A_minor',
-    points,
+    chords: data.chords,
+    source: data.source,
+    genre: data.genre,
+    tags: data.tags ?? [],
+    mode: data.mode ?? 'major',
+    originalKey: data.originalKey,
+    points: centeredPoints,
   };
 }
 
-// Convert all progressions
-export const PROGRESSIONS: Progression[] = (progressionsData as ProgressionData[]).map(
+// =============================================================================
+// Load and export progressions
+// =============================================================================
+
+// Convert all progressions from JSON
+export const PROGRESSIONS: Progression[] = (progressionsData as ProgressionJsonData[]).map(
   (data, index) => convertProgression(data, index)
 );
 
-// Helper to move a progression to the front by name substring
-function prioritize(list: Progression[], nameSubstring: string): Progression[] {
-  const idx = list.findIndex(p => p.name.includes(nameSubstring));
-  if (idx > 0) {
-    const [item] = list.splice(idx, 1);
-    list.unshift(item);
-  }
-  return list;
+// Build genre and tag lists
+const genreSet = new Set<string>();
+const tagSet = new Set<string>();
+
+for (const prog of PROGRESSIONS) {
+  if (prog.genre) genreSet.add(prog.genre);
+  for (const tag of prog.tags) tagSet.add(tag);
 }
 
-// Group by mode and prioritize specific progressions
-export const MAJOR_PROGRESSIONS = prioritize(
-  PROGRESSIONS.filter(p => p.mode === 'C_major'),
-  'Pachelbel'
-);
-export const MINOR_PROGRESSIONS = prioritize(
-  PROGRESSIONS.filter(p => p.mode === 'A_minor'),
-  'Hotel California'
-);
+// Sort and export
+ALL_GENRES.push(...Array.from(genreSet).sort());
+ALL_TAGS.push(...Array.from(tagSet).sort());
+
+// =============================================================================
+// Filter helpers
+// =============================================================================
+
+/**
+ * Filter progressions by genre
+ */
+export function filterByGenre(genre: string | null): Progression[] {
+  if (!genre) return PROGRESSIONS;
+  return PROGRESSIONS.filter(p => p.genre === genre);
+}
+
+/**
+ * Filter progressions by tag
+ */
+export function filterByTag(tag: string): Progression[] {
+  return PROGRESSIONS.filter(p => p.tags.includes(tag));
+}
+
+/**
+ * Filter progressions by mode
+ */
+export function filterByMode(mode: 'major' | 'minor'): Progression[] {
+  return PROGRESSIONS.filter(p => p.mode === mode);
+}
+
+/**
+ * Search progressions by name or tags
+ */
+export function searchProgressions(query: string): Progression[] {
+  const lowerQuery = query.toLowerCase();
+  return PROGRESSIONS.filter(p =>
+    p.name.toLowerCase().includes(lowerQuery) ||
+    p.tags.some(t => t.toLowerCase().includes(lowerQuery)) ||
+    p.source?.toLowerCase().includes(lowerQuery)
+  );
+}

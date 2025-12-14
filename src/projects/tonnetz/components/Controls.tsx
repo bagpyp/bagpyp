@@ -9,10 +9,6 @@ export function Controls() {
     setLabelMode,
     setKeyCenter,
     toggleSharps,
-    toggleTriangles,
-    togglePatchBoundaries,
-    toggleMajorTriangles,
-    toggleMinorTriangles,
   } = useSettings();
 
   return (
@@ -56,61 +52,13 @@ export function Controls() {
         </label>
       </div>
 
-      <h4>Display</h4>
-
-      <div className="control-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={settings.showTriangles}
-            onChange={toggleTriangles}
-          />
-          Show Triangles
-        </label>
-      </div>
-
-      {settings.showTriangles && (
-        <>
-          <div className="control-group sub-control">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={settings.showMajorTriangles}
-                onChange={toggleMajorTriangles}
-              />
-              <span className="major-indicator">Major</span>
-            </label>
-          </div>
-
-          <div className="control-group sub-control">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={settings.showMinorTriangles}
-                onChange={toggleMinorTriangles}
-              />
-              <span className="minor-indicator">Minor</span>
-            </label>
-          </div>
-        </>
-      )}
-
-      <div className="control-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={settings.showPatchBoundaries}
-            onChange={togglePatchBoundaries}
-          />
-          Show Patch Boundaries
-        </label>
-      </div>
-
       <div className="help-text">
         <h4>Controls</h4>
-        <p><strong>Pan:</strong> Click and drag</p>
-        <p><strong>Zoom:</strong> Mouse wheel</p>
-        <p><strong>Add to path:</strong> Click a cell</p>
+        <p><strong>Pan:</strong> Drag</p>
+        <p><strong>Zoom:</strong> Scroll wheel</p>
+        <p><strong>Tilt:</strong> Shift + drag</p>
+        <p><strong>Rotate:</strong> ⌘/Ctrl + drag</p>
+        <p><strong>Add chord:</strong> ⇧⌘ + click</p>
       </div>
 
       <div className="help-text">

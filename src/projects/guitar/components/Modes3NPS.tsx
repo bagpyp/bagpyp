@@ -1,129 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { calculateFretYPositions, getNoteYPosition, getStringThickness, getNoteAtPosition } from '../lib/fretboard-physics';
 import { getNoteColor, getAllNoteColorsInCircleOfFifths } from '../lib/note-colors';
 import { playNote, stopAllSounds, resumeAudioContext } from '../lib/sound';
 import { DIMENSIONS, calculateAllStringYPositions } from '../lib/fretboard-dimensions';
-
-// Mode data structure
-interface ModePattern {
-  mode: string;
-  pattern: number[][]; // 6 arrays of 3 fret numbers each
-  markers: {
-    root: [number, number][]; // [string (1-6), fret] pairs
-    mode_start: [number, number][];
-  };
-}
-
-// G major modes data
-const G_MAJOR_MODES: ModePattern[] = [
-  {
-    mode: "G Ionian",
-    pattern: [
-      [3, 5, 7],
-      [3, 5, 7],
-      [4, 5, 7],
-      [4, 5, 7],
-      [5, 7, 8],
-      [5, 7, 8]
-    ],
-    markers: {
-      root: [[6, 3], [4, 5], [1, 8]],
-      mode_start: []
-    }
-  },
-  {
-    mode: "A Dorian",
-    pattern: [
-      [5, 7, 8],
-      [5, 7, 9],
-      [5, 7, 9],
-      [5, 7, 9],
-      [7, 8, 10],
-      [7, 8, 10]
-    ],
-    markers: {
-      root: [[5, 7], [3, 7]],
-      mode_start: [[6, 5], [4, 7], [1, 8]]
-    }
-  },
-  {
-    mode: "B Phrygian",
-    pattern: [
-      [7, 8, 10],
-      [7, 9, 10],
-      [7, 9, 10],
-      [7, 9, 11],
-      [8, 10, 12],
-      [8, 10, 12]
-    ],
-    markers: {
-      root: [[5, 10], [3, 9]],
-      mode_start: [[6, 7], [4, 9], [1, 10]]
-    }
-  },
-  {
-    mode: "C Lydian",
-    pattern: [
-      [8, 10, 12],
-      [9, 10, 12],
-      [9, 10, 12],
-      [9, 10, 12],
-      [10, 12, 13],
-      [10, 12, 13]
-    ],
-    markers: {
-      root: [[5, 10], [2, 13]],
-      mode_start: [[6, 8], [3, 10], [1, 12]]
-    }
-  },
-  {
-    mode: "D Mixolydian",
-    pattern: [
-      [10, 12, 13],
-      [10, 12, 14],
-      [10, 12, 14],
-      [10, 12, 14],
-      [12, 13, 15],
-      [12, 13, 15]
-    ],
-    markers: {
-      root: [[4, 12], [2, 15]],
-      mode_start: [[6, 10], [3, 12], [1, 13]]
-    }
-  },
-  {
-    mode: "E Aeolian",
-    pattern: [
-      [12, 13, 15],
-      [12, 14, 15],
-      [12, 14, 15],
-      [12, 14, 15],
-      [13, 15, 17],
-      [13, 15, 17]
-    ],
-    markers: {
-      root: [[6, 15], [4, 14]],
-      mode_start: [[6, 12], [3, 14], [1, 15]]
-    }
-  },
-  {
-    mode: "F# Locrian",
-    pattern: [
-      [13, 15, 17],
-      [13, 15, 17],
-      [13, 15, 17],
-      [13, 15, 17],
-      [15, 17, 18],
-      [15, 17, 18]
-    ],
-    markers: {
-      root: [[6, 15], [4, 17]],
-      mode_start: [[6, 14], [3, 15], [1, 17]]
-    }
-  }
-];
+import { generateAllModePatterns, getKeyOptions, ModePattern } from '../lib/modes';
 
 interface ModeFretboardProps {
   modeData: ModePattern;
@@ -168,24 +50,26 @@ function ModeFretboard({ modeData }: ModeFretboardProps) {
     }
   }, [hoveredNote]);
 
-  // Convert string number (1-6) to string index (5-0)
-  const stringNumToIdx = (stringNum: number) => 6 - stringNum;
-
   // Check if a position is a root marker
-  const isRootMarker = (stringNum: number, fret: number): boolean => {
-    return modeData.markers.root.some(([s, f]) => s === stringNum && f === fret);
+  const isRootMarker = (stringIdx: number, fret: number): boolean => {
+    return modeData.rootPositions.some(([s, f]) => s === stringIdx && f === fret);
   };
 
   // Collect all pattern notes
-  const patternNotes: { stringIdx: number; fret: number; stringNum: number }[] = [];
+  const patternNotes: { stringIdx: number; fret: number }[] = [];
   modeData.pattern.forEach((frets, stringIdx) => {
     frets.forEach(fret => {
-      patternNotes.push({ stringIdx, fret, stringNum: 6 - stringIdx });
+      patternNotes.push({ stringIdx, fret });
     });
   });
 
   return (
     <div className="w-full">
+      {/* Mode label */}
+      <div className="text-center mb-1">
+        <span className="text-lg font-semibold text-gray-200">{modeData.mode}</span>
+      </div>
+
       <svg
         width="98%"
         height={DIMENSIONS.svgHeight}
@@ -281,13 +165,13 @@ function ModeFretboard({ modeData }: ModeFretboardProps) {
         })}
 
         {/* Pattern notes (100% opacity) */}
-        {patternNotes.map(({ stringIdx, fret, stringNum }, idx) => {
+        {patternNotes.map(({ stringIdx, fret }, idx) => {
           const noteAtPos = getNoteAtPosition(stringIdx, fret);
           const colorData = getNoteColor(noteAtPos.noteName);
           const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
           const yPos = stringYPositions[stringIdx];
           const isHovered = hoveredNote?.string === stringIdx && hoveredNote?.fret === fret;
-          const isRoot = isRootMarker(stringNum, fret);
+          const isRoot = isRootMarker(stringIdx, fret);
 
           const radius = isHovered
             ? DIMENSIONS.noteRadius * DIMENSIONS.directHoverSizeMultiplier
@@ -341,22 +225,86 @@ function ModeFretboard({ modeData }: ModeFretboardProps) {
 }
 
 /**
- * Main component showing all 7 modes of G major
+ * Main component showing all 7 modes for a selected key
  */
 export default function Modes3NPS() {
+  const [selectedKey, setSelectedKey] = useState('G');
+  const keyOptions = getKeyOptions();
+
+  // Generate mode patterns when key changes
+  const modePatterns = useMemo(() => {
+    return generateAllModePatterns(selectedKey);
+  }, [selectedKey]);
+
+  // Handle keyboard shortcuts for key selection
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) {
+        return;
+      }
+
+      const key = e.key;
+
+      // Natural notes: lowercase letters
+      const naturalMap: Record<string, string> = {
+        'c': 'C', 'd': 'D', 'e': 'E', 'f': 'F',
+        'g': 'G', 'a': 'A', 'b': 'B'
+      };
+
+      // Sharp notes: uppercase letters
+      const sharpMap: Record<string, string> = {
+        'C': 'C#', 'D': 'D#', 'F': 'F#', 'G': 'G#', 'A': 'A#',
+        'E': 'F', 'B': 'C' // E# = F, B# = C
+      };
+
+      if (naturalMap[key]) {
+        setSelectedKey(naturalMap[key]);
+      } else if (sharpMap[key]) {
+        setSelectedKey(sharpMap[key]);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
-    <div className="space-y-6 p-4 w-full">
+    <div className="space-y-4 p-4 w-full bg-slate-900 min-h-screen">
+      {/* Header with key selector */}
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold mb-2">G Major Scale - 7 Modes (3NPS)</h1>
-        <p className="text-gray-400">
-          Three notes per string patterns • Golden rings = root notes
+        <h1 className="text-3xl font-bold mb-4 text-white">
+          {selectedKey} Major Scale - 7 Modes (3NPS)
+        </h1>
+
+        {/* Key selector */}
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <label className="text-gray-300 font-medium">Key:</label>
+          <select
+            value={selectedKey}
+            onChange={(e) => setSelectedKey(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-blue-500 focus:outline-none cursor-pointer"
+          >
+            {keyOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label} Major
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <p className="text-gray-400 text-sm">
+          Three notes per string patterns | Golden rings = root notes | Hover to play
+        </p>
+        <p className="text-gray-500 text-xs mt-1">
+          Keyboard: lowercase = natural (c, d, e...) | uppercase = sharp (C=C#, D=D#...)
         </p>
       </div>
 
       {/* Stack all 7 mode fretboards */}
-      <div className="flex flex-col gap-0">
-        {G_MAJOR_MODES.map((modeData, idx) => (
-          <ModeFretboard key={idx} modeData={modeData} />
+      <div className="flex flex-col gap-2">
+        {modePatterns.map((modeData, idx) => (
+          <ModeFretboard key={`${selectedKey}-${idx}`} modeData={modeData} />
         ))}
       </div>
     </div>

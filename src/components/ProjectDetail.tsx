@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Project } from "../interfaces";
 import dynamic from "next/dynamic";
+import FullscreenWrapper from "./FullscreenWrapper";
 
 type ProjectDetailProps = {
 	project: Project;
@@ -57,18 +58,18 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 	// If it's a guitar project, render the interactive component
 	if (isGuitarProject && GuitarComponent) {
 		return (
-			<div className="bg-white min-h-screen">
+			<FullscreenWrapper className="bg-white min-h-screen">
 				<GuitarComponent />
-			</div>
+			</FullscreenWrapper>
 		);
 	}
 
 	// If it's the Tonnetz project, render the Tonnetz component
 	if (isTonnetzProject && TonnetzComponent) {
 		return (
-			<div className="min-h-screen">
+			<FullscreenWrapper className="min-h-screen">
 				<TonnetzComponent />
-			</div>
+			</FullscreenWrapper>
 		);
 	}
 

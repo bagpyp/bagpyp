@@ -8,6 +8,7 @@ import { ChordWheel } from './components/ChordWheel';
 function App() {
   return (
     <AppProvider>
+      <div className="tonnetz-app-container">
       <div className="app">
         <header className="app-header">
           <h1>Tonnetz Lattice</h1>
@@ -23,6 +24,7 @@ function App() {
 
           <RightSidebar />
         </main>
+      </div>
       </div>
       <ChordWheel />
     </AppProvider>

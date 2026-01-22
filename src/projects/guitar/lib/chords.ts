@@ -92,66 +92,56 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
     };
   }
 
-  // For minor chords, try to transform from major positions
-  if (chordType === 'minor' && MAJOR_TRIAD_POSITIONS[sharpKey]) {
+  // For minor, dim, and aug chords, transform from major positions
+  const transformableTypes: ChordType[] = ['minor', 'dim', 'aug'];
+  if (transformableTypes.includes(chordType) && MAJOR_TRIAD_POSITIONS[sharpKey]) {
     const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'E'];
     const stringGroupsData: Array<[number, number, number]> = [
       [0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5],
     ];
 
     const stringGroups: StringGroupTriads[] = [];
-    let allTransformationsSuccessful = true;
 
     for (let groupIdx = 0; groupIdx < stringGroupsData.length; groupIdx++) {
       const stringGroupIndices = stringGroupsData[groupIdx];
       const groupKey = `G${groupIdx}`;
       const majorVoicings = MAJOR_TRIAD_POSITIONS[sharpKey][groupKey];
 
-      const minorVoicings: TriadVoicing[] = [];
+      const transformedVoicings: TriadVoicing[] = [];
 
       for (const majorVoicing of majorVoicings) {
-        // Try to transform this major voicing to minor
-        const minorFrets = transformChordType(
+        // Try to transform this major voicing to the target chord type
+        const newFrets = transformChordType(
           majorVoicing.frets,
           stringGroupIndices,
           key,
-          'minor',
+          chordType,
           fretboard
         );
 
-        if (minorFrets === null) {
-          // Can't transform this voicing (e.g., open string issue)
-          // Skip this position for minor chord
-          console.log(
-            `Cannot transform ${key} major position ${majorVoicing.pos} in group ${groupIdx} to minor (open string constraint)`
-          );
+        if (newFrets === null) {
+          // Can't transform this voicing (e.g., open string or fret limit)
           continue;
         }
 
         // Calculate the new voicing properties
-        const notes = minorFrets.map((fret, idx) =>
+        const notes = newFrets.map((fret, idx) =>
           fretboard[stringGroupIndices[idx]][fret]
         );
 
-        // Verify this is a valid minor chord voicing
+        // Verify this is a valid chord voicing
         if (!isValidChordVoicing(notes, chordPcs)) {
-          console.warn(
-            `Invalid minor chord voicing for ${key} position ${majorVoicing.pos} in group ${groupIdx}`
-          );
           continue;
         }
 
         const noteNames = notes.map(pc => pcToDisplayName(pc, key));
-        const avgFret = minorFrets.reduce((sum, f) => sum + f, 0) / 3;
-
-        // For minor chords, we need to recalculate inversion
-        // The bass note determines the inversion
+        const avgFret = newFrets.reduce((sum, f) => sum + f, 0) / 3;
         const inversion = identifyInversion(notes, chordPcs as [number, number, number]);
 
-        minorVoicings.push({
+        transformedVoicings.push({
           position: majorVoicing.pos,
           strings: [...stringGroupIndices],
-          frets: minorFrets,
+          frets: newFrets,
           notes,
           noteNames,
           inversion,
@@ -160,22 +150,18 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
       }
 
       // If we have at least some voicings for this group, add it
-      if (minorVoicings.length > 0) {
+      if (transformedVoicings.length > 0) {
         // Renumber positions to be consecutive
-        minorVoicings.sort((a, b) => a.avgFret - b.avgFret);
-        minorVoicings.forEach((v, idx) => {
+        transformedVoicings.sort((a, b) => a.avgFret - b.avgFret);
+        transformedVoicings.forEach((v, idx) => {
           v.position = idx;
         });
 
         stringGroups.push({
           strings: [...stringGroupIndices],
           stringNames: stringGroupIndices.map(idx => STRING_NAMES[idx]),
-          voicings: minorVoicings,
+          voicings: transformedVoicings,
         });
-      } else {
-        // No valid voicings for this group
-        allTransformationsSuccessful = false;
-        console.warn(`No valid minor voicings for ${key} in group ${groupIdx}`);
       }
     }
 

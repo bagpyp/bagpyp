@@ -140,20 +140,21 @@ export function isValidChordVoicing(
 }
 
 /**
- * For minor chords, check if we can "flat the third" on open strings
- * Returns adjusted fret positions if possible, or null if not possible
- * @param frets The original major chord frets
+ * Adjust a specific note in a voicing by a number of semitones
+ * @param frets The current fret positions
  * @param strings The string indices
- * @param majorThird The major third pitch class
- * @param minorThird The minor third pitch class
+ * @param sourceNote The pitch class to find and adjust
+ * @param targetNote The pitch class it should become
+ * @param semitones The number of semitones to shift (-1 = flat, +1 = sharp)
  * @param fretboard The fretboard mapping
- * @returns Adjusted frets for minor chord or null if not possible
+ * @returns Adjusted frets or null if not possible (e.g., would go below fret 0 or above fret 18)
  */
-export function flatThirdIfPossible(
+export function adjustNoteIfPossible(
   frets: number[],
   strings: number[],
-  majorThird: number,
-  minorThird: number,
+  sourceNote: number,
+  targetNote: number,
+  semitones: number,
   fretboard: Record<number, Record<number, number>>
 ): number[] | null {
   const newFrets = [...frets];
@@ -162,21 +163,18 @@ export function flatThirdIfPossible(
     const stringIdx = strings[i];
     const currentNote = fretboard[stringIdx][frets[i]];
 
-    // If this note is the major third, try to flat it
-    if (currentNote === majorThird) {
-      // To flat the third, we need to go down one semitone (one fret)
-      const newFret = frets[i] - 1;
+    if (currentNote === sourceNote) {
+      const newFret = frets[i] + semitones;
 
-      // Can't go below fret 0
-      if (newFret < 0) {
-        return null; // Cannot flat this third
+      // Check bounds
+      if (newFret < 0 || newFret > 18) {
+        return null;
       }
 
-      // Verify the new note is the minor third
-      if (fretboard[stringIdx][newFret] === minorThird) {
+      // Verify the new note is correct
+      if (fretboard[stringIdx][newFret] === targetNote) {
         newFrets[i] = newFret;
       } else {
-        // Something's wrong with our calculation
         return null;
       }
     }
@@ -186,8 +184,28 @@ export function flatThirdIfPossible(
 }
 
 /**
+ * For minor chords, check if we can "flat the third" on open strings
+ * Returns adjusted fret positions if possible, or null if not possible
+ */
+export function flatThirdIfPossible(
+  frets: number[],
+  strings: number[],
+  majorThird: number,
+  minorThird: number,
+  fretboard: Record<number, Record<number, number>>
+): number[] | null {
+  return adjustNoteIfPossible(frets, strings, majorThird, minorThird, -1, fretboard);
+}
+
+/**
  * Transform major triad voicings to another chord type
  * This is the main function for converting major triads to other chord types
+ *
+ * Transformations from major [0, 4, 7]:
+ * - minor [0, 3, 7]: flat the 3rd (-1 semitone)
+ * - dim [0, 3, 6]: flat the 3rd AND flat the 5th
+ * - aug [0, 4, 8]: sharp the 5th (+1 semitone)
+ *
  * @param majorFrets The fret positions for a major chord
  * @param strings The string indices being used
  * @param rootName The root note of the chord
@@ -209,18 +227,35 @@ export function transformChordType(
   const majorChord = buildChord(rootName, 'major');
   const targetChord = buildChord(rootName, targetChordType);
 
-  // For triads (3-note chords), we can try simple transformations
+  // Minor: flat the 3rd
   if (targetChordType === 'minor') {
-    // Special case: minor is just flatting the third
-    const majorThird = majorChord[1];
-    const minorThird = targetChord[1];
-    return flatThirdIfPossible(majorFrets, strings, majorThird, minorThird, fretboard);
+    const majorThird = majorChord[1]; // 4 semitones from root
+    const minorThird = targetChord[1]; // 3 semitones from root
+    return adjustNoteIfPossible(majorFrets, strings, majorThird, minorThird, -1, fretboard);
   }
 
-  // For other chord types, we need more complex logic
-  // This could involve finding the closest valid voicing
-  // For now, return null for unsupported transformations
-  // TODO: Implement more chord type transformations
+  // Diminished: flat the 3rd AND flat the 5th
+  if (targetChordType === 'dim') {
+    const majorThird = majorChord[1];
+    const minorThird = targetChord[1];
+    const perfectFifth = majorChord[2]; // 7 semitones from root
+    const dimFifth = targetChord[2]; // 6 semitones from root
 
+    // First, flat the third
+    const afterFlatThird = adjustNoteIfPossible(majorFrets, strings, majorThird, minorThird, -1, fretboard);
+    if (!afterFlatThird) return null;
+
+    // Then, flat the fifth
+    return adjustNoteIfPossible(afterFlatThird, strings, perfectFifth, dimFifth, -1, fretboard);
+  }
+
+  // Augmented: sharp the 5th
+  if (targetChordType === 'aug') {
+    const perfectFifth = majorChord[2]; // 7 semitones from root
+    const augFifth = targetChord[2]; // 8 semitones from root
+    return adjustNoteIfPossible(majorFrets, strings, perfectFifth, augFifth, +1, fretboard);
+  }
+
+  // Other chord types not yet supported
   return null;
 }

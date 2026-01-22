@@ -151,11 +151,11 @@ export default function MajorTriads() {
         return;
       } else if (e.key === '3') {
         e.preventDefault();
-        // Diminished not yet implemented
+        setSettings({ ...settings, chordType: 'dim' });
         return;
       } else if (e.key === '4') {
         e.preventDefault();
-        // Augmented not yet implemented
+        setSettings({ ...settings, chordType: 'aug' });
         return;
       }
 
@@ -263,11 +263,11 @@ export default function MajorTriads() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">3</span>
-                  <span className="text-slate-600 dark:text-slate-400">Diminished (coming soon)</span>
+                  <span className="text-slate-600 dark:text-slate-400">Diminished</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">4</span>
-                  <span className="text-slate-600 dark:text-slate-400">Augmented (coming soon)</span>
+                  <span className="text-slate-600 dark:text-slate-400">Augmented</span>
                 </div>
               </div>
             </div>
@@ -352,16 +352,22 @@ export default function MajorTriads() {
                   {labels.minor}
                 </button>
                 <button
-                  disabled
-                  className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
-                  title="Coming soon"
+                  onClick={() => setSettings({ ...settings, chordType: 'dim' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === 'dim'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
                 >
                   {labels.dim}
                 </button>
                 <button
-                  disabled
-                  className="px-4 py-2 text-sm font-medium rounded-md text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-50"
-                  title="Coming soon"
+                  onClick={() => setSettings({ ...settings, chordType: 'aug' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === 'aug'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
                 >
                   {labels.aug}
                 </button>

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { generateChordData, getSupportedKeys, debugMinorTransformations } from '../lib/chords';
 import { buildChord } from '../lib/chord-types';
 
@@ -15,7 +16,8 @@ describe('Minor Chord Transformations', () => {
 
       if (chordData) {
         // Verify chord notes are correct for C minor (C, Eb, G)
-        expect(chordData.chordNotes).toEqual(['C', 'D#', 'G']); // D# is enharmonic to Eb
+        // C is a sharp key, so uses D# not Eb
+        expect(chordData.chordNotes).toEqual(['C', 'D#', 'G']);
 
         // Check that we have some voicings
         expect(chordData.stringGroups.length).toBeGreaterThan(0);
@@ -78,7 +80,8 @@ describe('Minor Chord Transformations', () => {
 
       // G has several open string positions, so transformation might be limited
       if (chordData) {
-        expect(chordData.chordNotes).toEqual(['G', 'A#', 'D']); // A# is enharmonic to Bb
+        // G is a sharp key, so uses A# not Bb
+        expect(chordData.chordNotes).toEqual(['G', 'A#', 'D']);
 
         const gMinorPcs = buildChord('G', 'minor');
         for (const group of chordData.stringGroups) {

@@ -65,12 +65,12 @@ describe('Major Triads Logic', () => {
     const stringGroup: [number, number, number] = [3, 4, 5]; // Strings G-B-E
 
     it('finds multiple voicings', () => {
-      const voicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const voicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
       expect(voicings.length).toBeGreaterThan(0);
     });
 
     it('voicing structure is correct', () => {
-      const voicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const voicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
       const v = voicings[0];
 
       expect(v).toHaveProperty('strings');
@@ -86,7 +86,7 @@ describe('Major Triads Logic', () => {
     });
 
     it('all voicings contain all three triad notes', () => {
-      const voicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const voicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
 
       voicings.forEach(v => {
         const noteSet = new Set(v.notes);
@@ -98,7 +98,7 @@ describe('Major Triads Logic', () => {
     });
 
     it('finds open position voicing for C major on G-B-E strings', () => {
-      const voicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const voicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
 
       // Look for G(open), C(1st fret), E(open) = [0, 1, 0]
       const openVoicing = voicings.find(v =>
@@ -111,7 +111,7 @@ describe('Major Triads Logic', () => {
     });
 
     it('respects max stretch constraint', () => {
-      const voicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard, 5);
+      const voicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard, 5);
 
       voicings.forEach(v => {
         const minFret = Math.min(...v.frets);
@@ -128,7 +128,7 @@ describe('Major Triads Logic', () => {
     const stringGroup: [number, number, number] = [3, 4, 5]; // Strings G-B-E
 
     it('selects up to 4 voicings', () => {
-      const allVoicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const allVoicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
       const selected = select4Positions(allVoicings);
 
       expect(selected.length).toBeGreaterThan(0);
@@ -136,7 +136,7 @@ describe('Major Triads Logic', () => {
     });
 
     it('each selected voicing has a position field', () => {
-      const allVoicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const allVoicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
       const selected = select4Positions(allVoicings);
 
       selected.forEach(v => {
@@ -147,7 +147,7 @@ describe('Major Triads Logic', () => {
     });
 
     it('selected voicings are sorted by avg fret', () => {
-      const allVoicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const allVoicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
       const selected = select4Positions(allVoicings);
 
       if (selected.length > 1) {
@@ -158,7 +158,7 @@ describe('Major Triads Logic', () => {
     });
 
     it('positions span the fretboard', () => {
-      const allVoicings = findAllTriadVoicings(triadPcs, stringGroup, fretboard);
+      const allVoicings = findAllTriadVoicings(stringGroup, triadPcs, fretboard);
       const selected = select4Positions(allVoicings);
 
       if (selected.length >= 2) {

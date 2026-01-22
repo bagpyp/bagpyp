@@ -26,10 +26,10 @@ export interface TriadSettings {
  * Default settings for the triads display
  */
 export const DEFAULT_TRIAD_SETTINGS: TriadSettings = {
-  showChromaticNotes: true,
-  showOctaveColors: true,
+  showChromaticNotes: false,
+  showOctaveColors: false,
   showRootHalos: true,
-  enableHoverSound: true,
+  enableHoverSound: false,
   inversionNotation: 'symbols',
   chordLabelNotation: 'standard',
   chordType: 'major',

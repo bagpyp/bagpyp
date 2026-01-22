@@ -12,12 +12,70 @@ import {
 } from "./constants";
 import type { Mode, XYZSymbol, Position, XYZPosition } from "./types";
 
+// Map flat note names to their sharp equivalents
+const FLAT_TO_SHARP: Record<string, string> = {
+  'Db': 'C#',
+  'Eb': 'D#',
+  'Fb': 'E',
+  'Gb': 'F#',
+  'Ab': 'G#',
+  'Bb': 'A#',
+  'Cb': 'B',
+};
+
+/**
+ * Normalize a note name to its sharp equivalent
+ * @param name Note name (e.g., "Db", "C#", "C")
+ * @returns Sharp equivalent (e.g., "C#", "C#", "C")
+ */
+export function normalizeToSharp(name: string): string {
+  return FLAT_TO_SHARP[name] ?? name;
+}
+
 export function nameToPc(name: string): number {
-  return NOTE_NAMES_SHARP.indexOf(name);
+  // Normalize flats to sharps for lookup
+  const normalizedName = normalizeToSharp(name);
+  return NOTE_NAMES_SHARP.indexOf(normalizedName);
 }
 
 export function pcToSharpName(pc: number): string {
   return NOTE_NAMES_SHARP[pc % 12];
+}
+
+// Note names using sharps
+const NOTE_NAMES_SHARPS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+// Note names using flats
+const NOTE_NAMES_FLATS = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+// Keys that use flats in their key signature (flat side of circle of fifths)
+const FLAT_KEYS = new Set(['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb']);
+
+/**
+ * Determine if a key uses flats or sharps for accidentals
+ * Sharp keys: C, G, D, A, E, B, F#
+ * Flat keys: F, Bb, Eb, Ab, Db (and Gb for completeness)
+ */
+export function keyUsesFlats(key: string): boolean {
+  // Normalize the key name (handle both sharp and flat input)
+  const normalizedKey = normalizeToSharp(key);
+  // F, Bb, Eb, Ab, Db (as A#, D#, G#, C# in sharp notation) use flats
+  // Also keep Gb/F# as F# since that's the boundary key
+  return FLAT_KEYS.has(key) ||
+         (normalizedKey !== key && FLAT_KEYS.has(key)); // Key was input as flat
+}
+
+/**
+ * Convert pitch class to display name
+ * @param pc Pitch class (0-11)
+ * @param key Optional key context to determine sharps vs flats
+ *            Sharp keys (C,G,D,A,E,B,F#): use sharps
+ *            Flat keys (F,Bb,Eb,Ab,Db): use flats
+ */
+export function pcToDisplayName(pc: number, key?: string): string {
+  const useFlats = key ? keyUsesFlats(key) : false;
+  const noteNames = useFlats ? NOTE_NAMES_FLATS : NOTE_NAMES_SHARPS;
+  return noteNames[pc % 12];
 }
 
 export function midiToPc(midiNote: number): number {

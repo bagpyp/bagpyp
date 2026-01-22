@@ -3,7 +3,7 @@
  */
 
 import type { NoteName } from './types';
-import { nameToPc, pcToSharpName } from './core';
+import { nameToPc, pcToDisplayName } from './core';
 
 /**
  * Chord type definitions with their interval formulas
@@ -104,7 +104,7 @@ export function buildChord(rootName: NoteName, chordType: ChordType): number[] {
  */
 export function getChordNotes(rootName: NoteName, chordType: ChordType): string[] {
   const pitchClasses = buildChord(rootName, chordType);
-  return pitchClasses.map(pc => pcToSharpName(pc));
+  return pitchClasses.map(pc => pcToDisplayName(pc, rootName));
 }
 
 /**

@@ -2,7 +2,7 @@
  * Major Triads - Voicing generation and utilities
  */
 
-import { nameToPc, pcToSharpName, buildFretboard } from './core';
+import { nameToPc, pcToDisplayName, buildFretboard } from './core';
 import type { NoteName } from './types';
 import { MAJOR_TRIAD_POSITIONS } from './major-triad-data';
 
@@ -65,6 +65,10 @@ export function identifyInversion(
  * Find all valid triad voicings on a specific 3-string group
  * @param stringGroup Array of 3 string indices [low, mid, high]
  * @param triadPcs The triad pitch classes [root, third, fifth]
+ * @param fretboard The fretboard mapping
+ * @param maxStretch Maximum fret stretch (default 5)
+ * @param maxFret Maximum fret number (default 18)
+ * @param key Optional key for note name display (sharps vs flats)
  * @returns Array of valid voicings (without position numbers)
  */
 export function findAllTriadVoicings(
@@ -72,7 +76,8 @@ export function findAllTriadVoicings(
   triadPcs: [number, number, number],
   fretboard: Record<number, Record<number, number>>,
   maxStretch: number = 5,
-  maxFret: number = 18
+  maxFret: number = 18,
+  key?: string
 ): Omit<TriadVoicing, 'position'>[] {
   const voicings: Omit<TriadVoicing, 'position'>[] = [];
 
@@ -112,7 +117,7 @@ export function findAllTriadVoicings(
             strings: [...stringGroup],
             frets,
             notes,
-            noteNames: notes.map(pc => pcToSharpName(pc)),
+            noteNames: notes.map(pc => pcToDisplayName(pc, key)),
             inversion,
             avgFret,
           });
@@ -254,7 +259,7 @@ function findVoicingChains(
 /**
  * Select 4 positions for each string group with coordination
  */
-function select4PositionsCoordinated(
+export function select4PositionsCoordinated(
   groupVoicings: Omit<TriadVoicing, 'position'>[][],
   stringGroups: number[][]
 ): TriadVoicing[][] {
@@ -403,7 +408,7 @@ export function visualizeVoicings(
  */
 export function generateTriadsData(key: NoteName): TriadsData {
   const triadPcs = buildMajorTriad(key);
-  const triadNoteNames = triadPcs.map(pc => pcToSharpName(pc));
+  const triadNoteNames = triadPcs.map(pc => pcToDisplayName(pc, key));
   const fretboard = buildFretboard();
 
   // Use hard-coded voicings if available
@@ -433,7 +438,7 @@ export function generateTriadsData(key: NoteName): TriadsData {
 
       const voicings: TriadVoicing[] = hardCodedVoicings.map((hc: any) => {
         const notes = hc.frets.map((fret: number, idx: number) => fretboard[stringGroupIndices[idx]][fret]);
-        const noteNames = notes.map((pc: number) => pcToSharpName(pc));
+        const noteNames = notes.map((pc: number) => pcToDisplayName(pc, key));
         const avgFret = hc.frets.reduce((sum: number, f: number) => sum + f, 0) / 3;
 
         return {
@@ -471,7 +476,7 @@ export function generateTriadsData(key: NoteName): TriadsData {
 
   // Find all voicings for each group
   const allGroupVoicings = stringGroupsData.map(stringGroup =>
-    findAllTriadVoicings(stringGroup, triadPcs, fretboard)
+    findAllTriadVoicings(stringGroup, triadPcs, fretboard, 5, 18, key)
   );
 
   // Select 4 positions for each group with coordination

@@ -35,7 +35,7 @@ describe('Position Note Sharing Between Adjacent Groups', () => {
 
   // Get all voicings for each group
   const allVoicingsPerGroup = stringGroups.map(strings =>
-    findAllTriadVoicings(triadPcs, strings as [number, number, number], fretboard)
+    findAllTriadVoicings(strings as [number, number, number], triadPcs, fretboard)
   );
 
   // Use coordinated selection

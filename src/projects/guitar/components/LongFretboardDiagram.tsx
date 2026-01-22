@@ -15,6 +15,7 @@ interface LongFretboardDiagramProps {
   stringGroupLabel: string; // e.g., "Strings 3-2-1 (G-B-E)"
   triadPcs: [number, number, number]; // [root, third, fifth] pitch classes
   settings?: TriadSettings; // Display settings (optional, uses defaults if not provided)
+  selectedKey?: string; // The selected key (for sharp vs flat note names)
 }
 
 /**
@@ -47,6 +48,7 @@ export default function LongFretboardDiagram({
   stringGroupLabel,
   triadPcs,
   settings = DEFAULT_TRIAD_SETTINGS,
+  selectedKey,
 }: LongFretboardDiagramProps) {
   const [hoveredDot, setHoveredDot] = useState<{
     voicingIdx: number;
@@ -276,7 +278,7 @@ export default function LongFretboardDiagram({
               {allStringYPositions.map((y, globalStringIdx) => {
                 return Array.from({ length: numFrets + 1 }).map((_, fretIdx) => {
                   const x = getNoteXPosition(fretIdx);
-                  const { pitchClass, noteName } = getNoteAtPosition(globalStringIdx, fretIdx);
+                  const { pitchClass, noteName } = getNoteAtPosition(globalStringIdx, fretIdx, selectedKey);
                   const octave = getOctaveAtPosition(globalStringIdx, fretIdx);
                   const noteColor = settings.showOctaveColors
                     ? getNoteColorWithOctave(pitchClass, octave)
@@ -489,9 +491,11 @@ export default function LongFretboardDiagram({
 
           {/* Inversion symbols below fretboard as SVG text */}
           {voicings.map((voicing, voicingIdx) => {
-            // Get average X position of all notes in this voicing
+            // Get average X position of unique fret positions in this voicing
+            // (avoids bias when two notes share the same fret)
             const xPositions = voicing.frets.map(fret => getNoteXPosition(fret));
-            const averageX = xPositions.reduce((sum, x) => sum + x, 0) / xPositions.length;
+            const uniqueXPositions = [...new Set(xPositions)];
+            const averageX = uniqueXPositions.reduce((sum, x) => sum + x, 0) / uniqueXPositions.length;
 
             // Get inversion symbol based on notation preference
             const inversionSymbol = getInversionSymbol(voicing.inversion, settings.inversionNotation);

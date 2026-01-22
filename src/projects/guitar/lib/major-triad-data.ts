@@ -75,7 +75,7 @@ export const MAJOR_TRIAD_POSITIONS: Record<string, any> = {
   },
   'D#': {
     G0: [{ pos: 0, frets: [3, 1, 1], inv: 'first' }, { pos: 1, frets: [6, 6, 5], inv: 'second' }, { pos: 2, frets: [11, 10, 8], inv: 'root' }, { pos: 3, frets: [15, 13, 13], inv: 'first' }],
-    G1: [{ pos: 0, frets: [1, 1, 0], inv: 'second' }, { pos: 1, frets: [6, 5, 3], inv: 'root' }, { pos: 2, frets: [10, 13, 15], inv: 'first' }, { pos: 3, frets: [13, 13, 12], inv: 'second' }],
+    G1: [{ pos: 0, frets: [1, 1, 0], inv: 'second' }, { pos: 1, frets: [6, 5, 3], inv: 'root' }, { pos: 2, frets: [10, 8, 8], inv: 'first' }, { pos: 3, frets: [13, 13, 12], inv: 'second' }],
     G2: [{ pos: 0, frets: [5, 3, 4], inv: 'root' }, { pos: 1, frets: [8, 8, 8], inv: 'first' }, { pos: 2, frets: [13, 12, 11], inv: 'second' }, { pos: 3, frets: [17, 15, 16], inv: 'root' }],
     G3: [{ pos: 0, frets: [3, 4, 3], inv: 'first' }, { pos: 1, frets: [8, 8, 6], inv: 'second' }, { pos: 2, frets: [12, 11, 11], inv: 'root' }, { pos: 3, frets: [15, 16, 15], inv: 'first' }],
   },

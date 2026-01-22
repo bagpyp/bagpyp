@@ -157,6 +157,7 @@ describe('Fretboard Physics', () => {
 
     it('should handle chromatic scale correctly', () => {
       // Starting from open A string (5th string, fret 0), go up chromatically
+      // Without a key context, defaults to sharps
       const notes = [];
       for (let fret = 0; fret < 12; fret++) {
         notes.push(getNoteAtPosition(1, fret).noteName);

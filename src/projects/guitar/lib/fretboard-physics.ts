@@ -128,21 +128,35 @@ const STANDARD_TUNING_PITCH_CLASSES = [4, 9, 2, 7, 11, 4]; // E A D G B E
 const STRING_TUNING_MIDI = [40, 45, 50, 55, 59, 64]; // E2, A2, D3, G3, B3, E4
 
 /**
- * Note names for each pitch class
+ * Note names for sharps
  */
-const PITCH_CLASS_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const PITCH_CLASS_NAMES_SHARPS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+/**
+ * Note names for flats
+ */
+const PITCH_CLASS_NAMES_FLATS = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+/**
+ * Keys that use flats in their key signature (flat side of circle of fifths)
+ */
+const FLAT_KEYS = new Set(['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb']);
 
 /**
  * Get the note at a specific string and fret
  *
  * @param stringIndex - String index (0 = 6th string/low E, 5 = 1st string/high E)
  * @param fret - Fret number (0 = open string)
+ * @param key - Optional key context to determine sharps vs flats
  * @returns Object with pitch class (0-11) and note name
  */
-export function getNoteAtPosition(stringIndex: number, fret: number): { pitchClass: number; noteName: string } {
+export function getNoteAtPosition(stringIndex: number, fret: number, key?: string): { pitchClass: number; noteName: string } {
   const openStringPc = STANDARD_TUNING_PITCH_CLASSES[stringIndex];
   const pitchClass = (openStringPc + fret) % 12;
-  const noteName = PITCH_CLASS_NAMES[pitchClass];
+  // Use flats for flat keys, sharps for sharp keys
+  const useFlats = key ? FLAT_KEYS.has(key) : false;
+  const noteNames = useFlats ? PITCH_CLASS_NAMES_FLATS : PITCH_CLASS_NAMES_SHARPS;
+  const noteName = noteNames[pitchClass];
   return { pitchClass, noteName };
 }
 

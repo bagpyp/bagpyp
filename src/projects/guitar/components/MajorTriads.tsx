@@ -13,8 +13,8 @@ import { DEFAULT_TRIAD_SETTINGS, getChordTypeLabels } from '../lib/triad-setting
 import type { TriadSettings } from '../lib/triad-settings';
 import { playChord, resumeAudioContext } from '../lib/sound';
 
-// Circle of fifths order
-const CIRCLE_OF_FIFTHS_KEYS = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'G#', 'D#', 'A#', 'F'];
+// Circle of fifths order (using flats for Db, Ab, Eb, Bb)
+const CIRCLE_OF_FIFTHS_KEYS = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'Db', 'Ab', 'Eb', 'Bb', 'F'];
 
 // Keyboard mapping:
 // - lowercase = natural (c = C, d = D, etc.)
@@ -707,6 +707,7 @@ export default function MajorTriads() {
                     stringGroupLabel={STRING_GROUP_LABELS[labelIdx]}
                     triadPcs={triadPcs}
                     settings={settings}
+                    selectedKey={selectedKey}
                   />
                 </div>
               );

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { generateTriadsData } from '../lib/triads';
 
 /**
@@ -31,7 +32,7 @@ const PINNED_MAJOR_POSITIONS = {
   ],
   'D#': [
     [[3,1,1], [6,6,5], [11,10,8], [15,13,13]],     // Group 0
-    [[1,1,0], [6,5,3], [10,13,15], [13,13,12]],    // Group 1 (Note: Position 2 actual)
+    [[1,1,0], [6,5,3], [10,8,8], [13,13,12]],      // Group 1 (Position 2 fixed to playable voicing)
     [[5,3,4], [8,8,8], [13,12,11], [17,15,16]],    // Group 2
     [[3,4,3], [8,8,6], [12,11,11], [15,16,15]],    // Group 3
   ],
@@ -139,6 +140,10 @@ describe('All Major Triad Positions - Pinned as Facts of the Universe', () => {
 
       // Overall key tests
       it(`should have correct triad notes for ${key} major`, () => {
+        // Note names depend on key context:
+        // - Sharp keys (C, G, D, A, E, B, F#, C#, D#, G#, A#): use sharps
+        // - Flat keys (F, Bb, Eb, Ab, Db): use flats
+        // Since the test uses sharp key names internally, all accidentals are sharps
         const expectedTriadNotes: Record<string, string[]> = {
           'C': ['C', 'E', 'G'],
           'C#': ['C#', 'F', 'G#'],

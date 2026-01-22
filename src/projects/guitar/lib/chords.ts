@@ -2,7 +2,7 @@
  * Chords - General chord voicing generation supporting multiple chord types
  */
 
-import { nameToPc, pcToSharpName, buildFretboard } from './core';
+import { nameToPc, pcToDisplayName, buildFretboard, normalizeToSharp } from './core';
 import type { NoteName } from './types';
 import { MAJOR_TRIAD_POSITIONS } from './major-triad-data';
 import {
@@ -44,8 +44,11 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
   const chordName = getChordName(key, chordType);
   const fretboard = buildFretboard();
 
+  // Normalize key to sharp for lookup in MAJOR_TRIAD_POSITIONS
+  const sharpKey = normalizeToSharp(key);
+
   // For major chords, use the existing hard-coded positions
-  if (chordType === 'major' && MAJOR_TRIAD_POSITIONS[key]) {
+  if (chordType === 'major' && MAJOR_TRIAD_POSITIONS[sharpKey]) {
     const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'E'];
     const stringGroupsData: Array<[number, number, number]> = [
       [0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5],
@@ -53,13 +56,13 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
 
     const stringGroups: StringGroupTriads[] = stringGroupsData.map((stringGroupIndices, groupIdx) => {
       const groupKey = `G${groupIdx}`;
-      const hardCodedVoicings = MAJOR_TRIAD_POSITIONS[key][groupKey];
+      const hardCodedVoicings = MAJOR_TRIAD_POSITIONS[sharpKey][groupKey];
 
       const voicings: TriadVoicing[] = hardCodedVoicings.map((hc: any) => {
         const notes = hc.frets.map((fret: number, idx: number) =>
           fretboard[stringGroupIndices[idx]][fret]
         );
-        const noteNames = notes.map((pc: number) => pcToSharpName(pc));
+        const noteNames = notes.map((pc: number) => pcToDisplayName(pc, key));
         const avgFret = hc.frets.reduce((sum: number, f: number) => sum + f, 0) / 3;
 
         return {
@@ -90,7 +93,7 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
   }
 
   // For minor chords, try to transform from major positions
-  if (chordType === 'minor' && MAJOR_TRIAD_POSITIONS[key]) {
+  if (chordType === 'minor' && MAJOR_TRIAD_POSITIONS[sharpKey]) {
     const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'E'];
     const stringGroupsData: Array<[number, number, number]> = [
       [0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5],
@@ -102,7 +105,7 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
     for (let groupIdx = 0; groupIdx < stringGroupsData.length; groupIdx++) {
       const stringGroupIndices = stringGroupsData[groupIdx];
       const groupKey = `G${groupIdx}`;
-      const majorVoicings = MAJOR_TRIAD_POSITIONS[key][groupKey];
+      const majorVoicings = MAJOR_TRIAD_POSITIONS[sharpKey][groupKey];
 
       const minorVoicings: TriadVoicing[] = [];
 
@@ -138,7 +141,7 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
           continue;
         }
 
-        const noteNames = notes.map(pc => pcToSharpName(pc));
+        const noteNames = notes.map(pc => pcToDisplayName(pc, key));
         const avgFret = minorFrets.reduce((sum, f) => sum + f, 0) / 3;
 
         // For minor chords, we need to recalculate inversion
@@ -233,6 +236,7 @@ export function getSupportedKeys(chordType: ChordType): NoteName[] {
 export function debugMinorTransformations(key: NoteName): void {
   console.log(`\n=== Minor Transformation Analysis for ${key} ===`);
 
+  const sharpKey = normalizeToSharp(key);
   const majorChord = buildChord(key, 'major');
   const minorChord = buildChord(key, 'minor');
   const fretboard = buildFretboard();
@@ -243,7 +247,7 @@ export function debugMinorTransformations(key: NoteName): void {
 
   const groupNames = ['E-A-D', 'A-D-G', 'D-G-B', 'G-B-E'];
 
-  if (!MAJOR_TRIAD_POSITIONS[key]) {
+  if (!MAJOR_TRIAD_POSITIONS[sharpKey]) {
     console.log(`No major positions defined for ${key}`);
     return;
   }
@@ -251,7 +255,7 @@ export function debugMinorTransformations(key: NoteName): void {
   for (let groupIdx = 0; groupIdx < 4; groupIdx++) {
     console.log(`\nGroup ${groupIdx} (${groupNames[groupIdx]}):`);
     const groupKey = `G${groupIdx}`;
-    const majorVoicings = MAJOR_TRIAD_POSITIONS[key][groupKey];
+    const majorVoicings = MAJOR_TRIAD_POSITIONS[sharpKey][groupKey];
     const strings = stringGroupsData[groupIdx];
 
     for (const voicing of majorVoicings) {

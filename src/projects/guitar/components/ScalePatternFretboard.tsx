@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { calculateFretYPositions, getNoteAtPosition, getNoteYPosition, getStringThickness } from '../lib/fretboard-physics';
+import {
+  calculateFretYPositions,
+  getNoteAtPosition,
+  getNoteYPosition,
+  getStringThickness,
+  toFlatEnharmonic,
+} from '../lib/fretboard-physics';
 import { getAllNoteColorsInCircleOfFifths, getNoteColor } from '../lib/note-colors';
 import { DIMENSIONS, calculateAllStringYPositions } from '../lib/fretboard-dimensions';
 import { playNote, resumeAudioContext, stopAllSounds } from '../lib/sound';
@@ -24,6 +30,8 @@ interface ScalePatternFretboardProps {
   markers?: FretboardMarker[];
   showChromaticNotes?: boolean;
   numFrets?: number;
+  titlePlacement?: 'top' | 'left';
+  showTitle?: boolean;
 }
 
 function hasPosition(
@@ -42,6 +50,8 @@ export default function ScalePatternFretboard({
   markers = [],
   showChromaticNotes = false,
   numFrets = 24,
+  titlePlacement = 'top',
+  showTitle = true,
 }: ScalePatternFretboardProps) {
   const [hoveredNote, setHoveredNote] = useState<{ string: number; fret: number } | null>(null);
 
@@ -87,17 +97,26 @@ export default function ScalePatternFretboard({
   }, [hoveredNote]);
 
   return (
-    <div className="w-full">
-      <div className="text-center mb-1">
-        <span className="text-lg font-semibold text-gray-200">{title}</span>
-      </div>
+    <div className={`w-full ${titlePlacement === 'left' ? 'md:flex md:items-center md:gap-2' : ''}`}>
+      {showTitle && (
+        <div
+          className={
+            titlePlacement === 'left'
+              ? 'text-center md:text-left mb-1 md:mb-0 md:w-56 md:pr-2 flex-shrink-0'
+              : 'text-center mb-1'
+          }
+        >
+          <span className="text-lg font-semibold text-gray-200">{title}</span>
+        </div>
+      )}
 
-      <svg
-        width="98%"
-        height={DIMENSIONS.svgHeight}
-        viewBox={`0 0 ${DIMENSIONS.viewBoxWidth} ${DIMENSIONS.svgHeight}`}
-        style={{ display: 'block', margin: '0 auto' }}
-      >
+      <div className={titlePlacement === 'left' && showTitle ? 'flex-1' : ''}>
+        <svg
+          width={titlePlacement === 'left' ? '100%' : '98%'}
+          height={DIMENSIONS.svgHeight}
+          viewBox={`0 0 ${DIMENSIONS.viewBoxWidth} ${DIMENSIONS.svgHeight}`}
+          style={{ display: 'block', margin: '0 auto' }}
+        >
         <defs>
           <filter id="blue-vibe-glow" x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur stdDeviation="2.8" result="blueBlur" />
@@ -226,7 +245,11 @@ export default function ScalePatternFretboard({
 
         {patternNotes.map(({ stringIdx, fret }, idx) => {
           const noteAtPos = getNoteAtPosition(stringIdx, fret, selectedKey);
-          const colorData = getNoteColor(noteAtPos.noteName);
+          const isBlueNote = markers.some(
+            (marker) => marker.variant === 'blue-vibe' && hasPosition(marker.positions, stringIdx, fret)
+          );
+          const displayNoteName = isBlueNote ? toFlatEnharmonic(noteAtPos.noteName) : noteAtPos.noteName;
+          const colorData = getNoteColor(displayNoteName);
           const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
           const yPos = stringYPositions[stringIdx];
           const isHovered = hoveredNote?.string === stringIdx && hoveredNote?.fret === fret;
@@ -330,12 +353,13 @@ export default function ScalePatternFretboard({
                 dominantBaseline="middle"
                 pointerEvents="none"
               >
-                {noteAtPos.noteName}
+                {displayNoteName}
               </text>
             </g>
           );
         })}
-      </svg>
+        </svg>
+      </div>
     </div>
   );
 }

@@ -141,6 +141,13 @@ const PITCH_CLASS_NAMES_FLATS = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'
  * Keys that use flats in their key signature (flat side of circle of fifths)
  */
 const FLAT_KEYS = new Set(['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb']);
+const SHARP_TO_FLAT_ENHARMONIC: Record<string, string> = {
+  'C#': 'Db',
+  'D#': 'Eb',
+  'F#': 'Gb',
+  'G#': 'Ab',
+  'A#': 'Bb',
+};
 
 /**
  * Get the note at a specific string and fret
@@ -158,6 +165,21 @@ export function getNoteAtPosition(stringIndex: number, fret: number, key?: strin
   const noteNames = useFlats ? PITCH_CLASS_NAMES_FLATS : PITCH_CLASS_NAMES_SHARPS;
   const noteName = noteNames[pitchClass];
   return { pitchClass, noteName };
+}
+
+/**
+ * Convert sharp accidental spellings to flat enharmonic spellings.
+ * Keeps naturals and existing flats unchanged.
+ */
+export function toFlatEnharmonic(noteName: string): string {
+  const normalized = noteName.replace('♯', '#').replace('♭', 'b');
+  const match = normalized.match(/^([A-G](?:#|b)?)(\d+)?$/);
+  if (!match) {
+    return noteName;
+  }
+
+  const [, base, octave = ''] = match;
+  return `${SHARP_TO_FLAT_ENHARMONIC[base] ?? base}${octave}`;
 }
 
 /**

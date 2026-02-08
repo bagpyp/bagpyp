@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   getDisplayOrderedBoxPatterns,
   generateBoxShapePatterns,
   getBoxScaleFamilyOptions,
+  getPitchClass,
   getRelativeMinorKeyFromMajor,
   type BoxScaleFamily,
 } from '../lib/box-shapes';
@@ -20,10 +21,13 @@ export default function BoxShapes({
   selectedMajorKey,
   onSelectedMajorKeyChange,
 }: BoxShapesProps) {
+  const STANDARD_TUNING_PCS = [4, 9, 2, 7, 11, 4]; // E A D G B E
+  const FLAT_SEVEN_INTERVAL = 10;
   const BOX_FRET_COUNT = 24;
   const [scaleFamily, setScaleFamily] = useState<BoxScaleFamily>('major');
-  const [includeExperimentalBluesShape, setIncludeExperimentalBluesShape] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showFlatSevenTargets, setShowFlatSevenTargets] = useState(false);
+  const settingsContainerRef = useRef<HTMLDivElement | null>(null);
   const scaleFamilyOptions = getBoxScaleFamilyOptions();
 
   const effectiveScaleKey = useMemo(
@@ -32,14 +36,16 @@ export default function BoxShapes({
   );
 
   const shapePatterns = useMemo(() => {
-    return generateBoxShapePatterns(effectiveScaleKey, scaleFamily, {
-      includeExperimentalBluesShape,
-    });
-  }, [effectiveScaleKey, scaleFamily, includeExperimentalBluesShape]);
+    return generateBoxShapePatterns(effectiveScaleKey, scaleFamily);
+  }, [effectiveScaleKey, scaleFamily]);
 
   const displayPatterns = useMemo(
     () => getDisplayOrderedBoxPatterns(shapePatterns, scaleFamily),
     [shapePatterns, scaleFamily]
+  );
+  const scaleRootPitchClass = useMemo(
+    () => getPitchClass(effectiveScaleKey),
+    [effectiveScaleKey]
   );
 
   useEffect(() => {
@@ -81,6 +87,22 @@ export default function BoxShapes({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onSelectedMajorKeyChange]);
 
+  useEffect(() => {
+    if (!isSettingsOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (settingsContainerRef.current && !settingsContainerRef.current.contains(target)) {
+        setIsSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isSettingsOpen]);
+
   const title = scaleFamily === 'major'
     ? `${effectiveScaleKey} Major System - 7 Modal Box Shapes`
     : scaleFamily === 'pentatonic'
@@ -92,7 +114,7 @@ export default function BoxShapes({
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold mb-4 text-white">{title}</h1>
 
-        <div className="w-full max-w-[970px] mx-auto relative mb-4">
+        <div ref={settingsContainerRef} className="w-full max-w-[970px] mx-auto relative mb-3">
           <CircleOfFifthsSelector
             selectedKey={selectedMajorKey}
             onSelectKey={onSelectedMajorKeyChange}
@@ -102,36 +124,64 @@ export default function BoxShapes({
           />
 
           {isSettingsOpen && (
-            <div className="absolute top-24 right-0 bg-slate-800 rounded-lg shadow-xl border border-slate-700 z-50 min-w-[280px] p-3 text-left">
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                    Scale Family
+            <div
+              className="absolute top-24 right-0 z-50 rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800"
+              style={{ width: '220px' }}
+            >
+              <div className="space-y-2" style={{ padding: '6px' }}>
+                <div className="space-y-1" role="radiogroup" aria-label="Scale Family">
+                  <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
+                    Scale family
                   </label>
-                  <select
-                    value={scaleFamily}
-                    onChange={(e) => setScaleFamily(e.target.value as BoxScaleFamily)}
-                    className="w-full px-3 py-2 rounded-md bg-slate-900 text-slate-100 border border-slate-600 focus:border-blue-500 focus:outline-none cursor-pointer"
-                  >
-                    {scaleFamilyOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-slate-400">{scaleFamilyOptions.find((f) => f.value === scaleFamily)?.description}</p>
+                  {scaleFamilyOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={option.value === scaleFamily}
+                      onClick={() => {
+                        setScaleFamily(option.value);
+                      }}
+                      className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
+                      style={{
+                        backgroundColor: option.value === scaleFamily ? '#34C759' : '#E5E7EB',
+                        color: option.value === scaleFamily ? '#FFFFFF' : '#4B5563',
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
 
                 {scaleFamily === 'blues' && (
-                  <label className="inline-flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={includeExperimentalBluesShape}
-                      onChange={(e) => setIncludeExperimentalBluesShape(e.target.checked)}
-                      className="rounded bg-slate-700 border-slate-500 text-blue-500 focus:ring-blue-500"
-                    />
-                    Add experimental 6th box
-                  </label>
+                  <>
+                    <div className="border-t border-slate-200 dark:border-slate-700" />
+                    <div
+                      onClick={() => setShowFlatSevenTargets((current) => !current)}
+                      className="flex items-center gap-3 cursor-pointer py-1"
+                    >
+                      <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                        <div
+                          className="absolute inset-0 rounded-full transition-colors"
+                          style={{ backgroundColor: showFlatSevenTargets ? '#34C759' : '#E5E7EB' }}
+                        />
+                        <div
+                          className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            left: '2px',
+                            top: '2px',
+                            transform: showFlatSevenTargets ? 'translateX(16px)' : 'translateX(0)',
+                            transition: 'transform 0.2s ease',
+                          }}
+                        />
+                      </div>
+                      <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                        Add b7 targets
+                      </span>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -152,19 +202,39 @@ export default function BoxShapes({
         </p>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         {displayPatterns.map((shapeData) => {
-          const markers: FretboardMarker[] = scaleFamily === 'blues'
-            ? [
-                {
-                  positions: shapeData.blueNotePositions,
-                  stroke: '#38bdf8',
-                  strokeWidth: 2,
-                  ringOffset: 8,
-                  variant: 'blue-vibe',
-                },
-              ]
-            : [];
+          const markers: FretboardMarker[] = [];
+          if (scaleFamily === 'blues') {
+            markers.push({
+              positions: shapeData.blueNotePositions,
+              stroke: '#38bdf8',
+              strokeWidth: 2,
+              ringOffset: 8,
+              variant: 'blue-vibe',
+            });
+
+            if (showFlatSevenTargets) {
+              const flatSevenPositions: [number, number][] = [];
+              shapeData.pattern.forEach((stringFrets, stringIndex) => {
+                stringFrets.forEach((fret) => {
+                  const pitchClass = (STANDARD_TUNING_PCS[stringIndex] + fret) % 12;
+                  const interval = (pitchClass - scaleRootPitchClass + 12) % 12;
+                  if (interval === FLAT_SEVEN_INTERVAL) {
+                    flatSevenPositions.push([stringIndex, fret]);
+                  }
+                });
+              });
+
+              markers.push({
+                positions: flatSevenPositions,
+                stroke: '#c084fc',
+                strokeWidth: 2,
+                dashArray: '4 3',
+                ringOffset: 6,
+              });
+            }
+          }
 
           return (
             <ScalePatternFretboard
@@ -175,6 +245,8 @@ export default function BoxShapes({
               rootPositions={shapeData.rootPositions}
               markers={markers}
               numFrets={BOX_FRET_COUNT}
+              titlePlacement="left"
+              showTitle={false}
             />
           );
         })}

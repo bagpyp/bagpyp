@@ -239,13 +239,17 @@ function selectBlueCandidatesForBox(
     const best = blueFrets
       .map((fret) => {
         const between = fret >= low && fret <= high;
+        const belowRun = fret < low;
         const edgeDistance = between ? 0 : Math.min(Math.abs(fret - low), Math.abs(fret - high));
         const windowDistance = fret < windowStart
           ? (windowStart - fret)
           : fret > windowEnd
             ? (fret - windowEnd)
             : 0;
-        const score = (between ? -100 : 0) + (edgeDistance * 10) + windowDistance;
+        // Prefer adding blue notes at/above the pentatonic pair so box anchors
+        // do not shift left on the neck (e.g. E blues box 4 low-E should stay at B).
+        const belowRunPenalty = belowRun ? 2 : 0;
+        const score = (between ? -100 : 0) + (edgeDistance * 10) + windowDistance + belowRunPenalty;
         return { stringIndex, fret, score };
       })
       .sort((a, b) => a.score - b.score || a.fret - b.fret)[0];
@@ -672,26 +676,18 @@ export function getDisplayOrderedBoxPatterns(
     return patterns;
   }
 
-  // A minor (pentatonic/blues) practice often starts from higher-neck boxes.
-  // Keep this as an explicit display preference without changing generated shapes.
-  if (family !== 'major' && patterns[0].keyRoot === 'A') {
-    const preferredOrder = patterns.length >= 6
-      ? [4, 5, 6, 1, 2, 3]
-      : [4, 5, 1, 2, 3];
+  if (family !== 'major') {
     const byShapeNumber = new Map(patterns.map((pattern) => [pattern.shapeNumber, pattern]));
-    const ordered = preferredOrder
-      .map((shapeNumber) => byShapeNumber.get(shapeNumber))
-      .filter((pattern): pattern is BoxShapePattern => Boolean(pattern));
-    const usedShapeNumbers = new Set(ordered.map((pattern) => pattern.shapeNumber));
-
-    const orderedWithRemainder = [
-      ...ordered,
-      ...patterns.filter((pattern) => !usedShapeNumbers.has(pattern.shapeNumber)),
-    ];
-
-    // If higher-neck boxes are moved to the front, octave-wrap them down
-    // so the displayed sequence still flows left-to-right diagonally.
-    const adjusted = orderedWithRemainder.map((pattern) => ({ ...pattern, pattern: pattern.pattern.map((s) => [...s]) }));
+    const candidateOrders = patterns.length >= 6
+      ? [
+          [4, 5, 6, 1, 2, 3],
+          [5, 6, 1, 2, 3, 4],
+          [6, 1, 2, 3, 4, 5],
+        ]
+      : [
+          [4, 5, 1, 2, 3],
+          [5, 1, 2, 3, 4],
+        ];
 
     const transposeDownOctave = (shape: BoxShapePattern): BoxShapePattern | null => {
       const transposedPattern = shape.pattern.map((stringFrets) =>
@@ -717,17 +713,48 @@ export function getDisplayOrderedBoxPatterns(
       );
     };
 
-    for (let i = adjusted.length - 2; i >= 0; i--) {
-      while (adjusted[i].windowStart > adjusted[i + 1].windowStart) {
-        const transposed = transposeDownOctave(adjusted[i]);
-        if (!transposed) {
-          break;
+    const isDiagonal = (ordered: BoxShapePattern[]): boolean => {
+      for (let i = 1; i < ordered.length; i++) {
+        const prev = ordered[i - 1];
+        const curr = ordered[i];
+        if (
+          curr.windowStart < prev.windowStart ||
+          (curr.windowStart === prev.windowStart && curr.windowEnd < prev.windowEnd)
+        ) {
+          return false;
         }
-        adjusted[i] = transposed;
+      }
+      return true;
+    };
+
+    for (const preferredOrder of candidateOrders) {
+      const ordered = preferredOrder
+        .map((shapeNumber) => byShapeNumber.get(shapeNumber))
+        .filter((pattern): pattern is BoxShapePattern => Boolean(pattern))
+        .map((pattern) => ({ ...pattern, pattern: pattern.pattern.map((s) => [...s]) }));
+      const used = new Set(ordered.map((pattern) => pattern.shapeNumber));
+      ordered.push(...patterns
+        .filter((pattern) => !used.has(pattern.shapeNumber))
+        .map((pattern) => ({ ...pattern, pattern: pattern.pattern.map((s) => [...s]) })));
+
+      for (let i = ordered.length - 2; i >= 0; i--) {
+        while (
+          ordered[i].windowStart > ordered[i + 1].windowStart ||
+          (ordered[i].windowStart === ordered[i + 1].windowStart &&
+            ordered[i].windowEnd > ordered[i + 1].windowEnd)
+        ) {
+          const transposed = transposeDownOctave(ordered[i]);
+          if (!transposed) {
+            break;
+          }
+          ordered[i] = transposed;
+        }
+      }
+
+      if (isDiagonal(ordered)) {
+        return ordered;
       }
     }
-
-    return adjusted;
   }
 
   // Always render as a downward diagonal: top box leftmost, each next box rightward.

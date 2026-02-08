@@ -219,6 +219,20 @@ describe('box shape generation', () => {
     expect(blues[2].blueNotePositions.some(([stringIndex]) => stringIndex === 5)).toBe(true);
   });
 
+  it('keeps E blues box 4 anchored on low E B and adds A# on the B string', () => {
+    const bluesBox4 = generateBoxShapePatterns('E', 'blues')[3];
+    const lowEString = bluesBox4.pattern[0];
+    const bString = bluesBox4.pattern[4];
+
+    expect(lowEString[0]).toBe(7); // B on low E, not A#
+    expect(bluesBox4.blueNotePositions).toEqual(
+      expect.arrayContaining([
+        [4, 11], // A# on B string
+      ])
+    );
+    expect(bString).toContain(11);
+  });
+
   it('keeps open strings and both A# blue notes in E blues box 1', () => {
     const box1 = generateBoxShapePatterns('E', 'blues')[0];
 
@@ -317,6 +331,31 @@ describe('box shape generation', () => {
     for (let i = 1; i < ordered.length; i++) {
       expect(ordered[i].windowStart).toBeGreaterThanOrEqual(ordered[i - 1].windowStart);
     }
+  });
+
+  it('starts C minor pentatonic/blues from higher boxes too', () => {
+    const cPent = getDisplayOrderedBoxPatterns(
+      generateBoxShapePatterns('C', 'pentatonic'),
+      'pentatonic'
+    );
+    const cBlues = getDisplayOrderedBoxPatterns(
+      generateBoxShapePatterns('C', 'blues'),
+      'blues'
+    );
+
+    expect(cPent.slice(0, 2).map((box) => box.shapeNumber)).toEqual([4, 5]);
+    expect(cBlues.slice(0, 2).map((box) => box.shapeNumber)).toEqual([4, 5]);
+  });
+
+  it('starts experimental C blues from 4, 5, then 6', () => {
+    const cBlues6 = getDisplayOrderedBoxPatterns(
+      generateBoxShapePatterns('C', 'blues', {
+        includeExperimentalBluesShape: true,
+      }),
+      'blues'
+    );
+
+    expect(cBlues6.slice(0, 3).map((box) => box.shapeNumber)).toEqual([4, 5, 6]);
   });
 
   it('orders non-A experimental blues display by neck position too', () => {

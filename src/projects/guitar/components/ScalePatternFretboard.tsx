@@ -258,6 +258,8 @@ export default function ScalePatternFretboard({
           const radius = isHovered
             ? DIMENSIONS.noteRadius * DIMENSIONS.directHoverSizeMultiplier
             : DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
+          const rootRingOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 3);
+          const rootRingWidth = Math.max(1.8, DIMENSIONS.rootNoteRingWidth - 1);
 
           return (
             <g key={`pattern-${idx}`}>
@@ -265,10 +267,10 @@ export default function ScalePatternFretboard({
                 <circle
                   cx={xPos}
                   cy={yPos}
-                  r={radius + DIMENSIONS.rootNoteRingOffset}
+                  r={radius + rootRingOffset}
                   fill="none"
                   stroke="#ffd700"
-                  strokeWidth={DIMENSIONS.rootNoteRingWidth}
+                  strokeWidth={rootRingWidth}
                   opacity={0.95}
                 />
               )}
@@ -279,28 +281,28 @@ export default function ScalePatternFretboard({
                 }
 
                 if (marker.variant === 'blue-vibe') {
-                  const baseOffset = marker.ringOffset ?? (DIMENSIONS.rootNoteRingOffset + 4);
+                  const baseOffset = marker.ringOffset ?? (rootRingOffset + 1);
                   return (
                     <g key={`marker-${idx}-${markerIdx}`} pointerEvents="none">
                       <circle
                         cx={xPos}
                         cy={yPos}
-                        r={radius + baseOffset + 6}
+                        r={radius + baseOffset + 2.5}
                         fill="none"
                         stroke="#0ea5e9"
-                        strokeWidth={1.2}
-                        opacity={0.35}
+                        strokeWidth={1}
+                        opacity={0.3}
                         strokeDasharray="1.5 3"
                         filter="url(#blue-vibe-glow)"
                       />
                       <circle
                         cx={xPos}
                         cy={yPos}
-                        r={radius + baseOffset + 3}
+                        r={radius + baseOffset + 1.25}
                         fill="none"
                         stroke="#38bdf8"
-                        strokeWidth={2}
-                        opacity={0.6}
+                        strokeWidth={1.6}
+                        opacity={0.55}
                         strokeDasharray="4 2"
                         filter="url(#blue-vibe-glow)"
                       />
@@ -310,8 +312,8 @@ export default function ScalePatternFretboard({
                         r={radius + baseOffset}
                         fill="none"
                         stroke="#7dd3fc"
-                        strokeWidth={2.6}
-                        opacity={0.95}
+                        strokeWidth={2}
+                        opacity={0.9}
                         filter="url(#blue-vibe-glow)"
                       />
                     </g>
@@ -323,7 +325,7 @@ export default function ScalePatternFretboard({
                     key={`marker-${idx}-${markerIdx}`}
                     cx={xPos}
                     cy={yPos}
-                    r={radius + (marker.ringOffset ?? (DIMENSIONS.rootNoteRingOffset + 4))}
+                    r={radius + (marker.ringOffset ?? (rootRingOffset + 1))}
                     fill="none"
                     stroke={marker.stroke}
                     strokeWidth={marker.strokeWidth ?? 2}

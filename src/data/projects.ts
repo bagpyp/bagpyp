@@ -115,12 +115,12 @@ export const projectsData: Project[] = [
 	{
 		id: "guitar-triads",
 		slug: "guitar-major-triads",
-		title: "Guitar Major Triads Visualizer",
-		subtitle: "Interactive Chord Voicing Explorer",
+		title: "Guitar Workbench",
+		subtitle: "Triads and Box Shapes",
 		description:
-			"Physics-based fretboard visualization of major triads across all string groups with circle of fifths color coding and Web Audio playback.",
+			"Unified guitar learning page with switchable tools for triads, pentatonic boxes, and blues boxes.",
 		longDescription:
-			"Comprehensive guitar learning tool featuring major triads visualization with realistic fretboard rendering. Uses exponential fret spacing (Fender 25.5\" scale) and circle of fifths color system. Hover over any note to hear it played through the Web Audio API.",
+			"Comprehensive interactive guitar workspace combining chord and box-shape systems in one place. Switch between major triad voicings and box-shape visualizers with shared fretboard rendering and hover-to-play audio feedback.",
 		client: "Personal Project",
 		technologies: [
 			"Next.js 14",
@@ -130,11 +130,11 @@ export const projectsData: Project[] = [
 		],
 		features: [
 			"Major triads across 4 string groups (6-5-4, 5-4-3, 4-3-2, 3-2-1)",
-			"Circle of fifths color-coded visualization",
-			"Physics-based exponential fret spacing",
+			"Major, pentatonic, and blues box-shape systems",
+			"Pentatonic 5-box and blues box visualizations",
+			"Shared fretboard rendering engine across tools",
 			"Interactive hover-to-play notes",
-			"Smart position selection algorithm",
-			"188 comprehensive tests"
+			"Physics-based exponential fret spacing"
 		],
 		outcomes: [
 			"Demonstrates mathematical precision",
@@ -147,39 +147,41 @@ export const projectsData: Project[] = [
 		year: "2024",
 		category: "Full-Stack"
 	},
-	{
-		id: "guitar-modes",
-		slug: "guitar-modes-3nps",
-		title: "Guitar Modes - 3 Notes Per String",
-		subtitle: "Interactive Modal Scale Visualizer",
-		description:
-			"Visual exploration of all 7 modes (Ionian through Locrian) using 3-notes-per-string patterns with color-coded fretboard display.",
-		longDescription:
-			"Comprehensive modal scale visualization tool showing all 7 modes across the fretboard. Uses 3-notes-per-string patterns for optimal finger positioning. Each mode is color-coded and displayed with physics-based fretboard rendering.",
-		client: "Personal Project",
-		technologies: [
-			"Next.js 14",
-			"TypeScript",
-			"Web Audio API",
-			"Music Theory"
-		],
-		features: [
-			"All 7 modes visualization (Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian)",
-			"3-notes-per-string patterns",
-			"Color-coded scale degrees",
-			"Interactive fretboard",
-			"Mode comparison tool"
-		],
-		outcomes: [
-			"Complete modal theory implementation",
-			"Visual learning tool",
-			"Interactive exploration"
-		],
-		images: ["guitar-modes-screenshot.png"],
-		featured: false,
-		year: "2024",
-		category: "Full-Stack"
-	}
+		{
+			id: "guitar-modes",
+			slug: "guitar-modes-3nps",
+			title: "Guitar Box Shapes",
+			subtitle: "Major, Pentatonic, and Blues Boxes",
+			description:
+				"Interactive guitar scale explorer focused on box-shape systems for major modes, minor pentatonic, and blues.",
+			longDescription:
+				"Comprehensive fretboard visualization tool focused on connected box-shape systems. Includes all seven major-mode boxes, five minor pentatonic boxes, and five blues boxes with optional experimental sixth-box extension.",
+			client: "Personal Project",
+			technologies: [
+				"Next.js 14",
+				"TypeScript",
+				"Web Audio API",
+				"Music Theory"
+			],
+			features: [
+				"All 7 major modes visualization (Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian)",
+				"Major-mode box-shape visualization",
+				"Minor pentatonic 5-box system",
+				"Blues 5-box system with optional experimental 6th box",
+				"Color-coded scale degrees",
+				"Interactive fretboard",
+				"Mode comparison tool"
+			],
+			outcomes: [
+				"Complete modal theory implementation",
+				"Visual learning tool",
+				"Interactive exploration"
+			],
+			images: ["guitar-modes-screenshot.png"],
+			featured: false,
+			year: "2024",
+			category: "Full-Stack"
+		}
 ];
 
 export const getFeaturedProjects = () =>

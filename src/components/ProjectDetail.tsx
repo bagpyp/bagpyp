@@ -11,18 +11,13 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 	// Check if this is a guitar project that should load interactive component
 	const isGuitarProject = project.slug.startsWith("guitar-");
 	const isTonnetzProject = project.slug === "tonnetz-lattice";
+	const guitarInitialSection =
+		project.slug === "guitar-modes-3nps" ? "boxes" : "triads";
 
 	// Dynamically load guitar components
 	const GuitarComponent = isGuitarProject
 		? dynamic(
-				() => {
-					if (project.slug === "guitar-major-triads") {
-						return import("../projects/guitar/components/MajorTriads");
-					} else if (project.slug === "guitar-modes-3nps") {
-						return import("../projects/guitar/components/Modes3NPS");
-					}
-					return Promise.resolve(() => <div>Guitar component not found</div>);
-				},
+				() => import("../projects/guitar/components/GuitarWorkbench"),
 				{
 					ssr: false,
 					loading: () => (
@@ -58,8 +53,8 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 	// If it's a guitar project, render the interactive component
 	if (isGuitarProject && GuitarComponent) {
 		return (
-			<FullscreenWrapper className="bg-white min-h-screen">
-				<GuitarComponent />
+			<FullscreenWrapper className="bg-slate-950 min-h-screen">
+				<GuitarComponent initialSection={guitarInitialSection} />
 			</FullscreenWrapper>
 		);
 	}

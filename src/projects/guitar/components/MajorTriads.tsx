@@ -2,19 +2,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import LongFretboardDiagram from './LongFretboardDiagram';
+import CircleOfFifthsSelector from './CircleOfFifthsSelector';
 import { generateChordData } from '../lib/chords';
 import type { ChordData } from '../lib/chords';
 import { buildChord } from '../lib/chord-types';
 import { nameToPc } from '../lib';
-import { getAllNoteColorsInCircleOfFifths, getNoteColor } from '../lib/note-colors';
-import { DIMENSIONS } from '../lib/fretboard-dimensions';
 import type { NoteName } from '../lib/types';
 import { DEFAULT_TRIAD_SETTINGS, getChordTypeLabels } from '../lib/triad-settings';
 import type { TriadSettings } from '../lib/triad-settings';
 import { playChord, resumeAudioContext } from '../lib/sound';
-
-// Circle of fifths order (using flats for Db, Ab, Eb, Bb)
-const CIRCLE_OF_FIFTHS_KEYS = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'Db', 'Ab', 'Eb', 'Bb', 'F'];
 
 // Keyboard mapping:
 // - lowercase = natural (c = C, d = D, etc.)
@@ -55,8 +51,15 @@ const STRING_GROUP_LABELS = [
   'Strings 6-5-4 (E-A-D)',
 ];
 
-export default function MajorTriads() {
-  const [selectedKey, setSelectedKey] = useState<string>('C');
+interface MajorTriadsProps {
+  selectedKey: string;
+  onSelectedKeyChange: (key: string) => void;
+}
+
+export default function MajorTriads({
+  selectedKey,
+  onSelectedKeyChange,
+}: MajorTriadsProps) {
   const [settings, setSettings] = useState<TriadSettings>(DEFAULT_TRIAD_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -76,11 +79,9 @@ export default function MajorTriads() {
     return chordData;
   }, [selectedKey, settings.chordType]);
 
-  // Calculate which notes are in the current triad (1, 3, 5)
+  // Calculate which notes are in the current triad
   const getTriadNotes = (rootKey: string, chordType: 'major' | 'minor' | 'dim' | 'aug'): { root: number; third: number; fifth: number } => {
-    // For now, only major and minor are implemented, so fall back to major for dim/aug
-    const actualChordType = (chordType === 'major' || chordType === 'minor') ? chordType : 'major';
-    const chordPcs = buildChord(rootKey as NoteName, actualChordType);
+    const chordPcs = buildChord(rootKey as NoteName, chordType);
     return {
       root: chordPcs[0],
       third: chordPcs[1],
@@ -90,12 +91,21 @@ export default function MajorTriads() {
 
   const triadNotes = getTriadNotes(selectedKey, settings.chordType);
 
-  // Get interval label for a note (1, 3, 5, or null)
-  const getIntervalLabel = (noteName: string): '1' | '3' | '5' | null => {
+  // Get interval label for a note based on chord type
+  // Major: 1, 3, 5 | Minor: 1, ♭3, 5 | Dim: 1, ♭3, ♭5 | Aug: 1, 3, #5
+  const getIntervalLabel = (noteName: string): string | null => {
     const notePc = nameToPc(noteName as any);
     if (notePc === triadNotes.root) return '1';
-    if (notePc === triadNotes.third) return '3';
-    if (notePc === triadNotes.fifth) return '5';
+    if (notePc === triadNotes.third) {
+      // 3rd is flat for minor and dim
+      return (settings.chordType === 'minor' || settings.chordType === 'dim') ? '♭3' : '3';
+    }
+    if (notePc === triadNotes.fifth) {
+      // 5th is flat for dim, sharp for aug
+      if (settings.chordType === 'dim') return '♭5';
+      if (settings.chordType === 'aug') return '#5';
+      return '5';
+    }
     return null;
   };
 
@@ -175,7 +185,7 @@ export default function MajorTriads() {
         const flatNote = CTRL_KEY_TO_FLAT_MAP[e.key.toLowerCase()];
         if (flatNote) {
           e.preventDefault(); // Prevent browser shortcuts
-          setSelectedKey(flatNote);
+          onSelectedKeyChange(flatNote);
           return;
         }
       }
@@ -185,7 +195,7 @@ export default function MajorTriads() {
         const note = KEY_TO_NOTE_MAP[e.key];
         if (note) {
           e.preventDefault(); // Prevent any default behavior
-          setSelectedKey(note);
+          onSelectedKeyChange(note);
           return;
         }
       }
@@ -193,7 +203,7 @@ export default function MajorTriads() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [settings, triadsData]);
+  }, [onSelectedKeyChange, settings, triadsData]);
 
   // Help Modal Component
   const HelpModal = () => {
@@ -319,7 +329,7 @@ export default function MajorTriads() {
   };
 
   return (
-    <div className="space-y-3 p-2 w-full">
+    <div className="space-y-3 p-2 w-full bg-slate-900 min-h-screen text-slate-100">
       {/* Help Modal */}
       <HelpModal />
 
@@ -402,143 +412,14 @@ export default function MajorTriads() {
 
       {/* Circle of Fifths Visual Selector with Settings Icon */}
       <div className="w-full max-w-[970px] mx-auto relative">
-          <svg
-            width="100%"
-            height="100"
-            viewBox="0 0 970 100"
-            preserveAspectRatio="xMidYMid meet"
-          >
-            {/* SVG Filters for golden glow */}
-            <defs>
-              <filter id="selector-golden-glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-
-            {CIRCLE_OF_FIFTHS_KEYS.map((key, index) => {
-              const x = 65 + (index * 70); // Properly centered (65px margins on both sides)
-              const y = 50; // Vertical center
-              const colorData = getNoteColor(key);
-              const isSelected = key === selectedKey;
-              const intervalLabel = getIntervalLabel(key);
-
-              // All notes same size - only selected gets golden halo
-              const radius = DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
-
-              return (
-                <g key={key}>
-                  {/* Golden halo for selected note */}
-                  {isSelected && (
-                    <g pointerEvents="none">
-                      {/* Outer glow ring */}
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r={radius + DIMENSIONS.rootNoteRingOffset + 3}
-                        fill="none"
-                        stroke="#ffd700"
-                        strokeWidth={1}
-                        opacity={0.3}
-                        filter="url(#selector-golden-glow)"
-                      />
-                      {/* Middle glow ring */}
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r={radius + DIMENSIONS.rootNoteRingOffset + 1.5}
-                        fill="none"
-                        stroke="#ffd700"
-                        strokeWidth={1.5}
-                        opacity={0.5}
-                        filter="url(#selector-golden-glow)"
-                      />
-                      {/* Main bright ring */}
-                      <circle
-                        cx={x}
-                        cy={y}
-                        r={radius + DIMENSIONS.rootNoteRingOffset}
-                        fill="none"
-                        stroke="#ffd700"
-                        strokeWidth={DIMENSIONS.rootNoteRingWidth}
-                        opacity={0.9}
-                        filter="url(#selector-golden-glow)"
-                      />
-                    </g>
-                  )}
-
-                  {/* Interval label (1, 3, 5) below note */}
-                  {intervalLabel && (
-                    <text
-                      x={x}
-                      y={y + radius + 18}
-                      fill="#4a3020"
-                      fontSize="20"
-                      fontWeight="bold"
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      pointerEvents="none"
-                    >
-                      {intervalLabel}
-                    </text>
-                  )}
-
-                  {/* Note circle */}
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={radius}
-                    fill={colorData.bg}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setSelectedKey(key)}
-                  />
-
-                  {/* Note name text */}
-                  <text
-                    x={x}
-                    y={y}
-                    fill={colorData.text}
-                    fontSize="14"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    pointerEvents="none"
-                  >
-                    {key}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Settings Icon - Same size/shape as notes */}
-            <g onClick={() => setIsSettingsOpen(!isSettingsOpen)} style={{ cursor: 'pointer' }}>
-              <circle
-                cx={905} // Position after F (65 + 12 * 70)
-                cy={50}
-                r={DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier}
-                fill="#64748b"
-                opacity={isSettingsOpen ? 1 : 0.8}
-              />
-              <svg
-                x={905 - 10}
-                y={40}
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </g>
-          </svg>
+          <CircleOfFifthsSelector
+            selectedKey={selectedKey}
+            onSelectKey={onSelectedKeyChange}
+            getAuxLabel={getIntervalLabel}
+            showSettingsButton
+            isSettingsOpen={isSettingsOpen}
+            onSettingsToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+          />
 
           {/* Settings Panel Dropdown - Opens to the left */}
           {isSettingsOpen && (

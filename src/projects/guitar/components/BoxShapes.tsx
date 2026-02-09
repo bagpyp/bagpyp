@@ -17,21 +17,88 @@ interface BoxShapesProps {
   onSelectedMajorKeyChange: (key: string) => void;
 }
 
+interface TargetToneConfig {
+  id: 'flatFive' | 'flatSix' | 'flatSeven' | 'majorThird' | 'majorSecond' | 'majorSixth';
+  label: string;
+  description: string;
+  intervalFromMinorRoot: number;
+  preferFlatName: boolean;
+  palette: {
+    outer: string;
+    mid: string;
+    inner: string;
+  };
+}
+
+const TARGET_TONE_CONFIGS: TargetToneConfig[] = [
+  {
+    id: 'flatFive',
+    label: 'Add b5 targets',
+    description: 'Classic blue note bite',
+    intervalFromMinorRoot: 6,
+    preferFlatName: true,
+    palette: { outer: '#0ea5e9', mid: '#38bdf8', inner: '#7dd3fc' },
+  },
+  {
+    id: 'flatSix',
+    label: 'Add b6 targets',
+    description: 'Dark passing color',
+    intervalFromMinorRoot: 8,
+    preferFlatName: true,
+    palette: { outer: '#0284c7', mid: '#0ea5e9', inner: '#7dd3fc' },
+  },
+  {
+    id: 'flatSeven',
+    label: 'Add b7 targets',
+    description: 'Dominant blues pull',
+    intervalFromMinorRoot: 10,
+    preferFlatName: true,
+    palette: { outer: '#0369a1', mid: '#0ea5e9', inner: '#7dd3fc' },
+  },
+  {
+    id: 'majorThird',
+    label: 'Add M3 targets',
+    description: 'Vocal sweet vs sour color',
+    intervalFromMinorRoot: 4,
+    preferFlatName: false,
+    palette: { outer: '#c026d3', mid: '#e879f9', inner: '#f5d0fe' },
+  },
+  {
+    id: 'majorSecond',
+    label: 'Add 2/9 targets',
+    description: 'Smooth, floating modern blues',
+    intervalFromMinorRoot: 2,
+    preferFlatName: false,
+    palette: { outer: '#0891b2', mid: '#22d3ee', inner: '#a5f3fc' },
+  },
+  {
+    id: 'majorSixth',
+    label: 'Add 6 targets',
+    description: 'Gospel/soul hopeful color',
+    intervalFromMinorRoot: 9,
+    preferFlatName: false,
+    palette: { outer: '#16a34a', mid: '#4ade80', inner: '#bbf7d0' },
+  },
+];
+
+const DEFAULT_TARGET_TONE_STATE: Record<TargetToneConfig['id'], boolean> = {
+  flatFive: false,
+  flatSix: false,
+  flatSeven: false,
+  majorThird: false,
+  majorSecond: false,
+  majorSixth: false,
+};
+
 export default function BoxShapes({
   selectedMajorKey,
   onSelectedMajorKeyChange,
 }: BoxShapesProps) {
   const STANDARD_TUNING_PCS = [4, 9, 2, 7, 11, 4]; // E A D G B E
-  const FLAT_FIVE_INTERVAL = 6;
-  const FLAT_SIX_INTERVAL = 8;
-  const FLAT_SEVEN_INTERVAL = 10;
   const BOX_FRET_COUNT = 24;
   const [scaleFamily, setScaleFamily] = useState<BoxScaleFamily>('major');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isBluesModeEnabled, setIsBluesModeEnabled] = useState(false);
-  const [showFlatFiveTargets, setShowFlatFiveTargets] = useState(false);
-  const [showFlatSixTargets, setShowFlatSixTargets] = useState(false);
-  const [showFlatSevenTargets, setShowFlatSevenTargets] = useState(false);
+  const [targetToneState, setTargetToneState] = useState(DEFAULT_TARGET_TONE_STATE);
   const settingsContainerRef = useRef<HTMLDivElement | null>(null);
   const scaleFamilyOptions = useMemo(
     () => getBoxScaleFamilyOptions().filter((option) => option.value !== 'blues'),
@@ -42,12 +109,10 @@ export default function BoxShapes({
     () => (scaleFamily === 'major' ? selectedMajorKey : getRelativeMinorKeyFromMajor(selectedMajorKey)),
     [scaleFamily, selectedMajorKey]
   );
-  const activeScaleFamily = useMemo<BoxScaleFamily>(() => {
-    if (scaleFamily === 'pentatonic' && isBluesModeEnabled) {
-      return 'blues';
-    }
-    return scaleFamily;
-  }, [isBluesModeEnabled, scaleFamily]);
+  const activeScaleFamily = useMemo<BoxScaleFamily>(
+    () => (scaleFamily === 'major' ? 'major' : 'pentatonic'),
+    [scaleFamily]
+  );
 
   const shapePatterns = useMemo(() => {
     return generateBoxShapePatterns(effectiveScaleKey, activeScaleFamily);
@@ -57,17 +122,18 @@ export default function BoxShapes({
     () => getDisplayOrderedBoxPatterns(shapePatterns, activeScaleFamily),
     [shapePatterns, activeScaleFamily]
   );
-  const flatFiveTargetPitchClass = useMemo(
-    () => (getPitchClass(selectedMajorKey) + FLAT_FIVE_INTERVAL) % 12,
-    [selectedMajorKey]
-  );
-  const flatSixTargetPitchClass = useMemo(
-    () => (getPitchClass(selectedMajorKey) + FLAT_SIX_INTERVAL) % 12,
-    [selectedMajorKey]
-  );
-  const flatSevenTargetPitchClass = useMemo(
-    () => (getPitchClass(selectedMajorKey) + FLAT_SEVEN_INTERVAL) % 12,
-    [selectedMajorKey]
+  const targetPitchClassById = useMemo(() => {
+    const minorRootPitchClass = getPitchClass(effectiveScaleKey);
+    return Object.fromEntries(
+      TARGET_TONE_CONFIGS.map((config) => [
+        config.id,
+        (minorRootPitchClass + config.intervalFromMinorRoot) % 12,
+      ])
+    ) as Record<TargetToneConfig['id'], number>;
+  }, [effectiveScaleKey]);
+  const enabledTargetToneConfigs = useMemo(
+    () => TARGET_TONE_CONFIGS.filter((config) => targetToneState[config.id]),
+    [targetToneState]
   );
 
   useEffect(() => {
@@ -127,9 +193,7 @@ export default function BoxShapes({
 
   const title = scaleFamily === 'major'
     ? `${effectiveScaleKey} Major System - 7 Modal Box Shapes`
-    : !isBluesModeEnabled
-      ? `${effectiveScaleKey} Minor Pentatonic - 5 Box Shapes`
-      : `${effectiveScaleKey} Minor Pentatonic (Blues Mode) - ${shapePatterns.length} Box Shapes`;
+    : `${effectiveScaleKey} Minor Pentatonic - 5 Box Shapes`;
 
   return (
     <div className="space-y-4 p-4 w-full bg-slate-900 min-h-screen">
@@ -164,10 +228,7 @@ export default function BoxShapes({
                       onClick={() => {
                         setScaleFamily(option.value);
                         if (option.value === 'major') {
-                          setIsBluesModeEnabled(false);
-                          setShowFlatFiveTargets(false);
-                          setShowFlatSixTargets(false);
-                          setShowFlatSevenTargets(false);
+                          setTargetToneState(DEFAULT_TARGET_TONE_STATE);
                         }
                       }}
                       className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
@@ -184,52 +245,26 @@ export default function BoxShapes({
                 {scaleFamily === 'pentatonic' && (
                   <>
                     <div className="border-t border-slate-200 dark:border-slate-700" />
-                    <div
-                      onClick={() => {
-                        setIsBluesModeEnabled((current) => {
-                          const next = !current;
-                          if (!next) {
-                            setShowFlatFiveTargets(false);
-                            setShowFlatSixTargets(false);
-                            setShowFlatSevenTargets(false);
-                          }
-                          return next;
-                        });
-                      }}
-                      className="flex items-center gap-3 cursor-pointer py-1"
-                    >
-                      <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                    <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
+                      Pentatonic Color Tones
+                    </label>
+                    {TARGET_TONE_CONFIGS.map((config) => {
+                      const isEnabled = targetToneState[config.id];
+                      return (
                         <div
-                          className="absolute inset-0 rounded-full transition-colors"
-                          style={{ backgroundColor: isBluesModeEnabled ? '#34C759' : '#E5E7EB' }}
-                        />
-                        <div
-                          className="absolute bg-white rounded-full shadow-sm pointer-events-none"
-                          style={{
-                            width: '16px',
-                            height: '16px',
-                            left: '2px',
-                            top: '2px',
-                            transform: isBluesModeEnabled ? 'translateX(16px)' : 'translateX(0)',
-                            transition: 'transform 0.2s ease',
+                          key={config.id}
+                          onClick={() => {
+                            setTargetToneState((current) => ({
+                              ...current,
+                              [config.id]: !current[config.id],
+                            }));
                           }}
-                        />
-                      </div>
-                      <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
-                        Blues mode
-                      </span>
-                    </div>
-
-                    {isBluesModeEnabled && (
-                      <>
-                        <div
-                          onClick={() => setShowFlatFiveTargets((current) => !current)}
-                          className="flex items-center gap-3 cursor-pointer py-1 pl-2"
+                          className="flex items-center gap-3 cursor-pointer py-1"
                         >
                           <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
                             <div
                               className="absolute inset-0 rounded-full transition-colors"
-                              style={{ backgroundColor: showFlatFiveTargets ? '#34C759' : '#E5E7EB' }}
+                              style={{ backgroundColor: isEnabled ? '#34C759' : '#E5E7EB' }}
                             />
                             <div
                               className="absolute bg-white rounded-full shadow-sm pointer-events-none"
@@ -238,69 +273,29 @@ export default function BoxShapes({
                                 height: '16px',
                                 left: '2px',
                                 top: '2px',
-                                transform: showFlatFiveTargets ? 'translateX(16px)' : 'translateX(0)',
+                                transform: isEnabled ? 'translateX(16px)' : 'translateX(0)',
                                 transition: 'transform 0.2s ease',
                               }}
                             />
                           </div>
-                          <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
-                            Add b5 targets
-                          </span>
-                        </div>
 
-                        <div
-                          onClick={() => setShowFlatSixTargets((current) => !current)}
-                          className="flex items-center gap-3 cursor-pointer py-1 pl-2"
-                        >
-                          <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
-                            <div
-                              className="absolute inset-0 rounded-full transition-colors"
-                              style={{ backgroundColor: showFlatSixTargets ? '#34C759' : '#E5E7EB' }}
-                            />
-                            <div
-                              className="absolute bg-white rounded-full shadow-sm pointer-events-none"
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                left: '2px',
-                                top: '2px',
-                                transform: showFlatSixTargets ? 'translateX(16px)' : 'translateX(0)',
-                                transition: 'transform 0.2s ease',
-                              }}
-                            />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="inline-block h-2 w-2 rounded-full"
+                                style={{ backgroundColor: config.palette.mid }}
+                              />
+                              <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                                {config.label}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                              {config.description}
+                            </p>
                           </div>
-                          <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
-                            Add b6 targets
-                          </span>
                         </div>
-
-                        <div
-                          onClick={() => setShowFlatSevenTargets((current) => !current)}
-                          className="flex items-center gap-3 cursor-pointer py-1 pl-2"
-                        >
-                          <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
-                            <div
-                              className="absolute inset-0 rounded-full transition-colors"
-                              style={{ backgroundColor: showFlatSevenTargets ? '#34C759' : '#E5E7EB' }}
-                            />
-                            <div
-                              className="absolute bg-white rounded-full shadow-sm pointer-events-none"
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                left: '2px',
-                                top: '2px',
-                                transform: showFlatSevenTargets ? 'translateX(16px)' : 'translateX(0)',
-                                transition: 'transform 0.2s ease',
-                              }}
-                            />
-                          </div>
-                          <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
-                            Add b7 targets
-                          </span>
-                        </div>
-                      </>
-                    )}
+                      );
+                    })}
                   </>
                 )}
               </div>
@@ -315,7 +310,7 @@ export default function BoxShapes({
         )}
 
         <p className="text-gray-400 text-sm">
-          Gold rings = shape roots | Electric blue aura = blue note (blues mode) | Hover to play
+          Gold rings = shape roots | Aura rings = enabled target tones | Hover to play
         </p>
         <p className="text-gray-500 text-xs mt-1">
           Keyboard: lowercase = natural (c, d, e...) | uppercase = sharp (C=C#, D=D#...)
@@ -327,32 +322,17 @@ export default function BoxShapes({
           let patternForRender = shapeData.pattern;
           const markers: FretboardMarker[] = [];
 
-          if (activeScaleFamily === 'blues') {
-            markers.push({
-              positions: shapeData.blueNotePositions,
-              stroke: '#38bdf8',
-              strokeWidth: 2,
-              ringOffset: 3,
-              variant: 'blue-vibe',
-            });
+          if (activeScaleFamily === 'pentatonic' && enabledTargetToneConfigs.length > 0) {
+            const mergedPattern = shapeData.pattern.map((stringFrets) => new Set(stringFrets));
+            const minFret = Math.max(0, shapeData.windowStart);
+            const maxFret = Math.min(BOX_FRET_COUNT, shapeData.windowEnd);
+            const minimumTargetsPerPitchClass = 2;
+            const focusFret = maxFret + 1;
 
-            if (showFlatFiveTargets || showFlatSixTargets || showFlatSevenTargets) {
-              const targetPitchClasses = new Set<number>();
-              if (showFlatFiveTargets) {
-                targetPitchClasses.add(flatFiveTargetPitchClass);
-              }
-              if (showFlatSixTargets) {
-                targetPitchClasses.add(flatSixTargetPitchClass);
-              }
-              if (showFlatSevenTargets) {
-                targetPitchClasses.add(flatSevenTargetPitchClass);
-              }
-              const targetPitchClassList = [...targetPitchClasses];
+            enabledTargetToneConfigs.forEach((toneConfig) => {
+              const targetPitchClass = targetPitchClassById[toneConfig.id];
               const targetPositions: [number, number][] = [];
               const targetPositionKeys = new Set<string>();
-              const mergedPattern = shapeData.pattern.map((stringFrets) => new Set(stringFrets));
-              const minFret = Math.max(0, shapeData.windowStart);
-              const maxFret = Math.min(BOX_FRET_COUNT, shapeData.windowEnd);
 
               const addTargetPosition = (stringIndex: number, fret: number) => {
                 const key = `${stringIndex}:${fret}`;
@@ -364,71 +344,67 @@ export default function BoxShapes({
                 targetPositions.push([stringIndex, fret]);
               };
 
-              // Primary pass: flood targets that naturally fall inside the current box window.
+              const matchesTargetPitchClass = (stringIndex: number, fret: number) =>
+                (STANDARD_TUNING_PCS[stringIndex] + fret) % 12 === targetPitchClass;
+
+              // Primary pass: flood this target note inside the current box window.
               for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
                 for (let fret = minFret; fret <= maxFret; fret++) {
-                  const pitchClass = (STANDARD_TUNING_PCS[stringIndex] + fret) % 12;
-                  if (targetPitchClasses.has(pitchClass)) {
+                  if (matchesTargetPitchClass(stringIndex, fret)) {
                     addTargetPosition(stringIndex, fret);
                   }
                 }
               }
 
-              // Completion pass: ensure at least two visible targets for each enabled interval.
-              // This helps very tight boxes (like E blues box 1) show a second target note.
-              const minimumTargetsPerPitchClass = 2;
-              const focusFret = maxFret + 1;
+              // Completion pass: guarantee at least two targets for each active tone.
+              let count = targetPositions.length;
+              while (count < minimumTargetsPerPitchClass) {
+                let bestCandidate: { stringIndex: number; fret: number; score: number } | null = null;
 
-              for (const targetPitchClass of targetPitchClassList) {
-                const matchesTargetPitchClass = (stringIndex: number, fret: number) =>
-                  (STANDARD_TUNING_PCS[stringIndex] + fret) % 12 === targetPitchClass;
+                for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
+                  for (let fret = 0; fret <= BOX_FRET_COUNT; fret++) {
+                    if (!matchesTargetPitchClass(stringIndex, fret)) {
+                      continue;
+                    }
 
-                let count = targetPositions.filter(([stringIndex, fret]) =>
-                  matchesTargetPitchClass(stringIndex, fret)
-                ).length;
+                    const key = `${stringIndex}:${fret}`;
+                    if (targetPositionKeys.has(key)) {
+                      continue;
+                    }
 
-                while (count < minimumTargetsPerPitchClass) {
-                  let bestCandidate: { stringIndex: number; fret: number; score: number } | null = null;
-
-                  for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
-                    for (let fret = 0; fret <= BOX_FRET_COUNT; fret++) {
-                      if (!matchesTargetPitchClass(stringIndex, fret)) {
-                        continue;
-                      }
-                      const key = `${stringIndex}:${fret}`;
-                      if (targetPositionKeys.has(key)) {
-                        continue;
-                      }
-
-                      const score = Math.abs(fret - focusFret) + (fret < minFret ? 0.5 : 0);
-                      if (
-                        !bestCandidate ||
-                        score < bestCandidate.score ||
-                        (score === bestCandidate.score && fret < bestCandidate.fret)
-                      ) {
-                        bestCandidate = { stringIndex, fret, score };
-                      }
+                    const score = Math.abs(fret - focusFret) + (fret < minFret ? 0.5 : 0);
+                    if (
+                      !bestCandidate ||
+                      score < bestCandidate.score ||
+                      (score === bestCandidate.score && fret < bestCandidate.fret)
+                    ) {
+                      bestCandidate = { stringIndex, fret, score };
                     }
                   }
-
-                  if (!bestCandidate) {
-                    break;
-                  }
-                  addTargetPosition(bestCandidate.stringIndex, bestCandidate.fret);
-                  count += 1;
                 }
+
+                if (!bestCandidate) {
+                  break;
+                }
+
+                addTargetPosition(bestCandidate.stringIndex, bestCandidate.fret);
+                count += 1;
               }
 
-              patternForRender = mergedPattern.map((stringFrets) => [...stringFrets].sort((a, b) => a - b));
+              if (targetPositions.length > 0) {
+                markers.push({
+                  positions: targetPositions,
+                  stroke: toneConfig.palette.inner,
+                  strokeWidth: 2,
+                  ringOffset: 3,
+                  variant: 'vibe',
+                  vibePalette: toneConfig.palette,
+                  preferFlatName: toneConfig.preferFlatName,
+                });
+              }
+            });
 
-              markers.push({
-                positions: targetPositions,
-                stroke: '#38bdf8',
-                strokeWidth: 2,
-                ringOffset: 3,
-                variant: 'blue-vibe',
-              });
-            }
+            patternForRender = mergedPattern.map((stringFrets) => [...stringFrets].sort((a, b) => a - b));
           }
 
           return (

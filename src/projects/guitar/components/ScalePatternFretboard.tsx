@@ -19,7 +19,13 @@ export interface FretboardMarker {
   opacity?: number;
   dashArray?: string;
   ringOffset?: number;
-  variant?: 'ring' | 'blue-vibe';
+  variant?: 'ring' | 'vibe' | 'blue-vibe';
+  preferFlatName?: boolean;
+  vibePalette?: {
+    outer: string;
+    mid: string;
+    inner: string;
+  };
 }
 
 interface ScalePatternFretboardProps {
@@ -62,6 +68,11 @@ export default function ScalePatternFretboard({
   );
   const stringYPositions = calculateAllStringYPositions();
   const allNoteColors = getAllNoteColorsInCircleOfFifths();
+  const defaultVibePalette = {
+    outer: '#0ea5e9',
+    mid: '#38bdf8',
+    inner: '#7dd3fc',
+  };
 
   const patternNotes = useMemo(() => {
     const notes: { stringIdx: number; fret: number }[] = [];
@@ -118,7 +129,7 @@ export default function ScalePatternFretboard({
           style={{ display: 'block', margin: '0 auto' }}
         >
         <defs>
-          <filter id="blue-vibe-glow" x="-60%" y="-60%" width="220%" height="220%">
+          <filter id="note-vibe-glow" x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur stdDeviation="2.8" result="blueBlur" />
             <feMerge>
               <feMergeNode in="blueBlur" />
@@ -245,10 +256,11 @@ export default function ScalePatternFretboard({
 
         {patternNotes.map(({ stringIdx, fret }, idx) => {
           const noteAtPos = getNoteAtPosition(stringIdx, fret, selectedKey);
-          const isBlueNote = markers.some(
-            (marker) => marker.variant === 'blue-vibe' && hasPosition(marker.positions, stringIdx, fret)
-          );
-          const displayNoteName = isBlueNote ? toFlatEnharmonic(noteAtPos.noteName) : noteAtPos.noteName;
+          const prefersFlatName = markers.some((marker) => {
+            const shouldUseFlat = marker.preferFlatName ?? marker.variant === 'blue-vibe';
+            return shouldUseFlat && hasPosition(marker.positions, stringIdx, fret);
+          });
+          const displayNoteName = prefersFlatName ? toFlatEnharmonic(noteAtPos.noteName) : noteAtPos.noteName;
           const colorData = getNoteColor(displayNoteName);
           const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
           const yPos = stringYPositions[stringIdx];
@@ -280,7 +292,8 @@ export default function ScalePatternFretboard({
                   return null;
                 }
 
-                if (marker.variant === 'blue-vibe') {
+                if (marker.variant === 'vibe' || marker.variant === 'blue-vibe') {
+                  const palette = marker.vibePalette ?? defaultVibePalette;
                   const baseOffset = marker.ringOffset ?? (rootRingOffset + 1);
                   return (
                     <g key={`marker-${idx}-${markerIdx}`} pointerEvents="none">
@@ -289,32 +302,32 @@ export default function ScalePatternFretboard({
                         cy={yPos}
                         r={radius + baseOffset + 2.5}
                         fill="none"
-                        stroke="#0ea5e9"
+                        stroke={palette.outer}
                         strokeWidth={1}
                         opacity={0.3}
                         strokeDasharray="1.5 3"
-                        filter="url(#blue-vibe-glow)"
+                        filter="url(#note-vibe-glow)"
                       />
                       <circle
                         cx={xPos}
                         cy={yPos}
                         r={radius + baseOffset + 1.25}
                         fill="none"
-                        stroke="#38bdf8"
+                        stroke={palette.mid}
                         strokeWidth={1.6}
                         opacity={0.55}
                         strokeDasharray="4 2"
-                        filter="url(#blue-vibe-glow)"
+                        filter="url(#note-vibe-glow)"
                       />
                       <circle
                         cx={xPos}
                         cy={yPos}
                         r={radius + baseOffset}
                         fill="none"
-                        stroke="#7dd3fc"
+                        stroke={palette.inner}
                         strokeWidth={2}
                         opacity={0.9}
-                        filter="url(#blue-vibe-glow)"
+                        filter="url(#note-vibe-glow)"
                       />
                     </g>
                   );

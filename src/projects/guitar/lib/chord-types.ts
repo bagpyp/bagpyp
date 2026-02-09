@@ -4,11 +4,15 @@
 
 import type { NoteName } from './types';
 import { nameToPc, pcToDisplayName } from './core';
+import {
+  CHORD_FORMULA_CATALOG,
+  type ChordFormulaId,
+} from './theory-catalog';
 
 /**
  * Chord type definitions with their interval formulas
  */
-export type ChordType = 'major' | 'minor' | 'dim' | 'aug' | 'maj7' | 'min7' | '7' | 'dim7';
+export type ChordType = ChordFormulaId;
 
 /**
  * Intervals in semitones from the root
@@ -24,64 +28,18 @@ export interface ChordFormula {
 /**
  * All supported chord formulas
  */
-export const CHORD_FORMULAS: Record<ChordType, ChordFormula> = {
-  major: {
-    type: 'major',
-    name: 'Major',
-    symbol: '',
-    intervals: [0, 4, 7], // Root, Major 3rd, Perfect 5th
-    description: '1-3-5',
-  },
-  minor: {
-    type: 'minor',
-    name: 'Minor',
-    symbol: 'm',
-    intervals: [0, 3, 7], // Root, Minor 3rd (flatted), Perfect 5th
-    description: '1-♭3-5',
-  },
-  dim: {
-    type: 'dim',
-    name: 'Diminished',
-    symbol: 'dim',
-    intervals: [0, 3, 6], // Root, Minor 3rd, Diminished 5th
-    description: '1-♭3-♭5',
-  },
-  aug: {
-    type: 'aug',
-    name: 'Augmented',
-    symbol: 'aug',
-    intervals: [0, 4, 8], // Root, Major 3rd, Augmented 5th
-    description: '1-3-#5',
-  },
-  maj7: {
-    type: 'maj7',
-    name: 'Major 7th',
-    symbol: 'maj7',
-    intervals: [0, 4, 7, 11], // Root, Major 3rd, Perfect 5th, Major 7th
-    description: '1-3-5-7',
-  },
-  min7: {
-    type: 'min7',
-    name: 'Minor 7th',
-    symbol: 'm7',
-    intervals: [0, 3, 7, 10], // Root, Minor 3rd, Perfect 5th, Minor 7th
-    description: '1-♭3-5-♭7',
-  },
-  '7': {
-    type: '7',
-    name: 'Dominant 7th',
-    symbol: '7',
-    intervals: [0, 4, 7, 10], // Root, Major 3rd, Perfect 5th, Minor 7th
-    description: '1-3-5-♭7',
-  },
-  dim7: {
-    type: 'dim7',
-    name: 'Diminished 7th',
-    symbol: 'dim7',
-    intervals: [0, 3, 6, 9], // Root, Minor 3rd, Diminished 5th, Diminished 7th
-    description: '1-♭3-♭5-♭♭7',
-  },
-};
+export const CHORD_FORMULAS: Record<ChordType, ChordFormula> = Object.fromEntries(
+  Object.entries(CHORD_FORMULA_CATALOG).map(([type, formula]) => ([
+    type,
+    {
+      type: type as ChordType,
+      name: formula.name,
+      symbol: formula.symbol,
+      intervals: [...formula.intervals],
+      description: formula.description,
+    },
+  ]))
+) as Record<ChordType, ChordFormula>;
 
 /**
  * Build chord pitch classes from root and chord type

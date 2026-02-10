@@ -35,6 +35,12 @@ export interface HexatonicModeOption {
   toneIds: [TargetToneId, TargetToneId];
 }
 
+export interface ActiveTargetTone {
+  config: TargetToneConfig;
+  palette: TargetTonePalette;
+  source: 'hexatonic' | 'single';
+}
+
 const ALL_TARGET_TONE_CONFIGS: TargetToneConfig[] = [
   {
     id: 'flatSecond',
@@ -157,6 +163,12 @@ export const HEXATONIC_MODE_OPTIONS: HexatonicModeOption[] = [
   },
 ];
 
+export const HEXATONIC_MODE_RING_PALETTE: TargetTonePalette = {
+  outer: '#166534',
+  mid: '#22c55e',
+  inner: '#86efac',
+};
+
 export const DEFAULT_SINGLE_TARGET_TONE_STATE: Record<SingleTargetToneId, boolean> = {
   flatFive: false,
   flatSix: false,
@@ -171,6 +183,38 @@ export function getHexatonicModeOption(id: HexatonicModeId): HexatonicModeOption
     return null;
   }
   return HEXATONIC_MODE_OPTIONS.find((option) => option.id === id) ?? null;
+}
+
+export function getActiveTargetTones(
+  singleTargetToneState: Record<SingleTargetToneId, boolean>,
+  hexatonicMode: HexatonicModeId
+): ActiveTargetTone[] {
+  const byId = new Map<TargetToneId, ActiveTargetTone>();
+  const selectedHexatonicMode = getHexatonicModeOption(hexatonicMode);
+
+  if (selectedHexatonicMode) {
+    selectedHexatonicMode.toneIds.forEach((toneId) => {
+      byId.set(toneId, {
+        config: TARGET_TONE_BY_ID[toneId],
+        palette: HEXATONIC_MODE_RING_PALETTE,
+        source: 'hexatonic',
+      });
+    });
+  }
+
+  // Single-note targets override hexatonic ring styling when both select the same tone.
+  SINGLE_TARGET_TONE_CONFIGS.forEach((config) => {
+    if (!singleTargetToneState[config.id]) {
+      return;
+    }
+    byId.set(config.id, {
+      config,
+      palette: config.palette,
+      source: 'single',
+    });
+  });
+
+  return [...byId.values()];
 }
 
 export function getHexatonicModeDisplayLabel(

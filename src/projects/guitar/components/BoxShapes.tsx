@@ -21,16 +21,14 @@ import {
 import {
   DEFAULT_SINGLE_TARGET_TONE_STATE,
   HEXATONIC_MODE_OPTIONS,
+  getActiveTargetTones,
   getHexatonicModeDisplayLabel,
-  getHexatonicModeOption,
   getTargetToneToggleLabel,
   getTargetTonePitchClass,
   SINGLE_TARGET_TONE_CONFIGS,
-  TARGET_TONE_BY_ID,
   type HexatonicModeId,
   type SingleTargetToneId,
   type TonalCenterMode,
-  type TargetToneConfig,
   type TargetToneId,
 } from '../lib/target-tones';
 
@@ -97,33 +95,19 @@ export default function BoxShapes({
     () => getDisplayOrderedBoxPatterns(shapePatterns, activeScaleFamily),
     [shapePatterns, activeScaleFamily]
   );
-  const activeTargetToneConfigs = useMemo(() => {
-    const byId = new Map<TargetToneId, TargetToneConfig>();
-
-    SINGLE_TARGET_TONE_CONFIGS.forEach((config) => {
-      if (singleTargetToneState[config.id]) {
-        byId.set(config.id, config);
-      }
-    });
-
-    const selectedHexatonicMode = getHexatonicModeOption(hexatonicMode);
-    if (selectedHexatonicMode) {
-      selectedHexatonicMode.toneIds.forEach((toneId) => {
-        byId.set(toneId, TARGET_TONE_BY_ID[toneId]);
-      });
-    }
-
-    return [...byId.values()];
-  }, [hexatonicMode, singleTargetToneState]);
+  const activeTargetTones = useMemo(
+    () => getActiveTargetTones(singleTargetToneState, hexatonicMode),
+    [singleTargetToneState, hexatonicMode]
+  );
 
   const targetPitchClassById = useMemo(() => {
     return Object.fromEntries(
-      activeTargetToneConfigs.map((config) => [
+      activeTargetTones.map(({ config }) => [
         config.id,
         getTargetTonePitchClass(config, majorCenterKey, minorCenterKey),
       ])
     ) as Partial<Record<TargetToneId, number>>;
-  }, [activeTargetToneConfigs, majorCenterKey, minorCenterKey]);
+  }, [activeTargetTones, majorCenterKey, minorCenterKey]);
   const displayRootPitchClass = useMemo(() => {
     if (activeScaleFamily !== 'pentatonic') {
       return null;
@@ -172,14 +156,14 @@ export default function BoxShapes({
   );
   const cheatSheetAuraPitchClasses = useMemo(() => {
     const unique = new Set<number>();
-    activeTargetToneConfigs.forEach((toneConfig) => {
-      const pitchClass = targetPitchClassById[toneConfig.id];
+    activeTargetTones.forEach(({ config }) => {
+      const pitchClass = targetPitchClassById[config.id];
       if (pitchClass !== undefined) {
         unique.add(pitchClass);
       }
     });
     return [...unique];
-  }, [activeTargetToneConfigs, targetPitchClassById]);
+  }, [activeTargetTones, targetPitchClassById]);
   const shouldShowPracticePanels = isProgressionsPanelOpen;
   const handleSettingsToggle = () => {
     setIsSettingsOpen((current) => {
@@ -543,15 +527,15 @@ export default function BoxShapes({
           let rootPositionsForRender = shapeData.rootPositions;
           const markers: FretboardMarker[] = [];
 
-          if (activeScaleFamily === 'pentatonic' && activeTargetToneConfigs.length > 0) {
+          if (activeScaleFamily === 'pentatonic' && activeTargetTones.length > 0) {
             const mergedPattern = shapeData.pattern.map((stringFrets) => new Set(stringFrets));
             const minFret = Math.max(0, shapeData.windowStart);
             const maxFret = Math.min(BOX_FRET_COUNT, shapeData.windowEnd);
             const minimumTargetsPerPitchClass = 2;
             const focusFret = maxFret + 1;
 
-            activeTargetToneConfigs.forEach((toneConfig) => {
-              const targetPitchClass = targetPitchClassById[toneConfig.id];
+            activeTargetTones.forEach((tone) => {
+              const targetPitchClass = targetPitchClassById[tone.config.id];
               if (targetPitchClass === undefined) {
                 return;
               }
@@ -618,12 +602,12 @@ export default function BoxShapes({
               if (targetPositions.length > 0) {
                 markers.push({
                   positions: targetPositions,
-                  stroke: toneConfig.palette.inner,
+                  stroke: tone.palette.inner,
                   strokeWidth: 2,
                   ringOffset: 3,
                   variant: 'vibe',
-                  vibePalette: toneConfig.palette,
-                  preferFlatName: toneConfig.preferFlatName,
+                  vibePalette: tone.palette,
+                  preferFlatName: tone.config.preferFlatName,
                 });
               }
             });

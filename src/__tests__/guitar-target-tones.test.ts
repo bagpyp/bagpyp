@@ -1,7 +1,10 @@
 import { getPitchClass } from '@/lib/guitar/box-shapes';
 import {
+  DEFAULT_SINGLE_TARGET_TONE_STATE,
   HEXATONIC_MODE_OPTIONS,
+  HEXATONIC_MODE_RING_PALETTE,
   TARGET_TONE_BY_ID,
+  getActiveTargetTones,
   getHexatonicModeDisplayLabel,
   getTargetToneToggleLabel,
   getTargetTonePitchClass,
@@ -64,5 +67,28 @@ describe('guitar target tones', () => {
 
     expect(getTargetToneToggleLabel(flatFive, 'minor', 'G', 'E')).toBe('Add b5 targets');
     expect(getTargetToneToggleLabel(flatFive, 'major', 'G', 'E')).toBe('Add b3 targets');
+  });
+
+  it('uses green halos for hexatonic mode tones and single-target palette on collisions', () => {
+    const modeOnly = getActiveTargetTones(DEFAULT_SINGLE_TARGET_TONE_STATE, 'phrygian');
+    const flatSecondMode = modeOnly.find((tone) => tone.config.id === 'flatSecond');
+    const flatSixMode = modeOnly.find((tone) => tone.config.id === 'flatSix');
+
+    expect(flatSecondMode?.source).toBe('hexatonic');
+    expect(flatSecondMode?.palette).toEqual(HEXATONIC_MODE_RING_PALETTE);
+    expect(flatSixMode?.source).toBe('hexatonic');
+    expect(flatSixMode?.palette).toEqual(HEXATONIC_MODE_RING_PALETTE);
+
+    const withCollision = getActiveTargetTones(
+      {
+        ...DEFAULT_SINGLE_TARGET_TONE_STATE,
+        flatSix: true,
+      },
+      'phrygian'
+    );
+    const flatSixCollision = withCollision.find((tone) => tone.config.id === 'flatSix');
+
+    expect(flatSixCollision?.source).toBe('single');
+    expect(flatSixCollision?.palette).toEqual(TARGET_TONE_BY_ID.flatSix.palette);
   });
 });

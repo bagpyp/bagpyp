@@ -2,6 +2,7 @@ import {
   getDisplayOrderedBoxPatterns,
   generateBoxShapePatterns,
   getPitchClass,
+  getRelativeMajorKeyFromMinor,
   getRelativeMinorKeyFromMajor,
   normalizeMajorKeyName,
 } from '@/lib/guitar/box-shapes';
@@ -275,6 +276,12 @@ describe('box shape generation', () => {
     expect(getRelativeMinorKeyFromMajor('G')).toBe('E');
     expect(getRelativeMinorKeyFromMajor('C')).toBe('A');
     expect(getRelativeMinorKeyFromMajor('Db')).toBe('Bb');
+  });
+
+  it('maps minor keys to expected relative majors for box families', () => {
+    expect(getRelativeMajorKeyFromMinor('E')).toBe('G');
+    expect(getRelativeMajorKeyFromMinor('A')).toBe('C');
+    expect(getRelativeMajorKeyFromMinor('Bb')).toBe('Db');
   });
 
   it('normalizes enharmonic major names to circle-of-fifths keys', () => {

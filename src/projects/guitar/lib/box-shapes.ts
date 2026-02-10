@@ -58,6 +58,9 @@ const RELATIVE_MINOR_BY_MAJOR: Record<string, string> = {
   Bb: 'G',
   F: 'D',
 };
+const RELATIVE_MAJOR_BY_MINOR: Record<string, string> = Object.fromEntries(
+  Object.entries(RELATIVE_MINOR_BY_MAJOR).map(([major, minor]) => [minor, major])
+) as Record<string, string>;
 
 const MAJOR_MODE_NAMES = [
   'Ionian',
@@ -133,6 +136,22 @@ export function normalizeMajorKeyName(noteName: string): string {
 export function getRelativeMinorKeyFromMajor(majorKey: string): string {
   const normalizedMajor = normalizeMajorKeyName(majorKey);
   return RELATIVE_MINOR_BY_MAJOR[normalizedMajor] ?? getNoteName((getPitchClass(normalizedMajor) + 9) % 12);
+}
+
+export function getRelativeMajorKeyFromMinor(minorKey: string): string {
+  const normalizedMinor = minorKey.replace('♯', '#').replace('♭', 'b');
+  const direct = RELATIVE_MAJOR_BY_MINOR[normalizedMinor];
+  if (direct) {
+    return direct;
+  }
+
+  const canonical = getNoteName(getPitchClass(normalizedMinor));
+  const mapped = RELATIVE_MAJOR_BY_MINOR[canonical];
+  if (mapped) {
+    return mapped;
+  }
+
+  return normalizeMajorKeyName(getNoteName((getPitchClass(normalizedMinor) + 3) % 12));
 }
 
 function pitchClassAtPosition(stringIndex: number, fret: number): number {

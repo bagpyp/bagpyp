@@ -12,10 +12,10 @@ interface GuitarWorkbenchProps {
 }
 
 export default function GuitarWorkbench({
-  initialSection = 'triads',
+  initialSection = 'boxes',
 }: GuitarWorkbenchProps) {
   const [section, setSection] = useState<GuitarWorkbenchSection>(initialSection);
-  const [selectedMajorKey, setSelectedMajorKey] = useState<string>('G');
+  const [selectedMajorKey, setSelectedMajorKey] = useState<string>('E');
 
   const handleMajorKeyChange = useCallback((nextKey: string) => {
     setSelectedMajorKey(normalizeMajorKeyName(nextKey));
@@ -28,7 +28,7 @@ export default function GuitarWorkbench({
   return (
     <div className="w-full min-h-screen bg-slate-950">
       <div className="sticky top-0 z-30 bg-slate-950/95 backdrop-blur border-b border-slate-800">
-        <div className="max-w-5xl mx-auto px-4 py-3">
+        <div className="max-w-[1760px] mx-auto px-4 py-3 xl:px-6">
           <div className="flex items-center justify-center gap-2 flex-wrap">
             <button
               onClick={() => setSection('triads')}

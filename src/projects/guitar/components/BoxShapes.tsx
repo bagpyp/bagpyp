@@ -12,8 +12,12 @@ import {
 } from '../lib/box-shapes';
 import ScalePatternFretboard, { type FretboardMarker } from './ScalePatternFretboard';
 import CircleOfFifthsSelector from './CircleOfFifthsSelector';
+import ChordCheatSheetPanel from './ChordCheatSheetPanel';
 import PracticeProgressionsPanel from './PracticeProgressionsPanel';
-import { getPracticeProgressions } from '../lib/progression-recommendations';
+import {
+  getChordCheatSheetData,
+  getPracticeProgressions,
+} from '../lib/progression-recommendations';
 import {
   DEFAULT_SINGLE_TARGET_TONE_STATE,
   HEXATONIC_MODE_OPTIONS,
@@ -44,12 +48,25 @@ export default function BoxShapes({
   const [scaleFamily, setScaleFamily] = useState<BoxScaleFamily>('pentatonic');
   const [tonalCenterMode, setTonalCenterMode] = useState<TonalCenterMode>('minor');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [singleTargetToneState, setSingleTargetToneState] = useState({
-    ...DEFAULT_SINGLE_TARGET_TONE_STATE,
-    flatFive: true,
-  });
+  const [isProgressionsPanelOpen, setIsProgressionsPanelOpen] = useState(false);
+  const [keepPracticePanelsOpen, setKeepPracticePanelsOpen] = useState(false);
+  const [progressionsPanelPosition, setProgressionsPanelPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const [cheatSheetPanelPosition, setCheatSheetPanelPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
+  const [singleTargetToneState, setSingleTargetToneState] = useState(
+    DEFAULT_SINGLE_TARGET_TONE_STATE
+  );
   const [hexatonicMode, setHexatonicMode] = useState<HexatonicModeId>('off');
   const settingsContainerRef = useRef<HTMLDivElement | null>(null);
+  const settingsPanelRef = useRef<HTMLDivElement | null>(null);
+  const progressionsPanelRef = useRef<HTMLDivElement | null>(null);
+  const cheatSheetPanelRef = useRef<HTMLDivElement | null>(null);
+  const fretboardsContainerRef = useRef<HTMLDivElement | null>(null);
   const scaleFamilyOptions = useMemo(
     () => getBoxScaleFamilyOptions().filter((option) => option.value !== 'blues'),
     []
@@ -145,6 +162,20 @@ export default function BoxShapes({
       activeSingleTargetToneIdsForProgressions,
     ]
   );
+  const chordCheatSheetData = useMemo(
+    () => getChordCheatSheetData(practiceProgressions),
+    [practiceProgressions]
+  );
+  const shouldShowPracticePanels = isProgressionsPanelOpen && (isSettingsOpen || keepPracticePanelsOpen);
+  const handleSettingsToggle = () => {
+    setIsSettingsOpen((current) => {
+      const next = !current;
+      if (!next && !keepPracticePanelsOpen) {
+        setIsProgressionsPanelOpen(false);
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -192,14 +223,70 @@ export default function BoxShapes({
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (settingsContainerRef.current && !settingsContainerRef.current.contains(target)) {
+      const clickInsideSettings = settingsContainerRef.current?.contains(target) ?? false;
+      const clickInsideProgressions = progressionsPanelRef.current?.contains(target) ?? false;
+      const clickInsideCheatSheet = cheatSheetPanelRef.current?.contains(target) ?? false;
+      if (!clickInsideSettings && !clickInsideProgressions && !clickInsideCheatSheet) {
         setIsSettingsOpen(false);
+        if (!keepPracticePanelsOpen) {
+          setIsProgressionsPanelOpen(false);
+        }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSettingsOpen]);
+  }, [isSettingsOpen, keepPracticePanelsOpen]);
+
+  useEffect(() => {
+    if (!shouldShowPracticePanels) {
+      setProgressionsPanelPosition(null);
+      setCheatSheetPanelPosition(null);
+      return;
+    }
+
+    const updatePosition = () => {
+      if (!fretboardsContainerRef.current) {
+        return;
+      }
+
+      const settingsRect = settingsPanelRef.current?.getBoundingClientRect() ?? null;
+      const fretboardsRect = fretboardsContainerRef.current.getBoundingClientRect();
+
+      const progressionsPanelWidth = 300;
+      const cheatSheetPanelWidth = 280;
+      const gap = 8;
+      const margin = 8;
+      const top = Math.max(margin, fretboardsRect.top + 10);
+
+      let left = window.innerWidth - progressionsPanelWidth - margin;
+      if (settingsRect) {
+        left = settingsRect.right + gap;
+        if (left + progressionsPanelWidth > window.innerWidth - margin) {
+          left = Math.max(margin, settingsRect.left - progressionsPanelWidth - gap);
+        }
+      }
+
+      setProgressionsPanelPosition({ top, left });
+
+      const cheatSheetLeft = Math.max(
+        margin,
+        Math.min(
+          fretboardsRect.left - cheatSheetPanelWidth - gap,
+          window.innerWidth - cheatSheetPanelWidth - margin
+        )
+      );
+      setCheatSheetPanelPosition({ top, left: cheatSheetLeft });
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [shouldShowPracticePanels, isSettingsOpen]);
 
   const title = scaleFamily === 'major'
     ? `${majorCenterKey} Major System - 7 Modal Box Shapes`
@@ -208,9 +295,8 @@ export default function BoxShapes({
   return (
     <div className="w-full bg-slate-900 min-h-screen">
       <div className="mx-auto max-w-[1760px] px-4 py-4 xl:px-6">
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-4 xl:gap-6 items-start">
-          <div className="space-y-4">
-            <div className="text-center mb-6">
+        <div className="space-y-4">
+          <div className="text-center mb-6">
         <h1 className="text-3xl font-bold mb-4 text-white">{title}</h1>
 
         <div ref={settingsContainerRef} className="w-full max-w-[970px] mx-auto relative mb-3">
@@ -219,207 +305,236 @@ export default function BoxShapes({
             onSelectKey={onSelectedMajorKeyChange}
             showSettingsButton
             isSettingsOpen={isSettingsOpen}
-            onSettingsToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+            onSettingsToggle={handleSettingsToggle}
           />
 
           {isSettingsOpen && (
             <div
+              ref={settingsPanelRef}
               className="absolute top-24 right-0 z-50 rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800"
               style={{ width: '220px' }}
             >
               <div className="space-y-2" style={{ padding: '6px' }}>
-                <div className="space-y-1">
-                  <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
-                    Tonal center
-                  </label>
-                  <div className="grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (tonalCenterMode === 'minor') {
-                          return;
-                        }
-                        onSelectedMajorKeyChange(getRelativeMinorKeyFromMajor(selectedMajorKey));
-                        setTonalCenterMode('minor');
-                      }}
-                      className="rounded px-2 py-1.5 text-xs font-medium transition-colors"
-                      style={{
-                        backgroundColor: tonalCenterMode === 'minor' ? '#34C759' : '#E5E7EB',
-                        color: tonalCenterMode === 'minor' ? '#FFFFFF' : '#4B5563',
-                      }}
-                    >
-                      Minor
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (tonalCenterMode === 'major') {
-                          return;
-                        }
-                        onSelectedMajorKeyChange(getRelativeMajorKeyFromMinor(selectedMajorKey));
-                        setTonalCenterMode('major');
-                      }}
-                      className="rounded px-2 py-1.5 text-xs font-medium transition-colors"
-                      style={{
-                        backgroundColor: tonalCenterMode === 'major' ? '#34C759' : '#E5E7EB',
-                        color: tonalCenterMode === 'major' ? '#FFFFFF' : '#4B5563',
-                      }}
-                    >
-                      Major
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-1" role="radiogroup" aria-label="Scale Family">
-                  <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
-                    Scale family
-                  </label>
-                  {scaleFamilyOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      role="radio"
-                      aria-checked={option.value === scaleFamily}
-                      onClick={() => {
-                        setScaleFamily(option.value);
-                        if (option.value === 'major') {
-                          setSingleTargetToneState({
-                            ...DEFAULT_SINGLE_TARGET_TONE_STATE,
-                            flatFive: true,
-                          });
-                          setHexatonicMode('off');
-                        }
-                      }}
-                      className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
-                      style={{
-                        backgroundColor: option.value === scaleFamily ? '#34C759' : '#E5E7EB',
-                        color: option.value === scaleFamily ? '#FFFFFF' : '#4B5563',
-                      }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-
-                {scaleFamily === 'pentatonic' && (
-                  <>
-                    <div className="border-t border-slate-200 dark:border-slate-700" />
+                  <div className="space-y-1">
                     <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
-                      Hexatonic Modes
+                      Tonal center
                     </label>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
-                      Add two notes to express mode color through the pentatonic skeleton.
-                    </p>
-                    <div className="space-y-1">
-                      {HEXATONIC_MODE_OPTIONS.map((modeOption) => {
-                        const isActive = hexatonicMode === modeOption.id;
-                        const modeLabel = getHexatonicModeDisplayLabel(modeOption.id, tonalCenterMode);
-                        return (
-                          <button
-                            key={modeOption.id}
-                            type="button"
-                            onClick={() => setHexatonicMode((current) => (
-                              current === modeOption.id ? 'off' : modeOption.id
-                            ))}
-                            className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
-                            style={{
-                              backgroundColor: isActive ? '#34C759' : '#E5E7EB',
-                              color: isActive ? '#FFFFFF' : '#4B5563',
-                            }}
-                          >
-                            <div>{modeLabel}</div>
-                            <div
-                              className="text-[10px] leading-snug"
-                              style={{ color: isActive ? '#ECFDF5' : '#6B7280' }}
+                    <div className="grid grid-cols-2 gap-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tonalCenterMode === 'minor') {
+                            return;
+                          }
+                          onSelectedMajorKeyChange(getRelativeMinorKeyFromMajor(selectedMajorKey));
+                          setTonalCenterMode('minor');
+                        }}
+                        className="rounded px-2 py-1.5 text-xs font-medium transition-colors"
+                        style={{
+                          backgroundColor: tonalCenterMode === 'minor' ? '#34C759' : '#E5E7EB',
+                          color: tonalCenterMode === 'minor' ? '#FFFFFF' : '#4B5563',
+                        }}
+                      >
+                        Minor
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tonalCenterMode === 'major') {
+                            return;
+                          }
+                          onSelectedMajorKeyChange(getRelativeMajorKeyFromMinor(selectedMajorKey));
+                          setTonalCenterMode('major');
+                        }}
+                        className="rounded px-2 py-1.5 text-xs font-medium transition-colors"
+                        style={{
+                          backgroundColor: tonalCenterMode === 'major' ? '#34C759' : '#E5E7EB',
+                          color: tonalCenterMode === 'major' ? '#FFFFFF' : '#4B5563',
+                        }}
+                      >
+                        Major
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1" role="radiogroup" aria-label="Scale Family">
+                    <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
+                      Scale family
+                    </label>
+                    {scaleFamilyOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={option.value === scaleFamily}
+                        onClick={() => {
+                          setScaleFamily(option.value);
+                          if (option.value === 'major') {
+                            setSingleTargetToneState(DEFAULT_SINGLE_TARGET_TONE_STATE);
+                            setHexatonicMode('off');
+                          }
+                        }}
+                        className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
+                        style={{
+                          backgroundColor: option.value === scaleFamily ? '#34C759' : '#E5E7EB',
+                          color: option.value === scaleFamily ? '#FFFFFF' : '#4B5563',
+                        }}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {!isProgressionsPanelOpen && (
+                    <>
+                      <div className="border-t border-slate-200 dark:border-slate-700" />
+                      <button
+                        type="button"
+                        onClick={() => setIsProgressionsPanelOpen(true)}
+                        className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
+                        style={{
+                          backgroundColor: '#E5E7EB',
+                          color: '#4B5563',
+                        }}
+                      >
+                        Open practice progressions
+                      </button>
+                    </>
+                  )}
+
+                  {isProgressionsPanelOpen && (
+                    <div
+                      onClick={() => setKeepPracticePanelsOpen((current) => !current)}
+                      className="flex items-center gap-3 cursor-pointer py-1"
+                    >
+                      <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                        <div
+                          className="absolute inset-0 rounded-full transition-colors"
+                          style={{ backgroundColor: keepPracticePanelsOpen ? '#34C759' : '#E5E7EB' }}
+                        />
+                        <div
+                          className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            left: '2px',
+                            top: '2px',
+                            transform: keepPracticePanelsOpen ? 'translateX(16px)' : 'translateX(0)',
+                            transition: 'transform 0.2s ease',
+                          }}
+                        />
+                      </div>
+
+                      <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                        Keep practice panels open
+                      </span>
+                    </div>
+                  )}
+
+                  {scaleFamily === 'pentatonic' && (
+                    <>
+                      <div className="border-t border-slate-200 dark:border-slate-700" />
+                      <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
+                        Hexatonic Modes
+                      </label>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                        Add two notes to express mode color through the pentatonic skeleton.
+                      </p>
+                      <div className="space-y-1">
+                        {HEXATONIC_MODE_OPTIONS.map((modeOption) => {
+                          const isActive = hexatonicMode === modeOption.id;
+                          const modeLabel = getHexatonicModeDisplayLabel(modeOption.id, tonalCenterMode);
+                          return (
+                            <button
+                              key={modeOption.id}
+                              type="button"
+                              onClick={() => setHexatonicMode((current) => (
+                                current === modeOption.id ? 'off' : modeOption.id
+                              ))}
+                              className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
+                              style={{
+                                backgroundColor: isActive ? '#34C759' : '#E5E7EB',
+                                color: isActive ? '#FFFFFF' : '#4B5563',
+                              }}
                             >
-                              {modeOption.description}
+                              <div>{modeLabel}</div>
+                              <div
+                                className="text-[10px] leading-snug"
+                                style={{ color: isActive ? '#ECFDF5' : '#6B7280' }}
+                              >
+                                {modeOption.description}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="border-t border-slate-200 dark:border-slate-700" />
+                      <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
+                        Single-Note Targets
+                      </label>
+                      {SINGLE_TARGET_TONE_CONFIGS.map((config) => {
+                        const isEnabled = singleTargetToneState[config.id];
+                        return (
+                          <div
+                            key={config.id}
+                            onClick={() => {
+                              setSingleTargetToneState((current) => ({
+                                ...current,
+                                [config.id]: !current[config.id],
+                              }));
+                            }}
+                            className="flex items-center gap-3 cursor-pointer py-1"
+                          >
+                            <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                              <div
+                                className="absolute inset-0 rounded-full transition-colors"
+                                style={{ backgroundColor: isEnabled ? '#34C759' : '#E5E7EB' }}
+                              />
+                              <div
+                                className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                                style={{
+                                  width: '16px',
+                                  height: '16px',
+                                  left: '2px',
+                                  top: '2px',
+                                  transform: isEnabled ? 'translateX(16px)' : 'translateX(0)',
+                                  transition: 'transform 0.2s ease',
+                                }}
+                              />
                             </div>
-                          </button>
+
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="inline-block h-2 w-2 rounded-full"
+                                  style={{ backgroundColor: config.palette.mid }}
+                                />
+                                <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                                  {getTargetToneToggleLabel(
+                                    config,
+                                    tonalCenterMode,
+                                    majorCenterKey,
+                                    minorCenterKey
+                                  )}
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                                {config.description}
+                              </p>
+                            </div>
+                          </div>
                         );
                       })}
-                    </div>
-
-                    <div className="border-t border-slate-200 dark:border-slate-700" />
-                    <label className="block text-[10px] font-medium uppercase text-slate-500 dark:text-slate-500">
-                      Single-Note Targets
-                    </label>
-                    {SINGLE_TARGET_TONE_CONFIGS.map((config) => {
-                      const isEnabled = singleTargetToneState[config.id];
-                      return (
-                        <div
-                          key={config.id}
-                          onClick={() => {
-                            setSingleTargetToneState((current) => ({
-                              ...current,
-                              [config.id]: !current[config.id],
-                            }));
-                          }}
-                          className="flex items-center gap-3 cursor-pointer py-1"
-                        >
-                          <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
-                            <div
-                              className="absolute inset-0 rounded-full transition-colors"
-                              style={{ backgroundColor: isEnabled ? '#34C759' : '#E5E7EB' }}
-                            />
-                            <div
-                              className="absolute bg-white rounded-full shadow-sm pointer-events-none"
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                left: '2px',
-                                top: '2px',
-                                transform: isEnabled ? 'translateX(16px)' : 'translateX(0)',
-                                transition: 'transform 0.2s ease',
-                              }}
-                            />
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className="inline-block h-2 w-2 rounded-full"
-                                style={{ backgroundColor: config.palette.mid }}
-                              />
-                              <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
-                                {getTargetToneToggleLabel(
-                                  config,
-                                  tonalCenterMode,
-                                  majorCenterKey,
-                                  minorCenterKey
-                                )}
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
-                              {config.description}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </>
-                )}
+                    </>
+                  )}
               </div>
             </div>
           )}
         </div>
+          </div>
 
-        {scaleFamily !== 'major' && (
-          <p className="text-slate-400 text-sm mb-1">
-            {tonalCenterMode === 'minor'
-              ? `Relative major: ${minorCenterKey} minor → ${majorCenterKey} major`
-              : `Relative minor: ${majorCenterKey} major → ${minorCenterKey} minor`}
-          </p>
-        )}
-
-        <p className="text-gray-400 text-sm">
-          Gold rings = shape roots | Aura rings = hexatonic/single-note extensions | Hover to play
-        </p>
-        <p className="text-gray-500 text-xs mt-1">
-          Keyboard: lowercase = natural (c, d, e...) | uppercase = sharp (C=C#, D=D#...)
-        </p>
-            </div>
-
-            <div className="flex flex-col gap-1">
+          <div ref={fretboardsContainerRef} className="relative flex flex-col gap-1">
         {displayPatterns.map((shapeData) => {
           let patternForRender = shapeData.pattern;
           let rootPositionsForRender = shapeData.rootPositions;
@@ -541,19 +656,41 @@ export default function BoxShapes({
             />
           );
         })}
-            </div>
           </div>
 
-          <div className="xl:sticky xl:top-20">
-            <PracticeProgressionsPanel
-              tonalCenterMode={tonalCenterMode}
-              tonalKey={tonalCenterKey}
-              majorCenterKey={majorCenterKey}
-              minorCenterKey={minorCenterKey}
-              scaleFamilyLabel={scaleFamilyLabel}
-              progressions={practiceProgressions}
-            />
-          </div>
+          {shouldShowPracticePanels && progressionsPanelPosition && (
+            <div
+              ref={progressionsPanelRef}
+              className="fixed z-[55]"
+              style={{
+                top: `${progressionsPanelPosition.top}px`,
+                left: `${progressionsPanelPosition.left}px`,
+              }}
+            >
+              <PracticeProgressionsPanel
+                tonalCenterMode={tonalCenterMode}
+                tonalKey={tonalCenterKey}
+                majorCenterKey={majorCenterKey}
+                minorCenterKey={minorCenterKey}
+                scaleFamilyLabel={scaleFamilyLabel}
+                progressions={practiceProgressions}
+                onClose={() => setIsProgressionsPanelOpen(false)}
+              />
+            </div>
+          )}
+
+          {shouldShowPracticePanels && cheatSheetPanelPosition && (
+            <div
+              ref={cheatSheetPanelRef}
+              className="fixed z-[54]"
+              style={{
+                top: `${cheatSheetPanelPosition.top}px`,
+                left: `${cheatSheetPanelPosition.left}px`,
+              }}
+            >
+              <ChordCheatSheetPanel data={chordCheatSheetData} />
+            </div>
+          )}
         </div>
       </div>
     </div>

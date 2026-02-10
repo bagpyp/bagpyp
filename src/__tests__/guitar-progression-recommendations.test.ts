@@ -1,4 +1,5 @@
 import {
+  getChordCheatSheetData,
   getPracticeProgressions,
   renderRomanProgressionToChords,
 } from '@/lib/guitar/progression-recommendations';
@@ -45,5 +46,31 @@ describe('guitar progression recommendations', () => {
     expect(progressions.some((progression) => progression.id === 'mixolydianDrive')).toBe(true);
     const mixolydian = progressions.find((progression) => progression.id === 'mixolydianDrive');
     expect(mixolydian?.chordNames).toBe('G7 F C G7');
+  });
+
+  it('builds cheat-sheet chords and deduped note pool in appearance order', () => {
+    const data = getChordCheatSheetData([
+      {
+        id: 'p1',
+        title: 'P1',
+        romanNumerals: 'I7 IV7',
+        chordNames: 'E7 A7',
+        whyItFits: '',
+      },
+      {
+        id: 'p2',
+        title: 'P2',
+        romanNumerals: 'V7 I',
+        chordNames: 'B7 E',
+        whyItFits: '',
+      },
+    ]);
+
+    expect(data.entries.map((entry) => entry.chordSymbol)).toEqual(['E7', 'A7', 'B7', 'E']);
+    expect(data.entries[0]?.notes).toEqual(['E', 'G#', 'B', 'D']);
+    expect(data.entries[1]?.notes).toEqual(['A', 'C#', 'E', 'G']);
+    expect(data.entries[2]?.notes).toEqual(['B', 'D#', 'F#', 'A']);
+    expect(data.entries[3]?.notes).toEqual(['E', 'G#', 'B']);
+    expect(data.uniqueNotes).toEqual(['E', 'G#', 'B', 'D', 'A', 'C#', 'G', 'D#', 'F#']);
   });
 });

@@ -38,7 +38,7 @@ export default function GuitarWorkbench({
                   : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
               }`}
             >
-              Major Triads
+              Triads
             </button>
             <button
               onClick={() => setSection('boxes')}

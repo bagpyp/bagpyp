@@ -1,6 +1,7 @@
 import type { BoxScaleFamily } from './box-shapes';
 import type { HexatonicModeId, SingleTargetToneId, TonalCenterMode } from './target-tones';
 import { getPitchClass } from './box-shapes';
+import { getChordNotes, type ChordType } from './chord-types';
 
 export interface ProgressionRecommendationContext {
   tonalCenterMode: TonalCenterMode;
@@ -24,6 +25,16 @@ export interface PracticeProgression {
   romanNumerals: string;
   chordNames: string;
   whyItFits: string;
+}
+
+export interface ChordCheatSheetEntry {
+  chordSymbol: string;
+  notes: string[];
+}
+
+export interface ChordCheatSheetData {
+  entries: ChordCheatSheetEntry[];
+  uniqueNotes: string[];
 }
 
 const MAJOR_SCALE_DEGREE_OFFSETS = [0, 2, 4, 5, 7, 9, 11];
@@ -206,6 +217,85 @@ function dedupeTemplateIds(ids: string[]): string[] {
   });
 
   return output;
+}
+
+function chordTypeFromSuffix(suffix: string): ChordType | null {
+  const normalized = suffix.trim();
+  const map: Record<string, ChordType> = {
+    '': 'major',
+    m: 'minor',
+    dim: 'dim',
+    aug: 'aug',
+    maj7: 'maj7',
+    m7: 'min7',
+    '7': '7',
+    dim7: 'dim7',
+    mMaj7: 'mMaj7',
+    '7b5': '7b5',
+    '7#5': '7#5',
+    m7b5: 'm7b5',
+    '6': '6',
+    m6: 'm6',
+    '9': '9',
+    '11': '11',
+    '13': '13',
+  };
+
+  return map[normalized] ?? null;
+}
+
+function chordNotesFromSymbol(chordSymbol: string): string[] {
+  const baseSymbol = chordSymbol.split('/')[0];
+  const match = baseSymbol.match(/^([A-G](?:#|b)?)(.*)$/);
+  if (!match) {
+    return [];
+  }
+
+  const root = match[1];
+  const suffix = match[2];
+  const chordType = chordTypeFromSuffix(suffix);
+  if (!chordType) {
+    return [root];
+  }
+
+  return getChordNotes(root, chordType);
+}
+
+export function getChordCheatSheetData(progressions: PracticeProgression[]): ChordCheatSheetData {
+  const seenChords = new Set<string>();
+  const seenNotes = new Set<string>();
+  const entries: ChordCheatSheetEntry[] = [];
+  const uniqueNotes: string[] = [];
+
+  progressions.forEach((progression) => {
+    progression.chordNames
+      .split(/\s+/)
+      .filter((token) => token !== '|' && token.length > 0)
+      .forEach((chordSymbol) => {
+        if (!seenChords.has(chordSymbol)) {
+          seenChords.add(chordSymbol);
+          const notes = chordNotesFromSymbol(chordSymbol);
+          entries.push({ chordSymbol, notes });
+          notes.forEach((note) => {
+            if (!seenNotes.has(note)) {
+              seenNotes.add(note);
+              uniqueNotes.push(note);
+            }
+          });
+          return;
+        }
+
+        const existing = entries.find((entry) => entry.chordSymbol === chordSymbol);
+        existing?.notes.forEach((note) => {
+          if (!seenNotes.has(note)) {
+            seenNotes.add(note);
+            uniqueNotes.push(note);
+          }
+        });
+      });
+  });
+
+  return { entries, uniqueNotes };
 }
 
 export function getPracticeProgressions(

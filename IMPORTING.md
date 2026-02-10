@@ -173,7 +173,7 @@ src/projects/
 ### Build Results
 - **17 pages generated** (up from 15)
 - **86 tests passing** (all updated)
-- 4 project pages: guitar-major-triads, guitar-scale-practice, graph-theoretic-dynamics, dragontree-iot
+- 4 project pages: guitar, guitar-scale-practice, graph-theoretic-dynamics, dragontree-iot
 - 3 blog pages: agentic-architecture, agentic-architecture-algebra, reliability-testing-llm-systems
 
 ---
@@ -195,7 +195,7 @@ src/projects/
 - All guitar functionality tested and working
 
 ### Pages Structure
-- `/projects/guitar-major-triads` → Loads interactive MajorTriads component
+- `/projects/guitar` → Loads interactive MajorTriads component
 - `/projects/guitar-scale-practice` → Loads interactive ScalePractice component
 - Both use dynamic imports (client-side only for Web Audio)
 - Other projects (graph-theory, dragontree) show static detail pages

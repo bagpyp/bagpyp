@@ -9,7 +9,8 @@ type ProjectDetailProps = {
 
 const ProjectDetail = ({ project }: ProjectDetailProps) => {
 	// Check if this is a guitar project that should load interactive component
-	const isGuitarProject = project.slug.startsWith("guitar-");
+	const isGuitarProject =
+		project.slug === "guitar" || project.slug.startsWith("guitar-");
 	const isTonnetzProject = project.slug === "tonnetz-lattice";
 	const guitarInitialSection =
 		project.slug === "guitar-modes-3nps" ? "boxes" : "triads";

@@ -43,7 +43,7 @@ Transformed from basic Bootstrap site into professional showcase featuring:
 5. **Contact** (`/contact`) - Auth-gated details
 
 ### Project Pages (4)
-6. **Guitar Major Triads** (`/projects/guitar-major-triads`) - Interactive ⚡
+6. **Guitar Major Triads** (`/projects/guitar`) - Interactive ⚡
 7. **Guitar Modes 3NPS** (`/projects/guitar-modes-3nps`) - Interactive ⚡
 8. **Graph Theoretic Dynamics** (`/projects/graph-theoretic-dynamics`)
 9. **Dragontree IoT** (`/projects/dragontree-iot`)

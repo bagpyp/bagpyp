@@ -12,7 +12,16 @@ const nextConfig = {
 			}
 		]
 	},
-	reactStrictMode: true
+	reactStrictMode: true,
+	async redirects() {
+		return [
+			{
+				source: "/projects/guitar-major-triads",
+				destination: "/projects/guitar",
+				permanent: true
+			}
+		];
+	}
 };
 
 module.exports = nextConfig;

@@ -114,7 +114,7 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "guitar-triads",
-		slug: "guitar-major-triads",
+		slug: "guitar",
 		title: "Guitar Workbench",
 		subtitle: "Triads and Box Shapes",
 		description:

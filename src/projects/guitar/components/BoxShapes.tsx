@@ -5,90 +5,22 @@ import {
   getDisplayOrderedBoxPatterns,
   generateBoxShapePatterns,
   getBoxScaleFamilyOptions,
-  getPitchClass,
   getRelativeMinorKeyFromMajor,
   type BoxScaleFamily,
 } from '../lib/box-shapes';
 import ScalePatternFretboard, { type FretboardMarker } from './ScalePatternFretboard';
 import CircleOfFifthsSelector from './CircleOfFifthsSelector';
+import {
+  DEFAULT_TARGET_TONE_STATE,
+  TARGET_TONE_CONFIGS,
+  getTargetTonePitchClass,
+  type TargetToneId,
+} from '../lib/target-tones';
 
 interface BoxShapesProps {
   selectedMajorKey: string;
   onSelectedMajorKeyChange: (key: string) => void;
 }
-
-interface TargetToneConfig {
-  id: 'flatFive' | 'flatSix' | 'flatSeven' | 'majorThird' | 'majorSecond' | 'majorSixth';
-  label: string;
-  description: string;
-  intervalFromMinorRoot: number;
-  preferFlatName: boolean;
-  palette: {
-    outer: string;
-    mid: string;
-    inner: string;
-  };
-}
-
-const TARGET_TONE_CONFIGS: TargetToneConfig[] = [
-  {
-    id: 'flatFive',
-    label: 'Add b5 targets',
-    description: 'Classic blue note bite',
-    intervalFromMinorRoot: 6,
-    preferFlatName: true,
-    palette: { outer: '#0ea5e9', mid: '#38bdf8', inner: '#7dd3fc' },
-  },
-  {
-    id: 'flatSix',
-    label: 'Add b6 targets',
-    description: 'Dark passing color',
-    intervalFromMinorRoot: 8,
-    preferFlatName: true,
-    palette: { outer: '#0284c7', mid: '#0ea5e9', inner: '#7dd3fc' },
-  },
-  {
-    id: 'flatSeven',
-    label: 'Add b7 targets',
-    description: 'Dominant blues pull',
-    intervalFromMinorRoot: 10,
-    preferFlatName: true,
-    palette: { outer: '#0369a1', mid: '#0ea5e9', inner: '#7dd3fc' },
-  },
-  {
-    id: 'majorThird',
-    label: 'Add M3 targets',
-    description: 'Vocal sweet vs sour color',
-    intervalFromMinorRoot: 4,
-    preferFlatName: false,
-    palette: { outer: '#c026d3', mid: '#e879f9', inner: '#f5d0fe' },
-  },
-  {
-    id: 'majorSecond',
-    label: 'Add 2/9 targets',
-    description: 'Smooth, floating modern blues',
-    intervalFromMinorRoot: 2,
-    preferFlatName: false,
-    palette: { outer: '#0891b2', mid: '#22d3ee', inner: '#a5f3fc' },
-  },
-  {
-    id: 'majorSixth',
-    label: 'Add 6 targets',
-    description: 'Gospel/soul hopeful color',
-    intervalFromMinorRoot: 9,
-    preferFlatName: false,
-    palette: { outer: '#16a34a', mid: '#4ade80', inner: '#bbf7d0' },
-  },
-];
-
-const DEFAULT_TARGET_TONE_STATE: Record<TargetToneConfig['id'], boolean> = {
-  flatFive: false,
-  flatSix: false,
-  flatSeven: false,
-  majorThird: false,
-  majorSecond: false,
-  majorSixth: false,
-};
 
 export default function BoxShapes({
   selectedMajorKey,
@@ -123,14 +55,13 @@ export default function BoxShapes({
     [shapePatterns, activeScaleFamily]
   );
   const targetPitchClassById = useMemo(() => {
-    const minorRootPitchClass = getPitchClass(effectiveScaleKey);
     return Object.fromEntries(
       TARGET_TONE_CONFIGS.map((config) => [
         config.id,
-        (minorRootPitchClass + config.intervalFromMinorRoot) % 12,
+        getTargetTonePitchClass(config, selectedMajorKey, effectiveScaleKey),
       ])
-    ) as Record<TargetToneConfig['id'], number>;
-  }, [effectiveScaleKey]);
+    ) as Record<TargetToneId, number>;
+  }, [effectiveScaleKey, selectedMajorKey]);
   const enabledTargetToneConfigs = useMemo(
     () => TARGET_TONE_CONFIGS.filter((config) => targetToneState[config.id]),
     [targetToneState]

@@ -48,6 +48,54 @@ describe('guitar progression recommendations', () => {
     expect(mixolydian?.chordNames).toBe('G7 F C G7');
   });
 
+  it('keeps minor phrygian mode recommendations phrygian-pure', () => {
+    const progressions = getPracticeProgressions({
+      tonalCenterMode: 'minor',
+      scaleFamily: 'pentatonic',
+      majorCenterKey: 'G',
+      minorCenterKey: 'E',
+      hexatonicMode: 'phrygian',
+      activeSingleTargetToneIds: ['majorSecond', 'majorSixth'],
+    });
+
+    expect(progressions.length).toBeGreaterThanOrEqual(6);
+    expect(progressions.some((progression) => progression.id === 'phrygianVamp')).toBe(true);
+    expect(progressions.some((progression) => progression.id === 'dorianVamp')).toBe(false);
+    expect(progressions.some((progression) => progression.id === 'minorRock')).toBe(false);
+  });
+
+  it('returns a larger progression set across quality/key combinations', () => {
+    const minorPent = getPracticeProgressions({
+      tonalCenterMode: 'minor',
+      scaleFamily: 'pentatonic',
+      majorCenterKey: 'G',
+      minorCenterKey: 'E',
+      hexatonicMode: 'off',
+      activeSingleTargetToneIds: [],
+    });
+    const majorPent = getPracticeProgressions({
+      tonalCenterMode: 'major',
+      scaleFamily: 'pentatonic',
+      majorCenterKey: 'G',
+      minorCenterKey: 'E',
+      hexatonicMode: 'off',
+      activeSingleTargetToneIds: [],
+    });
+    const majorModes = getPracticeProgressions({
+      tonalCenterMode: 'major',
+      scaleFamily: 'major',
+      majorCenterKey: 'Bb',
+      minorCenterKey: 'G',
+      hexatonicMode: 'off',
+      activeSingleTargetToneIds: [],
+    });
+
+    expect(minorPent.length).toBeGreaterThanOrEqual(7);
+    expect(majorPent.length).toBeGreaterThanOrEqual(7);
+    expect(majorModes.length).toBeGreaterThanOrEqual(8);
+    expect(majorModes.some((progression) => progression.chordNames.includes('Bb'))).toBe(true);
+  });
+
   it('builds cheat-sheet chords and deduped note pool in appearance order', () => {
     const data = getChordCheatSheetData([
       {

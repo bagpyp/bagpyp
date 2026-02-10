@@ -166,7 +166,21 @@ export default function BoxShapes({
     () => getChordCheatSheetData(practiceProgressions),
     [practiceProgressions]
   );
-  const shouldShowPracticePanels = isProgressionsPanelOpen && (isSettingsOpen || keepPracticePanelsOpen);
+  const cheatSheetRootPitchClasses = useMemo(
+    () => (displayRootPitchClass === null ? [] : [displayRootPitchClass]),
+    [displayRootPitchClass]
+  );
+  const cheatSheetAuraPitchClasses = useMemo(() => {
+    const unique = new Set<number>();
+    activeTargetToneConfigs.forEach((toneConfig) => {
+      const pitchClass = targetPitchClassById[toneConfig.id];
+      if (pitchClass !== undefined) {
+        unique.add(pitchClass);
+      }
+    });
+    return [...unique];
+  }, [activeTargetToneConfigs, targetPitchClassById]);
+  const shouldShowPracticePanels = isProgressionsPanelOpen;
   const handleSettingsToggle = () => {
     setIsSettingsOpen((current) => {
       const next = !current;
@@ -175,6 +189,9 @@ export default function BoxShapes({
       }
       return next;
     });
+  };
+  const handlePracticeToggle = () => {
+    setIsProgressionsPanelOpen((current) => !current);
   };
 
   useEffect(() => {
@@ -217,7 +234,7 @@ export default function BoxShapes({
   }, [onSelectedMajorKeyChange]);
 
   useEffect(() => {
-    if (!isSettingsOpen) {
+    if (!isSettingsOpen && !shouldShowPracticePanels) {
       return;
     }
 
@@ -236,7 +253,7 @@ export default function BoxShapes({
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isSettingsOpen, keepPracticePanelsOpen]);
+  }, [isSettingsOpen, shouldShowPracticePanels, keepPracticePanelsOpen]);
 
   useEffect(() => {
     if (!shouldShowPracticePanels) {
@@ -254,7 +271,7 @@ export default function BoxShapes({
       const fretboardsRect = fretboardsContainerRef.current.getBoundingClientRect();
 
       const progressionsPanelWidth = 300;
-      const cheatSheetPanelWidth = 280;
+      const cheatSheetPanelWidth = 300;
       const gap = 8;
       const margin = 8;
       const top = Math.max(margin, fretboardsRect.top + 10);
@@ -306,6 +323,9 @@ export default function BoxShapes({
             showSettingsButton
             isSettingsOpen={isSettingsOpen}
             onSettingsToggle={handleSettingsToggle}
+            showPracticeButton
+            isPracticeOpen={isProgressionsPanelOpen}
+            onPracticeToggle={handlePracticeToggle}
           />
 
           {isSettingsOpen && (
@@ -384,23 +404,6 @@ export default function BoxShapes({
                       </button>
                     ))}
                   </div>
-
-                  {!isProgressionsPanelOpen && (
-                    <>
-                      <div className="border-t border-slate-200 dark:border-slate-700" />
-                      <button
-                        type="button"
-                        onClick={() => setIsProgressionsPanelOpen(true)}
-                        className="w-full rounded px-2 py-1.5 text-left text-xs font-medium transition-colors"
-                        style={{
-                          backgroundColor: '#E5E7EB',
-                          color: '#4B5563',
-                        }}
-                      >
-                        Open practice progressions
-                      </button>
-                    </>
-                  )}
 
                   {isProgressionsPanelOpen && (
                     <div
@@ -688,7 +691,11 @@ export default function BoxShapes({
                 left: `${cheatSheetPanelPosition.left}px`,
               }}
             >
-              <ChordCheatSheetPanel data={chordCheatSheetData} />
+              <ChordCheatSheetPanel
+                data={chordCheatSheetData}
+                rootPitchClasses={cheatSheetRootPitchClasses}
+                auraPitchClasses={cheatSheetAuraPitchClasses}
+              />
             </div>
           )}
         </div>

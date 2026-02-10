@@ -58,6 +58,42 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'I7 I7 I7 I7 | IV7 IV7 I7 I7 | V7 IV7 I7 V7',
     whyItFits: 'Classic dominant-blues form for loop-pedal phrasing.',
   },
+  dooWop: {
+    id: 'dooWop',
+    title: 'Doo-Wop Cycle',
+    romanNumerals: 'I vi IV V',
+    whyItFits: 'Classic tonal loop with smooth voice leading.',
+  },
+  majorWalk: {
+    id: 'majorWalk',
+    title: 'Major Walk',
+    romanNumerals: 'I ii IV V',
+    whyItFits: 'Strong major movement that supports scale-degree targeting.',
+  },
+  majorLift: {
+    id: 'majorLift',
+    title: 'Major Lift',
+    romanNumerals: 'I V ii IV',
+    whyItFits: 'Modern-feeling motion with clear cadence points.',
+  },
+  majorHome: {
+    id: 'majorHome',
+    title: 'Home Cadence',
+    romanNumerals: 'I IV ii V',
+    whyItFits: 'Keeps tonic awareness while cycling through diatonic color.',
+  },
+  majorColor: {
+    id: 'majorColor',
+    title: 'Major Color Sweep',
+    romanNumerals: 'I iii IV ii',
+    whyItFits: 'Highlights 3rd and 6th color tones in major.',
+  },
+  majorCadence64: {
+    id: 'majorCadence64',
+    title: 'Cadence 6-4 Feel',
+    romanNumerals: 'I V IV I',
+    whyItFits: 'Simple turn-around for repeated line practice.',
+  },
   majorCadence: {
     id: 'majorCadence',
     title: 'Major Cadence',
@@ -69,6 +105,30 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     title: 'Pop Major Loop',
     romanNumerals: 'I V vi IV',
     whyItFits: 'Popular modern major progression for melodic practice.',
+  },
+  majorPentDrive: {
+    id: 'majorPentDrive',
+    title: 'Major Pent Drive',
+    romanNumerals: 'I II V I',
+    whyItFits: 'Leans into 1-2-3-5-6 major pentatonic tones.',
+  },
+  majorPentLift: {
+    id: 'majorPentLift',
+    title: 'Major Pent Lift',
+    romanNumerals: 'I II IV V',
+    whyItFits: 'Open harmonic frame for pentatonic phrasing.',
+  },
+  majorPentFloat: {
+    id: 'majorPentFloat',
+    title: 'Major Pent Float',
+    romanNumerals: 'I V II IV',
+    whyItFits: 'Bright circular motion with sparse dissonance.',
+  },
+  majorPentColor: {
+    id: 'majorPentColor',
+    title: 'Major Pent Color',
+    romanNumerals: 'I iii V IV',
+    whyItFits: 'Accents 3 and 6 while keeping strong tonic gravity.',
   },
   minorRock: {
     id: 'minorRock',
@@ -82,11 +142,71 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'i7 i7 iv7 i7 | i7 i7 v7 iv7 | i7 v7 i7 v7',
     whyItFits: 'Minor-blues framework with space for call-and-response lines.',
   },
+  minorResolve: {
+    id: 'minorResolve',
+    title: 'Minor Resolve',
+    romanNumerals: 'i bVI bVII i',
+    whyItFits: 'Strong aeolian cadence for phrase resolution.',
+  },
+  minorColor: {
+    id: 'minorColor',
+    title: 'Minor Color',
+    romanNumerals: 'i bIII bVII i',
+    whyItFits: 'Natural minor color tones with clear tonic returns.',
+  },
+  minorDescent: {
+    id: 'minorDescent',
+    title: 'Minor Descent',
+    romanNumerals: 'i bVII bVI i',
+    whyItFits: 'Descending harmonic motion for lyrical lines.',
+  },
+  minorPulse: {
+    id: 'minorPulse',
+    title: 'Minor Pulse',
+    romanNumerals: 'i iv bVII i',
+    whyItFits: 'Mixes tonic and subdominant pull without overloading harmony.',
+  },
+  minorDrone: {
+    id: 'minorDrone',
+    title: 'Minor Drone',
+    romanNumerals: 'i v i bVII',
+    whyItFits: 'Minimal movement for focused motif development.',
+  },
   dorianVamp: {
     id: 'dorianVamp',
     title: 'Dorian Vamp',
     romanNumerals: 'i7 IV7 i7 IV7',
     whyItFits: 'Highlights the natural 6 color against a minor tonic.',
+  },
+  dorianTurn: {
+    id: 'dorianTurn',
+    title: 'Dorian Turn',
+    romanNumerals: 'i7 v7 IV7 i7',
+    whyItFits: 'Keeps dorian color while adding a tighter turn-around.',
+  },
+  dorianColor: {
+    id: 'dorianColor',
+    title: 'Dorian Color Loop',
+    romanNumerals: 'i7 bIII IV7 i7',
+    whyItFits: 'Connects minor tonic to brighter dorian color chords.',
+  },
+  dorianBackbeat: {
+    id: 'dorianBackbeat',
+    title: 'Dorian Backbeat',
+    romanNumerals: 'i7 bVII IV7 i7',
+    whyItFits: 'Funk-friendly layout with IV major emphasis.',
+  },
+  dorianClimb: {
+    id: 'dorianClimb',
+    title: 'Dorian Climb',
+    romanNumerals: 'i7 ii7 v7 i7',
+    whyItFits: 'Good for stepwise melodic sequencing.',
+  },
+  dorianWide: {
+    id: 'dorianWide',
+    title: 'Dorian Wide Loop',
+    romanNumerals: 'i7 IV7 bVII i7',
+    whyItFits: 'Wider harmonic arc while staying modal.',
   },
   phrygianVamp: {
     id: 'phrygianVamp',
@@ -94,11 +214,71 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'i bII i bII',
     whyItFits: 'Leans into the b2 pull for tense modal phrasing.',
   },
+  phrygianDrop: {
+    id: 'phrygianDrop',
+    title: 'Phrygian Drop',
+    romanNumerals: 'i bII bVII i',
+    whyItFits: 'Maintains phrygian tension with a clear release point.',
+  },
+  phrygianShadow: {
+    id: 'phrygianShadow',
+    title: 'Phrygian Shadow',
+    romanNumerals: 'i bII bVI bVII',
+    whyItFits: 'Dark modal movement centered on b2/b6 colors.',
+  },
+  phrygianPulse: {
+    id: 'phrygianPulse',
+    title: 'Phrygian Pulse',
+    romanNumerals: 'i bVII bII i',
+    whyItFits: 'Keeps the phrygian b2 as a repeated anchor.',
+  },
+  phrygianHeat: {
+    id: 'phrygianHeat',
+    title: 'Phrygian Heat',
+    romanNumerals: 'i bVI bII i',
+    whyItFits: 'Strong contrast around the b2 tension target.',
+  },
+  phrygianFrame: {
+    id: 'phrygianFrame',
+    title: 'Phrygian Frame',
+    romanNumerals: 'i bII iv i',
+    whyItFits: 'Adds iv color while preserving phrygian identity.',
+  },
   lydianLift: {
     id: 'lydianLift',
     title: 'Lydian Lift',
     romanNumerals: 'Imaj7 II Imaj7 II',
     whyItFits: 'Uses the raised 4 color through the major II chord.',
+  },
+  lydianSkyline: {
+    id: 'lydianSkyline',
+    title: 'Lydian Skyline',
+    romanNumerals: 'Imaj7 II V Imaj7',
+    whyItFits: 'Strong #4 color plus a conventional return.',
+  },
+  lydianOpen: {
+    id: 'lydianOpen',
+    title: 'Lydian Open',
+    romanNumerals: 'I II V I',
+    whyItFits: 'Clean modal frame for long melodic phrases.',
+  },
+  lydianFloat: {
+    id: 'lydianFloat',
+    title: 'Lydian Float',
+    romanNumerals: 'I II iii II',
+    whyItFits: 'Sustains the bright lydian atmosphere.',
+  },
+  lydianRise: {
+    id: 'lydianRise',
+    title: 'Lydian Rise',
+    romanNumerals: 'I V II I',
+    whyItFits: 'Alternates stability and lift around the II chord.',
+  },
+  lydianBright: {
+    id: 'lydianBright',
+    title: 'Lydian Bright Turn',
+    romanNumerals: 'Imaj7 II vi V',
+    whyItFits: 'Color-rich loop with practical cadence points.',
   },
   mixolydianDrive: {
     id: 'mixolydianDrive',
@@ -106,26 +286,118 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'I7 bVII IV I7',
     whyItFits: 'Dominant tonality with the signature b7 neighborhood.',
   },
+  mixoStep: {
+    id: 'mixoStep',
+    title: 'Mixolydian Step',
+    romanNumerals: 'I7 IV bVII I7',
+    whyItFits: 'Strong dominant center with classic rock movement.',
+  },
+  mixoReturn: {
+    id: 'mixoReturn',
+    title: 'Mixolydian Return',
+    romanNumerals: 'I7 bVII I7 IV',
+    whyItFits: 'Alternates dominant and bVII for call/response lines.',
+  },
+  mixoLoop: {
+    id: 'mixoLoop',
+    title: 'Mixolydian Loop',
+    romanNumerals: 'I7 IV I7 bVII',
+    whyItFits: 'Keeps tonic dominant in focus through each cycle.',
+  },
+  mixoPocket: {
+    id: 'mixoPocket',
+    title: 'Mixolydian Pocket',
+    romanNumerals: 'I7 bVII IV bVII',
+    whyItFits: 'Locks into groove-oriented dominant phrasing.',
+  },
+  mixoMinorV: {
+    id: 'mixoMinorV',
+    title: 'Mixolydian Minor-v',
+    romanNumerals: 'I7 v IV I7',
+    whyItFits: 'Adds darker modal contrast while staying mixolydian.',
+  },
 };
 
 const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
-  ionian: ['ionianPop', 'majorCadence'],
-  majorPentatonic: ['ionianPop', 'majorCadence'],
-  minorPentatonic: ['minorRock', 'minorBluesLoop'],
-  dorian: ['dorianVamp', 'minorRock'],
-  aeolian: ['minorRock', 'minorBluesLoop'],
-  phrygian: ['phrygianVamp', 'minorRock'],
-  lydian: ['lydianLift', 'ionianPop'],
-  mixolydian: ['mixolydianDrive', 'blues12'],
+  ionian: [
+    'majorCadence',
+    'ionianPop',
+    'dooWop',
+    'majorWalk',
+    'majorLift',
+    'majorHome',
+    'majorColor',
+    'majorCadence64',
+  ],
+  majorPentatonic: [
+    'majorCadence',
+    'ionianPop',
+    'majorPentDrive',
+    'majorPentLift',
+    'majorPentFloat',
+    'majorPentColor',
+    'majorHome',
+  ],
+  minorPentatonic: [
+    'minorRock',
+    'minorBluesLoop',
+    'minorResolve',
+    'minorColor',
+    'minorDescent',
+    'minorPulse',
+    'minorDrone',
+  ],
+  dorian: [
+    'dorianVamp',
+    'dorianTurn',
+    'dorianColor',
+    'dorianBackbeat',
+    'dorianClimb',
+    'dorianWide',
+  ],
+  aeolian: [
+    'minorRock',
+    'minorResolve',
+    'minorColor',
+    'minorDescent',
+    'minorPulse',
+    'minorDrone',
+    'minorBluesLoop',
+  ],
+  phrygian: [
+    'phrygianVamp',
+    'phrygianDrop',
+    'phrygianShadow',
+    'phrygianPulse',
+    'phrygianHeat',
+    'phrygianFrame',
+  ],
+  lydian: [
+    'lydianLift',
+    'lydianSkyline',
+    'lydianOpen',
+    'lydianFloat',
+    'lydianRise',
+    'lydianBright',
+  ],
+  mixolydian: [
+    'mixolydianDrive',
+    'mixoStep',
+    'mixoReturn',
+    'mixoLoop',
+    'mixoPocket',
+    'mixoMinorV',
+    'blues12',
+  ],
 };
 
 const ADDITIONAL_TEMPLATE_IDS_BY_TONE: Partial<Record<SingleTargetToneId, string[]>> = {
-  flatFive: ['blues12'],
-  flatSix: ['minorRock'],
-  flatSeven: ['mixolydianDrive'],
-  majorThird: ['blues12'],
-  majorSecond: ['dorianVamp'],
-  majorSixth: ['dorianVamp'],
+  flatFive: ['blues12', 'minorBluesLoop'],
+  flatSix: ['minorResolve', 'minorRock'],
+  flatSeven: ['mixolydianDrive', 'blues12'],
+  majorThird: ['blues12', 'mixolydianDrive'],
+  majorSecond: ['majorPentDrive', 'dorianVamp'],
+  majorSixth: ['dorianVamp', 'lydianLift'],
 };
 
 function usesFlatSpellingForKey(key: string): boolean {
@@ -307,20 +579,19 @@ export function getPracticeProgressions(
   const flavorId = getFlavorId(context.scaleFamily, context.tonalCenterMode, context.hexatonicMode);
   const progressionIds: string[] = [...(BASE_TEMPLATE_IDS_BY_FLAVOR[flavorId] ?? [])];
 
-  context.activeSingleTargetToneIds.forEach((toneId) => {
-    const additions = ADDITIONAL_TEMPLATE_IDS_BY_TONE[toneId];
-    if (!additions) {
-      return;
-    }
-    progressionIds.unshift(...additions);
-  });
-
-  if (context.hexatonicMode !== 'off') {
-    progressionIds.unshift(context.tonalCenterMode === 'major' ? 'lydianLift' : 'dorianVamp');
+  // Keep modal selections mode-pure: don't mix in single-tone presets when a hexatonic mode is active.
+  if (context.hexatonicMode === 'off') {
+    context.activeSingleTargetToneIds.forEach((toneId) => {
+      const additions = ADDITIONAL_TEMPLATE_IDS_BY_TONE[toneId];
+      if (!additions) {
+        return;
+      }
+      progressionIds.unshift(...additions);
+    });
   }
 
   return dedupeTemplateIds(progressionIds)
-    .slice(0, 6)
+    .slice(0, 10)
     .map((id) => {
       const template = PROGRESSION_TEMPLATES[id];
       return {

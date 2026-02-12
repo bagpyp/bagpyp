@@ -9,6 +9,7 @@ interface ChordCheatSheetPanelProps {
   data: ChordCheatSheetData;
   rootPitchClasses: number[];
   auraPitchClasses: number[];
+  onClose?: () => void;
 }
 
 interface NoteBadgeProps {
@@ -88,19 +89,30 @@ export default function ChordCheatSheetPanel({
   data,
   rootPitchClasses,
   auraPitchClasses,
+  onClose,
 }: ChordCheatSheetPanelProps) {
   const rootSet = useMemo(() => new Set(rootPitchClasses), [rootPitchClasses]);
   const auraSet = useMemo(() => new Set(auraPitchClasses), [auraPitchClasses]);
 
   return (
     <aside
-      className="rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800"
-      style={{ width: '300px' }}
+      className="w-full rounded-xl bg-slate-800/92 shadow-2xl backdrop-blur ring-1 ring-white/10"
+      style={{ maxWidth: '320px' }}
     >
-      <div className="border-b border-slate-200 px-3 py-2 dark:border-slate-700">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+      <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-200">
           Chord Cheat Sheet
         </h2>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded px-1.5 py-0.5 text-xs font-semibold text-slate-400 transition-colors hover:bg-slate-700 hover:text-white"
+            aria-label="Close chord cheat sheet"
+          >
+            X
+          </button>
+        )}
       </div>
 
       <div className="max-h-[70vh] overflow-auto px-3 py-2">
@@ -108,9 +120,9 @@ export default function ChordCheatSheetPanel({
           {data.entries.map((entry) => (
             <div
               key={entry.chordSymbol}
-              className="rounded border border-slate-200 bg-slate-50 px-2.5 py-2 dark:border-slate-700 dark:bg-slate-900/50"
+              className="rounded bg-slate-900/65 px-2.5 py-2 ring-1 ring-white/10"
             >
-              <p className="text-xs font-semibold text-slate-800 dark:text-slate-100">
+              <p className="text-xs font-semibold text-slate-100">
                 {entry.chordSymbol}
               </p>
               <div className="mt-1 flex flex-wrap gap-1.5">

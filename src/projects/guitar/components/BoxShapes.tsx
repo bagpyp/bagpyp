@@ -251,6 +251,10 @@ export default function BoxShapes({
       return;
     }
 
+    if (nextFamily === 'major' && tonalCenterMode !== 'major') {
+      handleTonalCenterChange('major');
+    }
+
     setScaleFamily(nextFamily);
     if (nextFamily === 'major') {
       setSingleTargetToneState(DEFAULT_SINGLE_TARGET_TONE_STATE);

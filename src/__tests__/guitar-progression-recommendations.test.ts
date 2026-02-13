@@ -79,6 +79,21 @@ describe('guitar progression recommendations', () => {
     expect(progressions.some((progression) => progression.id === 'minorRock')).toBe(false);
   });
 
+  it('switches to phrygian-tritone recommendations when b5 is added in phrygian mode', () => {
+    const progressions = getPracticeProgressions({
+      tonalCenterMode: 'minor',
+      scaleFamily: 'pentatonic',
+      majorCenterKey: 'G',
+      minorCenterKey: 'E',
+      hexatonicMode: 'phrygian',
+      visibleTargetIntervals: [1, 6, 8],
+    });
+
+    expect(progressions[0]?.id).toBe('phrygianTritoneBite');
+    expect(progressions.some((progression) => progression.id === 'phrygianTritonePivot')).toBe(true);
+    expect(progressions.some((progression) => progression.id === 'phrygianB5Drone')).toBe(true);
+  });
+
   it('returns a larger progression set across quality/key combinations', () => {
     const minorPent = getPracticeProgressions({
       tonalCenterMode: 'minor',
@@ -109,6 +124,9 @@ describe('guitar progression recommendations', () => {
     expect(majorPent.length).toBeGreaterThanOrEqual(7);
     expect(majorModes.length).toBeGreaterThanOrEqual(8);
     expect(majorModes.some((progression) => progression.chordNames.includes('Bb'))).toBe(true);
+    expect(majorModes.some((progression) => progression.id === 'ionianPop')).toBe(true);
+    const ionianPop = majorModes.find((progression) => progression.id === 'ionianPop');
+    expect(ionianPop?.chordNames).toBe('Bb F Gm Eb');
   });
 
   it('builds cheat-sheet chords and deduped note pool in appearance order', () => {

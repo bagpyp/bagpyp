@@ -244,6 +244,36 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'i bII iv i',
     whyItFits: 'Adds iv color while preserving phrygian identity.',
   },
+  phrygianTritoneBite: {
+    id: 'phrygianTritoneBite',
+    title: 'Phrygian Tritone Bite',
+    romanNumerals: 'i bV bII i',
+    whyItFits: 'Centers the b5 color directly against phrygian b2 tension.',
+  },
+  phrygianTritonePivot: {
+    id: 'phrygianTritonePivot',
+    title: 'Phrygian Tritone Pivot',
+    romanNumerals: 'i bII bV i',
+    whyItFits: 'Approaches the tritone via b2 for dark chromatic pull.',
+  },
+  phrygianB5Drone: {
+    id: 'phrygianB5Drone',
+    title: 'Phrygian b5 Drone',
+    romanNumerals: 'i bV i bII',
+    whyItFits: 'Keeps tonic anchored while repeatedly spotlighting b5.',
+  },
+  phrygianB5Cycle: {
+    id: 'phrygianB5Cycle',
+    title: 'Phrygian b5 Cycle',
+    romanNumerals: 'i bV bVII bII',
+    whyItFits: 'Moves through familiar phrygian colors with explicit b5 color-stop.',
+  },
+  phrygianB5Descent: {
+    id: 'phrygianB5Descent',
+    title: 'Phrygian b5 Descent',
+    romanNumerals: 'i bVI bV bII',
+    whyItFits: 'Descending darker motion with a tritone landing before b2.',
+  },
   lydianLift: {
     id: 'lydianLift',
     title: 'Lydian Lift',
@@ -396,6 +426,14 @@ const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
     'phrygianHeat',
     'phrygianFrame',
   ],
+  phrygianTritone: [
+    'phrygianTritoneBite',
+    'phrygianTritonePivot',
+    'phrygianB5Drone',
+    'phrygianB5Cycle',
+    'phrygianB5Descent',
+    'phrygianVamp',
+  ],
   lydian: [
     'lydianLift',
     'lydianSkyline',
@@ -539,6 +577,10 @@ function getFlavorId(
     return 'minorBlues';
   }
 
+  if (tonalCenterMode === 'minor' && hexatonicMode === 'phrygian' && hasInterval(6)) {
+    return 'phrygianTritone';
+  }
+
   if (hexatonicMode === 'off') {
     return tonalCenterMode === 'major' ? 'majorPentatonic' : 'minorPentatonic';
   }
@@ -580,7 +622,7 @@ function getBaselineIntervals(
 function getTonalCompatibilityFlavorSet(tonalCenterMode: TonalCenterMode): Set<string> {
   return tonalCenterMode === 'major'
     ? new Set(['ionian', 'majorPentatonic', 'lydian', 'mixolydian', 'mixolydianBlues', 'majorBlues'])
-    : new Set(['aeolian', 'minorPentatonic', 'dorian', 'phrygian', 'locrian', 'minorBlues']);
+    : new Set(['aeolian', 'minorPentatonic', 'dorian', 'phrygian', 'phrygianTritone', 'locrian', 'minorBlues']);
 }
 
 interface TemplateIntervalAnalysis {

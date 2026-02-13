@@ -445,6 +445,24 @@ const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
   ],
 };
 
+const MAJOR_DIATONIC_INTERVALS = [0, 2, 4, 5, 7, 9, 11];
+const MINOR_DIATONIC_INTERVALS = [0, 2, 3, 5, 7, 8, 10];
+const MAJOR_PENTATONIC_INTERVALS = [0, 2, 4, 7, 9];
+const MINOR_PENTATONIC_INTERVALS = [0, 3, 5, 7, 10];
+
+const TEMPLATE_IDS = Object.keys(PROGRESSION_TEMPLATES);
+const FLAVORS_BY_TEMPLATE_ID = (() => {
+  const byTemplate = new Map<string, Set<string>>();
+  Object.entries(BASE_TEMPLATE_IDS_BY_FLAVOR).forEach(([flavorId, templateIds]) => {
+    templateIds.forEach((templateId) => {
+      const existing = byTemplate.get(templateId) ?? new Set<string>();
+      existing.add(flavorId);
+      byTemplate.set(templateId, existing);
+    });
+  });
+  return byTemplate;
+})();
+
 function usesFlatSpellingForKey(key: string): boolean {
   return key.includes('b') || FLAT_KEYS.has(key);
 }
@@ -547,6 +565,191 @@ function getFlavorId(
   return tonalCenterMode === 'minor'
     ? majorToMinorFallbackMap[hexatonicMode]
     : minorToMajorFallbackMap[hexatonicMode];
+}
+
+function getBaselineIntervals(
+  scaleFamily: BoxScaleFamily,
+  tonalCenterMode: TonalCenterMode
+): number[] {
+  if (scaleFamily === 'major') {
+    return tonalCenterMode === 'major' ? MAJOR_DIATONIC_INTERVALS : MINOR_DIATONIC_INTERVALS;
+  }
+  return tonalCenterMode === 'major' ? MAJOR_PENTATONIC_INTERVALS : MINOR_PENTATONIC_INTERVALS;
+}
+
+function getTonalCompatibilityFlavorSet(tonalCenterMode: TonalCenterMode): Set<string> {
+  return tonalCenterMode === 'major'
+    ? new Set(['ionian', 'majorPentatonic', 'lydian', 'mixolydian', 'mixolydianBlues', 'majorBlues'])
+    : new Set(['aeolian', 'minorPentatonic', 'dorian', 'phrygian', 'locrian', 'minorBlues']);
+}
+
+interface TemplateIntervalAnalysis {
+  inProfileIntervalHits: number;
+  outOfProfileIntervalHits: number;
+  targetIntervalHits: number;
+  uniqueInProfileIntervals: number;
+  uniqueTargetIntervals: number;
+  tonicTokenCount: number;
+  dominantTokenCount: number;
+}
+
+function analyzeTemplateIntervals(
+  template: ProgressionTemplate,
+  tonalKey: string,
+  tonalRootPitchClass: number,
+  profileIntervalSet: Set<number>,
+  targetIntervalSet: Set<number>
+): TemplateIntervalAnalysis {
+  const chordTokens = template.romanNumerals
+    .split(/\s+/)
+    .filter((token) => token !== '|' && token.length > 0);
+  const uniqueChordSymbols = [...new Set(chordTokens.map((token) => renderRomanTokenAsChord(token, tonalKey)))];
+
+  let inProfileIntervalHits = 0;
+  let outOfProfileIntervalHits = 0;
+  let targetIntervalHits = 0;
+  const uniqueInProfileIntervals = new Set<number>();
+  const uniqueTargetIntervals = new Set<number>();
+
+  uniqueChordSymbols.forEach((chordSymbol) => {
+    const noteIntervals = [...new Set(
+      chordNotesFromSymbol(chordSymbol)
+        .map((noteName) => getPitchClass(noteName))
+        .map((pitchClass) => (pitchClass - tonalRootPitchClass + 12) % 12)
+    )];
+
+    noteIntervals.forEach((interval) => {
+      if (profileIntervalSet.has(interval)) {
+        inProfileIntervalHits += 1;
+        uniqueInProfileIntervals.add(interval);
+      } else {
+        outOfProfileIntervalHits += 1;
+      }
+
+      if (targetIntervalSet.has(interval)) {
+        targetIntervalHits += 1;
+        uniqueTargetIntervals.add(interval);
+      }
+    });
+  });
+
+  const tonicTokenCount = chordTokens.filter((token) => /^([b#]?)[iI](?:maj7|m7|7)?$/.test(token)).length;
+  const dominantTokenCount = chordTokens.filter((token) => /^([b#]?)[vV](?:maj7|m7|7)?$/.test(token)).length;
+
+  return {
+    inProfileIntervalHits,
+    outOfProfileIntervalHits,
+    targetIntervalHits,
+    uniqueInProfileIntervals: uniqueInProfileIntervals.size,
+    uniqueTargetIntervals: uniqueTargetIntervals.size,
+    tonicTokenCount,
+    dominantTokenCount,
+  };
+}
+
+function getTemplateScore(
+  template: ProgressionTemplate,
+  tonalKey: string,
+  tonalRootPitchClass: number,
+  desiredFlavorId: string,
+  desiredFlavorOrder: Map<string, number>,
+  tonalCompatibilityFlavorSet: Set<string>,
+  profileIntervalSet: Set<number>,
+  targetIntervalSet: Set<number>
+): number {
+  const analysis = analyzeTemplateIntervals(
+    template,
+    tonalKey,
+    tonalRootPitchClass,
+    profileIntervalSet,
+    targetIntervalSet
+  );
+
+  const templateFlavorSet = FLAVORS_BY_TEMPLATE_ID.get(template.id) ?? new Set<string>();
+  const inDesiredFlavor = desiredFlavorOrder.has(template.id);
+  const desiredFlavorIndex = desiredFlavorOrder.get(template.id) ?? 999;
+  const tonalCompatible = [...templateFlavorSet].some((flavorId) => tonalCompatibilityFlavorSet.has(flavorId));
+  const targetIntervalCount = targetIntervalSet.size;
+  const missingTargetIntervals = Math.max(0, targetIntervalCount - analysis.uniqueTargetIntervals);
+
+  let score = 0;
+
+  // Strong prior for hand-picked pedagogical templates by selected flavor.
+  if (inDesiredFlavor) {
+    score += 150;
+    score += Math.max(0, 240 - (desiredFlavorIndex * 70));
+  } else if (tonalCompatible) {
+    score += 25;
+  } else {
+    score -= 15;
+  }
+
+  // Harmonic fit against the currently visible note set.
+  score += analysis.inProfileIntervalHits * 5;
+  score -= analysis.outOfProfileIntervalHits * 9;
+  score += analysis.uniqueInProfileIntervals * 2;
+
+  // Target-tone pressure: favor progressions that actually surface selected target colors.
+  if (targetIntervalCount > 0) {
+    score += analysis.targetIntervalHits * 7;
+    score += analysis.uniqueTargetIntervals * 18;
+    score -= missingTargetIntervals * 22;
+    if (analysis.uniqueTargetIntervals === targetIntervalCount) {
+      score += 12;
+    }
+  }
+
+  // Keep tonic gravity and playable loop behavior.
+  score += analysis.tonicTokenCount > 0 ? 8 : -10;
+  score += analysis.dominantTokenCount > 0 ? 4 : 0;
+
+  return score;
+}
+
+function getRankedTemplateIds(
+  context: ProgressionRecommendationContext,
+  tonalKey: string,
+  desiredFlavorId: string
+): string[] {
+  const tonalRootPitchClass = getPitchClass(tonalKey);
+  const profileIntervalSet = new Set<number>([
+    ...getBaselineIntervals(context.scaleFamily, context.tonalCenterMode),
+    ...context.visibleTargetIntervals,
+  ]);
+  const targetIntervalSet = new Set<number>(context.visibleTargetIntervals);
+  const desiredFlavorTemplates = BASE_TEMPLATE_IDS_BY_FLAVOR[desiredFlavorId] ?? [];
+  const desiredFlavorOrder = new Map<string, number>(
+    desiredFlavorTemplates.map((id, index) => [id, index])
+  );
+  const tonalCompatibilityFlavorSet = getTonalCompatibilityFlavorSet(context.tonalCenterMode);
+  const shouldKeepModePure = context.scaleFamily === 'pentatonic' && context.hexatonicMode !== 'off';
+  const candidateTemplateIds = shouldKeepModePure && desiredFlavorTemplates.length > 0
+    ? desiredFlavorTemplates
+    : TEMPLATE_IDS;
+
+  return [...candidateTemplateIds]
+    .filter((id) => PROGRESSION_TEMPLATES[id])
+    .map((id, index) => ({
+      id,
+      index,
+      score: getTemplateScore(
+        PROGRESSION_TEMPLATES[id],
+        tonalKey,
+        tonalRootPitchClass,
+        desiredFlavorId,
+        desiredFlavorOrder,
+        tonalCompatibilityFlavorSet,
+        profileIntervalSet,
+        targetIntervalSet
+      ),
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.index - b.index;
+    })
+    .map((entry) => entry.id);
 }
 
 function dedupeTemplateIds(ids: string[]): string[] {
@@ -655,7 +858,7 @@ export function getPracticeProgressions(
     context.hexatonicMode,
     context.visibleTargetIntervals
   );
-  const progressionIds: string[] = [...(BASE_TEMPLATE_IDS_BY_FLAVOR[flavorId] ?? [])];
+  const progressionIds = getRankedTemplateIds(context, tonalKey, flavorId);
 
   return dedupeTemplateIds(progressionIds)
     .slice(0, 10)

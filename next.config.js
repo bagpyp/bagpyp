@@ -16,6 +16,11 @@ const nextConfig = {
 	async redirects() {
 		return [
 			{
+				source: "/guitar",
+				destination: "/projects/guitar",
+				permanent: true
+			},
+			{
 				source: "/projects/guitar-major-triads",
 				destination: "/projects/guitar",
 				permanent: true

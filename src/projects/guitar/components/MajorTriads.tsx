@@ -9,7 +9,7 @@ import { buildChord } from '../lib/chord-types';
 import { nameToPc } from '../lib';
 import type { NoteName } from '../lib/types';
 import { DEFAULT_TRIAD_SETTINGS, getChordTypeLabels } from '../lib/triad-settings';
-import type { TriadSettings } from '../lib/triad-settings';
+import type { TriadSettings, TriadChordType } from '../lib/triad-settings';
 import { playChord, resumeAudioContext } from '../lib/sound';
 
 // Keyboard mapping:
@@ -51,6 +51,18 @@ const STRING_GROUP_LABELS = [
   'Strings 6-5-4 (E-A-D)',
 ];
 
+const SHELL_CHORD_TYPES: TriadChordType[] = ['7', 'min7', 'maj7'];
+const INTERVAL_LABELS_BY_SEMITONES: Record<number, string> = {
+  0: '1',
+  3: '♭3',
+  4: '3',
+  6: '♭5',
+  7: '5',
+  8: '#5',
+  10: '♭7',
+  11: '7',
+};
+
 interface MajorTriadsProps {
   selectedKey: string;
   onSelectedKeyChange: (key: string) => void;
@@ -79,34 +91,26 @@ export default function MajorTriads({
     return chordData;
   }, [selectedKey, settings.chordType]);
 
-  // Calculate which notes are in the current triad
-  const getTriadNotes = (rootKey: string, chordType: 'major' | 'minor' | 'dim' | 'aug'): { root: number; third: number; fifth: number } => {
-    const chordPcs = buildChord(rootKey as NoteName, chordType);
-    return {
-      root: chordPcs[0],
-      third: chordPcs[1],
-      fifth: chordPcs[2],
-    };
-  };
+  const displayedChordPitchClasses = useMemo(() => {
+    const chordPcs = buildChord(selectedKey as NoteName, settings.chordType);
+    if (SHELL_CHORD_TYPES.includes(settings.chordType)) {
+      // Shell voicings: root + 3rd + 7th
+      return [chordPcs[0], chordPcs[1], chordPcs[3]];
+    }
+    // Triad voicings: root + 3rd + 5th
+    return [chordPcs[0], chordPcs[1], chordPcs[2]];
+  }, [selectedKey, settings.chordType]);
 
-  const triadNotes = getTriadNotes(selectedKey, settings.chordType);
-
-  // Get interval label for a note based on chord type
-  // Major: 1, 3, 5 | Minor: 1, ♭3, 5 | Dim: 1, ♭3, ♭5 | Aug: 1, 3, #5
+  // Interval labels reflect the displayed voicing tones.
   const getIntervalLabel = (noteName: string): string | null => {
     const notePc = nameToPc(noteName as any);
-    if (notePc === triadNotes.root) return '1';
-    if (notePc === triadNotes.third) {
-      // 3rd is flat for minor and dim
-      return (settings.chordType === 'minor' || settings.chordType === 'dim') ? '♭3' : '3';
+    if (!displayedChordPitchClasses.includes(notePc)) {
+      return null;
     }
-    if (notePc === triadNotes.fifth) {
-      // 5th is flat for dim, sharp for aug
-      if (settings.chordType === 'dim') return '♭5';
-      if (settings.chordType === 'aug') return '#5';
-      return '5';
-    }
-    return null;
+
+    const rootPc = displayedChordPitchClasses[0];
+    const interval = (notePc - rootPc + 12) % 12;
+    return INTERVAL_LABELS_BY_SEMITONES[interval] ?? null;
   };
 
   // Play a triad position
@@ -150,7 +154,7 @@ export default function MajorTriads({
         return;
       }
 
-      // Check for chord type toggles (1-4)
+      // Check for chord type toggles (1-7)
       if (e.key === '1') {
         e.preventDefault();
         setSettings({ ...settings, chordType: 'major' });
@@ -166,6 +170,18 @@ export default function MajorTriads({
       } else if (e.key === '4') {
         e.preventDefault();
         setSettings({ ...settings, chordType: 'aug' });
+        return;
+      } else if (e.key === '5') {
+        e.preventDefault();
+        setSettings({ ...settings, chordType: '7' });
+        return;
+      } else if (e.key === '6') {
+        e.preventDefault();
+        setSettings({ ...settings, chordType: 'min7' });
+        return;
+      } else if (e.key === '7') {
+        e.preventDefault();
+        setSettings({ ...settings, chordType: 'maj7' });
         return;
       }
 
@@ -279,6 +295,18 @@ export default function MajorTriads({
                   <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">4</span>
                   <span className="text-slate-600 dark:text-slate-400">Augmented</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">5</span>
+                  <span className="text-slate-600 dark:text-slate-400">Dominant 7 shell (1-3-b7)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">6</span>
+                  <span className="text-slate-600 dark:text-slate-400">Minor 7 shell (1-b3-b7)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">7</span>
+                  <span className="text-slate-600 dark:text-slate-400">Major 7 shell (1-3-7)</span>
+                </div>
               </div>
             </div>
 
@@ -380,6 +408,36 @@ export default function MajorTriads({
                   }`}
                 >
                   {labels.aug}
+                </button>
+                <button
+                  onClick={() => setSettings({ ...settings, chordType: '7' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === '7'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  {labels.dominant7}
+                </button>
+                <button
+                  onClick={() => setSettings({ ...settings, chordType: 'min7' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === 'min7'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  {labels.minor7}
+                </button>
+                <button
+                  onClick={() => setSettings({ ...settings, chordType: 'maj7' })}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    settings.chordType === 'maj7'
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                  }`}
+                >
+                  {labels.major7}
                 </button>
               </>
             );
@@ -576,11 +634,10 @@ export default function MajorTriads({
         <div className="w-full">
           <div className="flex flex-col gap-0">
             {[...triadsData.stringGroups].reverse().map((group, groupIdx) => {
-              // Convert triad note names to pitch classes
               const triadPcs: [number, number, number] = [
-                nameToPc(triadsData.chordNotes[0] as any),
-                nameToPc(triadsData.chordNotes[1] as any),
-                nameToPc(triadsData.chordNotes[2] as any),
+                displayedChordPitchClasses[0],
+                displayedChordPitchClasses[1],
+                displayedChordPitchClasses[2],
               ];
 
               // Reversed index for labels (0→3, 1→2, 2→1, 3→0)

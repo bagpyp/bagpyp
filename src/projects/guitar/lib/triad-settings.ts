@@ -4,6 +4,7 @@
 
 export type InversionNotation = 'symbols' | 'figured-bass';
 export type ChordLabelNotation = 'standard' | 'jazz' | 'classical';
+export type TriadChordType = 'major' | 'minor' | 'dim' | 'aug' | '7' | 'min7' | 'maj7';
 
 export interface TriadSettings {
   // Visual display options
@@ -19,7 +20,7 @@ export interface TriadSettings {
   chordLabelNotation: ChordLabelNotation; // How to display chord type labels
 
   // Chord type (moved to main display, not in settings anymore)
-  chordType: 'major' | 'minor' | 'dim' | 'aug';     // Chord type (dim and aug not yet implemented)
+  chordType: TriadChordType;
 }
 
 /**
@@ -77,6 +78,9 @@ export function getChordTypeLabels(notation: ChordLabelNotation): Record<string,
         minor: 'Minor',
         dim: 'Dim',
         aug: 'Aug',
+        dominant7: '7',
+        minor7: 'm7',
+        major7: 'maj7',
       };
     case 'jazz':
       return {
@@ -84,6 +88,9 @@ export function getChordTypeLabels(notation: ChordLabelNotation): Record<string,
         minor: 'min',
         dim: 'dim',
         aug: 'aug',
+        dominant7: '7',
+        minor7: 'm7',
+        major7: 'maj7',
       };
     case 'classical':
       return {
@@ -91,6 +98,9 @@ export function getChordTypeLabels(notation: ChordLabelNotation): Record<string,
         minor: 'm',
         dim: '°',
         aug: '+',
+        dominant7: 'V⁷',
+        minor7: 'm⁷',
+        major7: 'M⁷',
       };
     default:
       return {
@@ -98,6 +108,9 @@ export function getChordTypeLabels(notation: ChordLabelNotation): Record<string,
         minor: 'Minor',
         dim: 'Dim',
         aug: 'Aug',
+        dominant7: '7',
+        minor7: 'm7',
+        major7: 'maj7',
       };
   }
 }

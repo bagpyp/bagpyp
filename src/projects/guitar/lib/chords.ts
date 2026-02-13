@@ -31,6 +31,118 @@ export interface ChordData {
   stringGroups: StringGroupTriads[]; // 4 groups with voicings
 }
 
+const MAX_FRET = 18;
+
+function findNearestFretForPitchClass(
+  currentFret: number,
+  stringIdx: number,
+  targetPitchClass: number,
+  fretboard: Record<number, Record<number, number>>
+): number | null {
+  let bestFret: number | null = null;
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  for (let candidateFret = 0; candidateFret <= MAX_FRET; candidateFret++) {
+    if (fretboard[stringIdx][candidateFret] !== targetPitchClass) {
+      continue;
+    }
+    const distance = Math.abs(candidateFret - currentFret);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestFret = candidateFret;
+    }
+  }
+
+  return bestFret;
+}
+
+function replaceChordToneWithNearestTarget(
+  frets: number[],
+  strings: number[],
+  sourcePitchClass: number,
+  targetPitchClass: number,
+  fretboard: Record<number, Record<number, number>>
+): number[] | null {
+  let bestIndex = -1;
+  let bestFret = -1;
+  let bestDistance = Number.POSITIVE_INFINITY;
+
+  for (let i = 0; i < frets.length; i++) {
+    const currentPitchClass = fretboard[strings[i]][frets[i]];
+    if (currentPitchClass !== sourcePitchClass) {
+      continue;
+    }
+
+    const candidateFret = findNearestFretForPitchClass(frets[i], strings[i], targetPitchClass, fretboard);
+    if (candidateFret === null) {
+      continue;
+    }
+
+    const distance = Math.abs(candidateFret - frets[i]);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = i;
+      bestFret = candidateFret;
+    }
+  }
+
+  if (bestIndex === -1) {
+    return null;
+  }
+
+  const transformed = [...frets];
+  transformed[bestIndex] = bestFret;
+  return transformed;
+}
+
+function transformToShellChordType(
+  majorFrets: number[],
+  strings: number[],
+  rootName: NoteName,
+  targetChordType: '7' | 'min7' | 'maj7',
+  fretboard: Record<number, Record<number, number>>
+): number[] | null {
+  const majorChord = buildChord(rootName, 'major');
+  const perfectFifth = majorChord[2];
+
+  if (targetChordType === '7') {
+    const dominantSeventh = buildChord(rootName, '7')[3];
+    return replaceChordToneWithNearestTarget(
+      majorFrets,
+      strings,
+      perfectFifth,
+      dominantSeventh,
+      fretboard
+    );
+  }
+
+  if (targetChordType === 'maj7') {
+    const majorSeventh = buildChord(rootName, 'maj7')[3];
+    return replaceChordToneWithNearestTarget(
+      majorFrets,
+      strings,
+      perfectFifth,
+      majorSeventh,
+      fretboard
+    );
+  }
+
+  // min7: major -> minor triad, then replace 5 with b7
+  const minorFrets = transformChordType(majorFrets, strings, rootName, 'minor', fretboard);
+  if (!minorFrets) {
+    return null;
+  }
+
+  const minorSeventh = buildChord(rootName, 'min7')[3];
+  return replaceChordToneWithNearestTarget(
+    minorFrets,
+    strings,
+    perfectFifth,
+    minorSeventh,
+    fretboard
+  );
+}
+
 /**
  * Generate chord voicings for a given key and chord type
  * Currently supports major and minor triads, with more types coming
@@ -176,6 +288,90 @@ export function generateChordData(key: NoteName, chordType: ChordType): ChordDat
     }
   }
 
+  // For shell-style seventh chords, transform the triad framework:
+  // R-3-5 -> R-3-b7 / R-b3-b7 / R-3-7
+  const shellChordTypes: ChordType[] = ['7', 'min7', 'maj7'];
+  if (shellChordTypes.includes(chordType) && MAJOR_TRIAD_POSITIONS[sharpKey]) {
+    const STRING_NAMES = ['E', 'A', 'D', 'G', 'B', 'E'];
+    const stringGroupsData: Array<[number, number, number]> = [
+      [0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5],
+    ];
+
+    const stringGroups: StringGroupTriads[] = [];
+    const expectedShellPitchClasses = chordType === '7'
+      ? [chordPcs[0], chordPcs[1], chordPcs[3]]
+      : chordType === 'min7'
+        ? [chordPcs[0], chordPcs[1], chordPcs[3]]
+        : [chordPcs[0], chordPcs[1], chordPcs[3]];
+
+    for (let groupIdx = 0; groupIdx < stringGroupsData.length; groupIdx++) {
+      const stringGroupIndices = stringGroupsData[groupIdx];
+      const groupKey = `G${groupIdx}`;
+      const majorVoicings = MAJOR_TRIAD_POSITIONS[sharpKey][groupKey];
+      const transformedVoicings: TriadVoicing[] = [];
+
+      for (const majorVoicing of majorVoicings) {
+        const newFrets = transformToShellChordType(
+          majorVoicing.frets,
+          stringGroupIndices,
+          key,
+          chordType as '7' | 'min7' | 'maj7',
+          fretboard
+        );
+
+        if (newFrets === null) {
+          continue;
+        }
+
+        const notes = newFrets.map((fret, idx) => fretboard[stringGroupIndices[idx]][fret]);
+
+        if (!isValidChordVoicing(notes, expectedShellPitchClasses)) {
+          continue;
+        }
+
+        const noteNames = notes.map(pc => pcToDisplayName(pc, key));
+        const avgFret = newFrets.reduce((sum, f) => sum + f, 0) / 3;
+        const inversion = identifyInversion(
+          notes,
+          [expectedShellPitchClasses[0], expectedShellPitchClasses[1], expectedShellPitchClasses[2]]
+        );
+
+        transformedVoicings.push({
+          position: majorVoicing.pos,
+          strings: [...stringGroupIndices],
+          frets: newFrets,
+          notes,
+          noteNames,
+          inversion,
+          avgFret,
+        });
+      }
+
+      if (transformedVoicings.length > 0) {
+        transformedVoicings.sort((a, b) => a.avgFret - b.avgFret);
+        transformedVoicings.forEach((v, idx) => {
+          v.position = idx;
+        });
+
+        stringGroups.push({
+          strings: [...stringGroupIndices],
+          stringNames: stringGroupIndices.map(idx => STRING_NAMES[idx]),
+          voicings: transformedVoicings,
+        });
+      }
+    }
+
+    if (stringGroups.length > 0) {
+      return {
+        key,
+        chordType,
+        chordName,
+        chordNotes,
+        stringGroups,
+      };
+    }
+  }
+
   // Chord type not yet supported
   return null;
 }
@@ -190,13 +386,13 @@ export function getSupportedKeys(chordType: ChordType): NoteName[] {
     return Object.keys(MAJOR_TRIAD_POSITIONS) as NoteName[];
   }
 
-  // For minor chords, check which major keys can be transformed
-  if (chordType === 'minor') {
+  // For transformed/shell chord types, check which major keys can be transformed
+  if (['minor', 'dim', 'aug', '7', 'min7', 'maj7'].includes(chordType)) {
     const supportedKeys: NoteName[] = [];
     const allKeys = Object.keys(MAJOR_TRIAD_POSITIONS) as NoteName[];
 
     for (const key of allKeys) {
-      const chordData = generateChordData(key, 'minor');
+      const chordData = generateChordData(key, chordType);
       if (chordData && chordData.stringGroups.length === 4) {
         // Only consider it fully supported if all 4 groups have voicings
         const allGroupsHaveVoicings = chordData.stringGroups.every(

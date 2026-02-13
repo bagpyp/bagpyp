@@ -5,6 +5,7 @@ export type TargetToneId =
   | 'flatFive'
   | 'flatSix'
   | 'flatSeven'
+  | 'majorSeventh'
   | 'majorThird'
   | 'majorSecond'
   | 'majorSixth';
@@ -79,6 +80,15 @@ const ALL_TARGET_TONE_CONFIGS: TargetToneConfig[] = [
     palette: { outer: '#0369a1', mid: '#0ea5e9', inner: '#7dd3fc' },
   },
   {
+    id: 'majorSeventh',
+    label: 'Add 7 targets',
+    description: 'Leading-tone pull',
+    intervalFromReferenceRoot: 11,
+    referenceRoot: 'minor',
+    preferFlatName: true,
+    palette: { outer: '#6d28d9', mid: '#a78bfa', inner: '#ddd6fe' },
+  },
+  {
     id: 'majorThird',
     label: 'Add M3 targets',
     description: 'Vocal sweet vs sour color',
@@ -122,6 +132,34 @@ const INTERVAL_LABEL_BY_SEMITONES: Record<number, string> = {
   11: '7',
 };
 
+const ROMAN_NUMERAL_LABEL_BY_SEMITONES: Record<number, string> = {
+  0: 'I',
+  1: 'bII',
+  2: 'II',
+  3: 'bIII',
+  4: 'III',
+  5: 'IV',
+  6: 'bV',
+  7: 'V',
+  8: 'bVI',
+  9: 'VI',
+  10: 'bVII',
+  11: 'VII',
+};
+
+const INTERVAL_EFFECT_DESCRIPTION_BY_SEMITONES: Record<number, string> = {
+  1: 'Tense half-step pull',
+  2: 'Smooth, floating extension',
+  3: 'Classic blues bite',
+  4: 'Bright major-color lift',
+  5: 'Suspended open color',
+  6: 'Tritone tension bite',
+  8: 'Borrowed-minor shadow',
+  9: 'Warm soulful color',
+  10: 'Dominant blues pull',
+  11: 'Leading-tone pull',
+};
+
 export const TARGET_TONE_BY_ID: Record<TargetToneId, TargetToneConfig> = Object.fromEntries(
   ALL_TARGET_TONE_CONFIGS.map((config) => [config.id, config])
 ) as Record<TargetToneId, TargetToneConfig>;
@@ -130,6 +168,7 @@ export const SINGLE_TARGET_TONE_IDS = [
   'flatFive',
   'flatSix',
   'flatSeven',
+  'majorSeventh',
   'majorThird',
   'majorSecond',
   'majorSixth',
@@ -173,6 +212,7 @@ export const DEFAULT_SINGLE_TARGET_TONE_STATE: Record<SingleTargetToneId, boolea
   flatFive: false,
   flatSix: false,
   flatSeven: false,
+  majorSeventh: false,
   majorThird: false,
   majorSecond: false,
   majorSixth: false,
@@ -245,6 +285,15 @@ export function getTargetTonePitchClass(
 
 export function getIntervalLabelFromSemitones(semitones: number): string {
   return INTERVAL_LABEL_BY_SEMITONES[((semitones % 12) + 12) % 12] ?? `${semitones}`;
+}
+
+export function getRomanNumeralLabelFromSemitones(semitones: number): string {
+  return ROMAN_NUMERAL_LABEL_BY_SEMITONES[((semitones % 12) + 12) % 12] ?? `${semitones}`;
+}
+
+export function getIntervalEffectDescriptionFromSemitones(semitones: number): string {
+  const normalized = ((semitones % 12) + 12) % 12;
+  return INTERVAL_EFFECT_DESCRIPTION_BY_SEMITONES[normalized] ?? 'Color extension target';
 }
 
 export function getTargetToneIntervalFromTonalCenter(

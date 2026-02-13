@@ -381,4 +381,19 @@ describe('box shape generation', () => {
       }
     }
   });
+
+  it('keeps F# and G# pentatonic boxes compact after display ordering', () => {
+    ['F#', 'G#'].forEach((minorKey) => {
+      const ordered = getDisplayOrderedBoxPatterns(
+        generateBoxShapePatterns(minorKey, 'pentatonic'),
+        'pentatonic'
+      );
+
+      ordered.forEach((box) => {
+        const allFrets = box.pattern.flat();
+        const span = Math.max(...allFrets) - Math.min(...allFrets);
+        expect(span).toBeLessThanOrEqual(7);
+      });
+    });
+  });
 });

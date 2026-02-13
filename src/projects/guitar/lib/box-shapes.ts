@@ -709,9 +709,20 @@ export function getDisplayOrderedBoxPatterns(
         ];
 
     const transposeDownOctave = (shape: BoxShapePattern): BoxShapePattern | null => {
+      const allFrets = shape.pattern.flat();
+      if (allFrets.length === 0) {
+        return null;
+      }
+
+      // Never partially fold only some frets below 12. That splits a single
+      // box into two distant clusters (e.g. 0/2 and 10/12) and breaks shape continuity.
+      if (Math.min(...allFrets) < 12) {
+        return null;
+      }
+
       const transposedPattern = shape.pattern.map((stringFrets) =>
         stringFrets
-          .map((fret) => (fret >= 12 ? fret - 12 : fret))
+          .map((fret) => fret - 12)
           .sort((a, b) => a - b)
       );
       const changed = transposedPattern.some((stringFrets, stringIndex) =>

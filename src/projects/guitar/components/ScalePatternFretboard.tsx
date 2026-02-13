@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import {
   calculateFretYPositions,
   getNoteAtPosition,
@@ -28,12 +28,26 @@ export interface FretboardMarker {
   };
 }
 
+export interface FretboardShapeOverlay {
+  id: string;
+  points: [number, number][];
+  stroke: string;
+  strokeWidth?: number;
+  opacity?: number;
+  fill?: string;
+  fillOpacity?: number;
+  dashArray?: string;
+}
+
 interface ScalePatternFretboardProps {
   title: string;
   selectedKey: string;
   pattern: number[][];
   rootPositions: [number, number][];
   markers?: FretboardMarker[];
+  shapeOverlays?: FretboardShapeOverlay[];
+  pitchClassLabels?: Partial<Record<number, string>>;
+  showRootHalos?: boolean;
   showChromaticNotes?: boolean;
   numFrets?: number;
   titlePlacement?: 'top' | 'left';
@@ -54,12 +68,16 @@ export default function ScalePatternFretboard({
   pattern,
   rootPositions,
   markers = [],
+  shapeOverlays = [],
+  pitchClassLabels,
+  showRootHalos = true,
   showChromaticNotes = false,
   numFrets = 24,
   titlePlacement = 'top',
   showTitle = true,
 }: ScalePatternFretboardProps) {
   const [hoveredNote, setHoveredNote] = useState<{ string: number; fret: number } | null>(null);
+  const overlayClipPathId = useId();
 
   const fretYPositions = calculateFretYPositions(
     DIMENSIONS.startFret,
@@ -72,6 +90,30 @@ export default function ScalePatternFretboard({
     outer: '#0ea5e9',
     mid: '#38bdf8',
     inner: '#7dd3fc',
+  };
+  const fretboardTop = stringYPositions[5] - DIMENSIONS.fretLineExtensionTop;
+  const fretboardBottom = stringYPositions[0] + DIMENSIONS.fretLineExtensionBottom;
+  const fretboardHeight = fretboardBottom - fretboardTop;
+  const stringGap = stringYPositions[1] - stringYPositions[0];
+  const getOverlayY = (stringPosition: number) => {
+    if (Number.isInteger(stringPosition) && stringPosition >= 0 && stringPosition <= 5) {
+      return stringYPositions[stringPosition];
+    }
+
+    if (stringPosition <= 0) {
+      return stringYPositions[0] + (stringPosition * stringGap);
+    }
+
+    if (stringPosition >= 5) {
+      return stringYPositions[5] + ((stringPosition - 5) * stringGap);
+    }
+
+    const lowerString = Math.floor(stringPosition);
+    const upperString = Math.ceil(stringPosition);
+    const lowerY = stringYPositions[lowerString];
+    const upperY = stringYPositions[upperString];
+    const t = stringPosition - lowerString;
+    return lowerY + ((upperY - lowerY) * t);
   };
 
   const patternNotes = useMemo(() => {
@@ -136,13 +178,29 @@ export default function ScalePatternFretboard({
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <filter id="note-root-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="rootBlur" />
+            <feMerge>
+              <feMergeNode in="rootBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <clipPath id={overlayClipPathId}>
+            <rect
+              x={DIMENSIONS.openStringOffset}
+              y={fretboardTop}
+              width={DIMENSIONS.svgWidth}
+              height={fretboardHeight}
+              rx={DIMENSIONS.fretboardBorderRadius}
+            />
+          </clipPath>
         </defs>
 
         <rect
           x={DIMENSIONS.openStringOffset}
-          y={DIMENSIONS.fretboardMarginTop}
+          y={fretboardTop}
           width={DIMENSIONS.svgWidth}
-          height={DIMENSIONS.svgHeight - DIMENSIONS.fretboardMarginTop - DIMENSIONS.fretboardMarginBottom}
+          height={fretboardHeight}
           fill="#3d2817"
           rx={DIMENSIONS.fretboardBorderRadius}
         />
@@ -254,6 +312,51 @@ export default function ScalePatternFretboard({
           });
         })}
 
+        {shapeOverlays.map((overlay) => {
+          const points = overlay.points
+            .map(([stringPosition, fret]) => {
+              const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
+              const yPos = getOverlayY(stringPosition);
+              return `${xPos},${yPos}`;
+            })
+            .join(' ');
+
+          return (
+            <g
+              key={`shape-overlay-${overlay.id}`}
+              pointerEvents="none"
+              clipPath={`url(#${overlayClipPathId})`}
+            >
+              {overlay.fill && (
+                <polygon
+                  points={points}
+                  fill={overlay.fill}
+                  fillOpacity={overlay.fillOpacity ?? 0.5}
+                />
+              )}
+              <polyline
+                points={points}
+                fill="none"
+                stroke="#3d2817"
+                strokeWidth={(overlay.strokeWidth ?? 2.5) + 2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.95}
+              />
+              <polyline
+                points={points}
+                fill="none"
+                stroke={overlay.stroke}
+                strokeWidth={overlay.strokeWidth ?? 2.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={overlay.opacity ?? 0.9}
+                strokeDasharray={overlay.dashArray}
+              />
+            </g>
+          );
+        })}
+
         {patternNotes.map(({ stringIdx, fret }, idx) => {
           const noteAtPos = getNoteAtPosition(stringIdx, fret, selectedKey);
           const prefersFlatName = markers.some((marker) => {
@@ -261,6 +364,7 @@ export default function ScalePatternFretboard({
             return shouldUseFlat && hasPosition(marker.positions, stringIdx, fret);
           });
           const displayNoteName = prefersFlatName ? toFlatEnharmonic(noteAtPos.noteName) : noteAtPos.noteName;
+          const displayLabel = pitchClassLabels?.[noteAtPos.pitchClass] ?? displayNoteName;
           const colorData = getNoteColor(displayNoteName);
           const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
           const yPos = stringYPositions[stringIdx];
@@ -270,21 +374,45 @@ export default function ScalePatternFretboard({
           const radius = isHovered
             ? DIMENSIONS.noteRadius * DIMENSIONS.directHoverSizeMultiplier
             : DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
-          const rootRingOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 3);
-          const rootRingWidth = Math.max(1.8, DIMENSIONS.rootNoteRingWidth - 1);
+          const rootRingOffset = DIMENSIONS.rootNoteRingOffset;
+          const rootRingWidth = DIMENSIONS.rootNoteRingWidth;
+          const markerRingOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 3);
 
           return (
             <g key={`pattern-${idx}`}>
-              {isRoot && (
-                <circle
-                  cx={xPos}
-                  cy={yPos}
-                  r={radius + rootRingOffset}
-                  fill="none"
-                  stroke="#ffd700"
-                  strokeWidth={rootRingWidth}
-                  opacity={0.95}
-                />
+              {isRoot && showRootHalos && (
+                <g pointerEvents="none">
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 3}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={1}
+                    opacity={0.3}
+                    filter="url(#note-root-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 1.5}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={1.5}
+                    opacity={0.5}
+                    filter="url(#note-root-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={rootRingWidth}
+                    opacity={0.9}
+                    filter="url(#note-root-glow)"
+                  />
+                </g>
               )}
 
               {markers.map((marker, markerIdx) => {
@@ -338,7 +466,7 @@ export default function ScalePatternFretboard({
                     key={`marker-${idx}-${markerIdx}`}
                     cx={xPos}
                     cy={yPos}
-                    r={radius + (marker.ringOffset ?? (rootRingOffset + 1))}
+                    r={radius + (marker.ringOffset ?? (markerRingOffset + 1))}
                     fill="none"
                     stroke={marker.stroke}
                     strokeWidth={marker.strokeWidth ?? 2}
@@ -368,7 +496,7 @@ export default function ScalePatternFretboard({
                 dominantBaseline="middle"
                 pointerEvents="none"
               >
-                {displayNoteName}
+                {displayLabel}
               </text>
             </g>
           );

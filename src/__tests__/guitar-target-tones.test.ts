@@ -4,6 +4,8 @@ import {
   HEXATONIC_MODE_OPTIONS,
   HEXATONIC_MODE_RING_PALETTE,
   TARGET_TONE_BY_ID,
+  getIntervalEffectDescriptionFromSemitones,
+  getRomanNumeralLabelFromSemitones,
   getActiveTargetTones,
   getHexatonicModeDisplayLabel,
   getTargetToneToggleLabel,
@@ -64,9 +66,19 @@ describe('guitar target tones', () => {
 
   it('maps target-tone labels to the active tonal center interval naming', () => {
     const flatFive = TARGET_TONE_BY_ID.flatFive;
+    const majorSeventh = TARGET_TONE_BY_ID.majorSeventh;
 
     expect(getTargetToneToggleLabel(flatFive, 'minor', 'G', 'E')).toBe('Add b5 targets');
     expect(getTargetToneToggleLabel(flatFive, 'major', 'G', 'E')).toBe('Add b3 targets');
+    expect(getTargetToneToggleLabel(majorSeventh, 'minor', 'G', 'E')).toBe('Add 7 targets');
+    expect(getTargetToneToggleLabel(majorSeventh, 'major', 'G', 'E')).toBe('Add b6 targets');
+  });
+
+  it('exposes roman numerals and interval descriptions for display metadata', () => {
+    expect(getRomanNumeralLabelFromSemitones(3)).toBe('bIII');
+    expect(getRomanNumeralLabelFromSemitones(8)).toBe('bVI');
+    expect(getIntervalEffectDescriptionFromSemitones(3)).toBe('Classic blues bite');
+    expect(getIntervalEffectDescriptionFromSemitones(11)).toBe('Leading-tone pull');
   });
 
   it('uses green halos for hexatonic mode tones and single-target palette on collisions', () => {

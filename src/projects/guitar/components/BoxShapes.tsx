@@ -14,6 +14,7 @@ import ScalePatternFretboard, { type FretboardMarker } from './ScalePatternFretb
 import CircleOfFifthsSelector from './CircleOfFifthsSelector';
 import ChordCheatSheetPanel from './ChordCheatSheetPanel';
 import PracticeProgressionsPanel from './PracticeProgressionsPanel';
+import { buildPentatonicShapeOverlays } from '../lib/pentatonic-shape-overlays';
 import {
   getChordCheatSheetData,
   getPracticeProgressions,
@@ -23,7 +24,9 @@ import {
   HEXATONIC_MODE_OPTIONS,
   getActiveTargetTones,
   getHexatonicModeDisplayLabel,
-  getTargetToneToggleLabel,
+  getIntervalEffectDescriptionFromSemitones,
+  getIntervalLabelFromSemitones,
+  getTargetToneIntervalFromTonalCenter,
   getTargetTonePitchClass,
   SINGLE_TARGET_TONE_CONFIGS,
   type HexatonicModeId,
@@ -39,6 +42,7 @@ interface BoxShapesProps {
 
 const STANDARD_TUNING_PCS = [4, 9, 2, 7, 11, 4]; // E A D G B E
 const BOX_FRET_COUNT = 24;
+const CHROMATIC_DEGREE_LABELS = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7'] as const;
 
 const SEGMENT_WRAPPER_CLASS = 'inline-flex rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10';
 const SEGMENT_BUTTON_BASE_CLASS = 'rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none';
@@ -55,6 +59,10 @@ export default function BoxShapes({
 }: BoxShapesProps) {
   const [scaleFamily, setScaleFamily] = useState<BoxScaleFamily>('pentatonic');
   const [tonalCenterMode, setTonalCenterMode] = useState<TonalCenterMode>('minor');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showRectangleAndStack, setShowRectangleAndStack] = useState(true);
+  const [showIntervalLabels, setShowIntervalLabels] = useState(false);
+  const [showRootHalos, setShowRootHalos] = useState(true);
   const [showPracticePanel, setShowPracticePanel] = useState(true);
   const [showCheatSheetPanel, setShowCheatSheetPanel] = useState(true);
   const [singleTargetToneState, setSingleTargetToneState] = useState(
@@ -63,6 +71,7 @@ export default function BoxShapes({
   const [hexatonicMode, setHexatonicMode] = useState<HexatonicModeId>('off');
   const controlsPanelRef = useRef<HTMLElement | null>(null);
   const fretboardsContainerRef = useRef<HTMLDivElement | null>(null);
+  const circleSelectorRef = useRef<HTMLDivElement | null>(null);
   const [floatingPanelPositions, setFloatingPanelPositions] = useState<{
     leftPanelTop: number;
     rightPanelTop: number;
@@ -122,19 +131,50 @@ export default function BoxShapes({
     ) as Partial<Record<TargetToneId, number>>;
   }, [activeTargetTones, majorCenterKey, minorCenterKey]);
 
-  const displayRootPitchClass = useMemo(() => {
-    if (activeScaleFamily !== 'pentatonic') {
-      return null;
-    }
+  const tonalCenterRootPitchClass = useMemo(() => {
     const rootKey = tonalCenterMode === 'major' ? majorCenterKey : minorCenterKey;
     return getPitchClass(rootKey);
-  }, [activeScaleFamily, tonalCenterMode, majorCenterKey, minorCenterKey]);
+  }, [tonalCenterMode, majorCenterKey, minorCenterKey]);
+
+  const pitchClassLabels = useMemo(() => {
+    if (!showIntervalLabels) {
+      return undefined;
+    }
+
+    const labels: Partial<Record<number, string>> = {};
+    for (let pitchClass = 0; pitchClass < 12; pitchClass++) {
+      const interval = (pitchClass - tonalCenterRootPitchClass + 12) % 12;
+      labels[pitchClass] = CHROMATIC_DEGREE_LABELS[interval];
+    }
+    return labels;
+  }, [showIntervalLabels, tonalCenterRootPitchClass]);
 
   const activeSingleTargetToneIds = useMemo<SingleTargetToneId[]>(
     () => SINGLE_TARGET_TONE_CONFIGS
       .filter((config) => singleTargetToneState[config.id])
       .map((config) => config.id),
     [singleTargetToneState]
+  );
+  const orderedSingleTargetToneConfigs = useMemo(
+    () => [...SINGLE_TARGET_TONE_CONFIGS].sort((a, b) => {
+      const aInterval = getTargetToneIntervalFromTonalCenter(
+        a,
+        tonalCenterMode,
+        majorCenterKey,
+        minorCenterKey
+      );
+      const bInterval = getTargetToneIntervalFromTonalCenter(
+        b,
+        tonalCenterMode,
+        majorCenterKey,
+        minorCenterKey
+      );
+      if (aInterval !== bInterval) {
+        return aInterval - bInterval;
+      }
+      return a.id.localeCompare(b.id);
+    }),
+    [tonalCenterMode, majorCenterKey, minorCenterKey]
   );
 
   const tonalCenterKey = tonalCenterMode === 'major' ? majorCenterKey : minorCenterKey;
@@ -173,8 +213,8 @@ export default function BoxShapes({
   );
 
   const cheatSheetRootPitchClasses = useMemo(
-    () => (displayRootPitchClass === null ? [] : [displayRootPitchClass]),
-    [displayRootPitchClass]
+    () => [tonalCenterRootPitchClass],
+    [tonalCenterRootPitchClass]
   );
 
   const cheatSheetAuraPitchClasses = useMemo(() => {
@@ -221,6 +261,19 @@ export default function BoxShapes({
       setHexatonicMode('off');
     }
   };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (circleSelectorRef.current?.contains(target)) {
+        return;
+      }
+      setIsSettingsOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -329,11 +382,113 @@ export default function BoxShapes({
             <h1 className="text-3xl font-bold text-white">{title}</h1>
           </div>
 
-          <div className="w-full max-w-[970px] mx-auto">
+          <div ref={circleSelectorRef} className="w-full max-w-[970px] mx-auto relative z-[120]">
             <CircleOfFifthsSelector
               selectedKey={selectedMajorKey}
               onSelectKey={onSelectedMajorKeyChange}
+              showSettingsButton
+              isSettingsOpen={isSettingsOpen}
+              onSettingsToggle={() => setIsSettingsOpen((current) => !current)}
             />
+
+            {isSettingsOpen && (
+              <div className="absolute top-24 right-0 z-50 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700">
+                <div className="px-3 py-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-500">
+                    Display
+                  </p>
+                </div>
+
+                <div className="border-t border-slate-200 dark:border-slate-700 px-3 py-2">
+                  <div
+                    onClick={() => setShowRectangleAndStack((current) => !current)}
+                    className="flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: showRectangleAndStack ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: showRectangleAndStack ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Show rectangle + stack
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    Pentatonic overlay geometry
+                  </p>
+
+                  <div
+                    onClick={() => setShowRootHalos((current) => !current)}
+                    className="mt-2 flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: showRootHalos ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: showRootHalos ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Show root halos
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    Root ring highlights
+                  </p>
+
+                  <div
+                    onClick={() => setShowIntervalLabels((current) => !current)}
+                    className="mt-2 flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: showIntervalLabels ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: showIntervalLabels ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Show interval labels
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    Relative to selected tonal center
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <section
@@ -448,8 +603,16 @@ export default function BoxShapes({
                     Single-Note Targets
                   </p>
                   <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10">
-                    {SINGLE_TARGET_TONE_CONFIGS.map((config) => {
+                    {orderedSingleTargetToneConfigs.map((config) => {
                       const isEnabled = singleTargetToneState[config.id];
+                      const intervalSemitones = getTargetToneIntervalFromTonalCenter(
+                        config,
+                        tonalCenterMode,
+                        majorCenterKey,
+                        minorCenterKey
+                      );
+                      const intervalLabel = getIntervalLabelFromSemitones(intervalSemitones);
+                      const intervalEffectDescription = getIntervalEffectDescriptionFromSemitones(intervalSemitones);
                       return (
                         <button
                           key={config.id}
@@ -461,22 +624,22 @@ export default function BoxShapes({
                             }));
                           }}
                           className={[
-                            'inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                            'inline-flex min-w-[190px] flex-col items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                             isEnabled
                               ? 'bg-primary-600 text-white'
                               : 'bg-slate-900/60 text-slate-300 hover:bg-slate-700/70 hover:text-slate-100',
                           ].join(' ')}
                         >
-                          <span
-                            className="inline-block h-2.5 w-2.5 rounded-full"
-                            style={{ backgroundColor: config.palette.mid }}
-                          />
-                          {getTargetToneToggleLabel(
-                            config,
-                            tonalCenterMode,
-                            majorCenterKey,
-                            minorCenterKey
-                          )}
+                          <span className="inline-flex items-center gap-2">
+                            <span
+                              className="inline-block h-2.5 w-2.5 rounded-full"
+                              style={{ backgroundColor: config.palette.mid }}
+                            />
+                            <span>{`Add ${intervalLabel} targets`}</span>
+                          </span>
+                          <span className={`text-xs ${isEnabled ? 'text-slate-100' : 'text-slate-400'}`}>
+                            {intervalEffectDescription}
+                          </span>
                         </button>
                       );
                     })}
@@ -492,6 +655,9 @@ export default function BoxShapes({
                 let patternForRender = shapeData.pattern;
                 let rootPositionsForRender = shapeData.rootPositions;
                 const markers: FretboardMarker[] = [];
+                const shapeOverlaysForRender = activeScaleFamily === 'pentatonic' && showRectangleAndStack
+                  ? buildPentatonicShapeOverlays(shapeData.pattern, majorCenterKey)
+                  : [];
 
                 if (activeScaleFamily === 'pentatonic' && activeTargetTones.length > 0) {
                   const mergedPattern = shapeData.pattern.map((stringFrets) => new Set(stringFrets));
@@ -583,18 +749,16 @@ export default function BoxShapes({
                   );
                 }
 
-                if (displayRootPitchClass !== null) {
-                  const computedRootPositions: [number, number][] = [];
-                  patternForRender.forEach((stringFrets, stringIndex) => {
-                    stringFrets.forEach((fret) => {
-                      if ((STANDARD_TUNING_PCS[stringIndex] + fret) % 12 === displayRootPitchClass) {
-                        computedRootPositions.push([stringIndex, fret]);
-                      }
-                    });
+                const computedRootPositions: [number, number][] = [];
+                patternForRender.forEach((stringFrets, stringIndex) => {
+                  stringFrets.forEach((fret) => {
+                    if ((STANDARD_TUNING_PCS[stringIndex] + fret) % 12 === tonalCenterRootPitchClass) {
+                      computedRootPositions.push([stringIndex, fret]);
+                    }
                   });
-                  if (computedRootPositions.length > 0) {
-                    rootPositionsForRender = computedRootPositions;
-                  }
+                });
+                if (computedRootPositions.length > 0) {
+                  rootPositionsForRender = computedRootPositions;
                 }
 
                 return (
@@ -605,6 +769,9 @@ export default function BoxShapes({
                     pattern={patternForRender}
                     rootPositions={rootPositionsForRender}
                     markers={markers}
+                    shapeOverlays={shapeOverlaysForRender}
+                    pitchClassLabels={pitchClassLabels}
+                    showRootHalos={showRootHalos}
                     numFrets={BOX_FRET_COUNT}
                     titlePlacement="left"
                     showTitle={false}

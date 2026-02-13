@@ -62,6 +62,20 @@ function hasPosition(
   return positions.some(([s, f]) => s === stringIdx && f === fret);
 }
 
+function getFretMarkerXPosition(
+  fretNum: number,
+  fretYPositions: number[],
+  startFret: number
+): number {
+  const fretIndex = fretNum - startFret;
+  if (fretIndex <= 0 || fretIndex >= fretYPositions.length) {
+    return getNoteYPosition(fretNum, fretYPositions, startFret);
+  }
+  const left = fretYPositions[fretIndex - 1];
+  const right = fretYPositions[fretIndex];
+  return left + ((right - left) * 0.5);
+}
+
 export default function ScalePatternFretboard({
   title,
   selectedKey,
@@ -95,6 +109,14 @@ export default function ScalePatternFretboard({
   const fretboardBottom = stringYPositions[0] + DIMENSIONS.fretLineExtensionBottom;
   const fretboardHeight = fretboardBottom - fretboardTop;
   const stringGap = stringYPositions[1] - stringYPositions[0];
+  const getRenderedXForFret = (fret: number) => {
+    if (fret === 0) {
+      // Open strings should sit left of the nut, similar to fretted notes
+      // sitting slightly left of their fret wire.
+      return DIMENSIONS.openStringOffset * 0.45;
+    }
+    return getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
+  };
   const getOverlayY = (stringPosition: number) => {
     if (Number.isInteger(stringPosition) && stringPosition >= 0 && stringPosition <= 5) {
       return stringYPositions[stringPosition];
@@ -240,7 +262,7 @@ export default function ScalePatternFretboard({
         })}
 
         {[3, 5, 7, 9, 15, 17, 19, 21].filter((fretNum) => fretNum <= numFrets).map((fretNum) => {
-          const xPos = getNoteYPosition(fretNum, fretYPositions, DIMENSIONS.startFret);
+          const xPos = getFretMarkerXPosition(fretNum, fretYPositions, DIMENSIONS.startFret);
           const yCenter = (stringYPositions[0] + stringYPositions[5]) / 2;
 
           return (
@@ -257,11 +279,10 @@ export default function ScalePatternFretboard({
           );
         })}
 
-        {/* Double inlay at 12th fret */}
-        {numFrets >= 12 && (() => {
-          const xPos = getNoteYPosition(12, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
+        {[12, 24].filter((fretNum) => fretNum <= numFrets).map((fretNum) => {
+          const xPos = getFretMarkerXPosition(fretNum, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
           return (
-            <>
+            <g key={`double-inlay-${fretNum}`}>
               <circle
                 cx={xPos}
                 cy={(stringYPositions[1] + stringYPositions[2]) / 2}
@@ -280,9 +301,9 @@ export default function ScalePatternFretboard({
                 stroke="#ffffff"
                 strokeWidth={DIMENSIONS.fretMarkerStrokeWidth}
               />
-            </>
+            </g>
           );
-        })()}
+        })}
 
         {showChromaticNotes && allNoteColors.map((noteColor, pc) => {
           const notes: { stringIdx: number; fret: number }[] = [];
@@ -296,7 +317,7 @@ export default function ScalePatternFretboard({
           }
 
           return notes.map(({ stringIdx, fret }) => {
-            const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
+            const xPos = getRenderedXForFret(fret);
             const yPos = stringYPositions[stringIdx];
 
             return (
@@ -315,7 +336,7 @@ export default function ScalePatternFretboard({
         {shapeOverlays.map((overlay) => {
           const points = overlay.points
             .map(([stringPosition, fret]) => {
-              const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
+              const xPos = getRenderedXForFret(fret);
               const yPos = getOverlayY(stringPosition);
               return `${xPos},${yPos}`;
             })
@@ -366,7 +387,7 @@ export default function ScalePatternFretboard({
           const displayNoteName = prefersFlatName ? toFlatEnharmonic(noteAtPos.noteName) : noteAtPos.noteName;
           const displayLabel = pitchClassLabels?.[noteAtPos.pitchClass] ?? displayNoteName;
           const colorData = getNoteColor(displayNoteName);
-          const xPos = getNoteYPosition(fret, fretYPositions, DIMENSIONS.startFret) + DIMENSIONS.openStringOffset;
+          const xPos = getRenderedXForFret(fret);
           const yPos = stringYPositions[stringIdx];
           const isHovered = hoveredNote?.string === stringIdx && hoveredNote?.fret === fret;
           const isRoot = hasPosition(rootPositions, stringIdx, fret);

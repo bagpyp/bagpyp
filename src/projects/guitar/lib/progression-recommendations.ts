@@ -1,5 +1,5 @@
 import type { BoxScaleFamily } from './box-shapes';
-import type { HexatonicModeId, SingleTargetToneId, TonalCenterMode } from './target-tones';
+import type { HexatonicModeId, TonalCenterMode } from './target-tones';
 import { getPitchClass } from './box-shapes';
 import { getChordNotes, type ChordType } from './chord-types';
 
@@ -9,7 +9,7 @@ export interface ProgressionRecommendationContext {
   majorCenterKey: string;
   minorCenterKey: string;
   hexatonicMode: HexatonicModeId;
-  activeSingleTargetToneIds: SingleTargetToneId[];
+  visibleTargetIntervals: number[];
 }
 
 interface ProgressionTemplate {
@@ -316,6 +316,30 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'I7 v IV I7',
     whyItFits: 'Adds darker modal contrast while staying mixolydian.',
   },
+  mixoBluesColor: {
+    id: 'mixoBluesColor',
+    title: 'Mixolydian Blues Color',
+    romanNumerals: 'I7 bIII7 IV7 I7',
+    whyItFits: 'Major-blues mixture: mixolydian shell plus borrowed b3 color.',
+  },
+  mixoBluesBackdoor: {
+    id: 'mixoBluesBackdoor',
+    title: 'Mixolydian Backdoor Blues',
+    romanNumerals: 'I7 bVII7 IV7 bIII7',
+    whyItFits: 'Dominant groove with bIII color and backdoor motion.',
+  },
+  mixoBluesTurn: {
+    id: 'mixoBluesTurn',
+    title: 'Mixolydian Blues Turn',
+    romanNumerals: 'I7 IV7 bIII7 bVII7',
+    whyItFits: 'Rotating dominant pockets for b3/4/b7 targeting.',
+  },
+  majorBluesColor: {
+    id: 'majorBluesColor',
+    title: 'Major Pentatonic Blues Color',
+    romanNumerals: 'I7 bIII7 IV7 I7',
+    whyItFits: 'Injects blues color into a major-pentatonic frame.',
+  },
 };
 
 const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
@@ -389,15 +413,36 @@ const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
     'mixoMinorV',
     'blues12',
   ],
-};
-
-const ADDITIONAL_TEMPLATE_IDS_BY_TONE: Partial<Record<SingleTargetToneId, string[]>> = {
-  flatFive: ['blues12', 'minorBluesLoop'],
-  flatSix: ['minorResolve', 'minorRock'],
-  flatSeven: ['mixolydianDrive', 'blues12'],
-  majorThird: ['blues12', 'mixolydianDrive'],
-  majorSecond: ['majorPentDrive', 'dorianVamp'],
-  majorSixth: ['dorianVamp', 'lydianLift'],
+  locrian: [
+    'phrygianVamp',
+    'phrygianDrop',
+    'phrygianFrame',
+    'phrygianShadow',
+    'minorResolve',
+    'minorBluesLoop',
+  ],
+  mixolydianBlues: [
+    'mixoBluesColor',
+    'mixoBluesBackdoor',
+    'mixoBluesTurn',
+    'blues12',
+    'mixolydianDrive',
+    'mixoStep',
+  ],
+  majorBlues: [
+    'majorBluesColor',
+    'blues12',
+    'majorCadence',
+    'mixolydianDrive',
+    'ionianPop',
+  ],
+  minorBlues: [
+    'blues12',
+    'minorBluesLoop',
+    'minorRock',
+    'minorResolve',
+    'minorPulse',
+  ],
 };
 
 function usesFlatSpellingForKey(key: string): boolean {
@@ -454,26 +499,54 @@ export function renderRomanProgressionToChords(romanNumerals: string, tonicKey: 
 function getFlavorId(
   scaleFamily: BoxScaleFamily,
   tonalCenterMode: TonalCenterMode,
-  hexatonicMode: HexatonicModeId
+  hexatonicMode: HexatonicModeId,
+  visibleTargetIntervals: number[]
 ): string {
+  const intervalSet = new Set(visibleTargetIntervals);
+  const hasInterval = (interval: number) => intervalSet.has(interval);
+
   if (scaleFamily === 'major') {
     return tonalCenterMode === 'major' ? 'ionian' : 'aeolian';
+  }
+
+  if (tonalCenterMode === 'major' && hexatonicMode === 'mixolydian' && hasInterval(3)) {
+    return 'mixolydianBlues';
+  }
+
+  if (tonalCenterMode === 'major' && hexatonicMode === 'off' && hasInterval(3) && hasInterval(10)) {
+    return 'majorBlues';
+  }
+
+  if (tonalCenterMode === 'minor' && hexatonicMode === 'off' && hasInterval(6)) {
+    return 'minorBlues';
   }
 
   if (hexatonicMode === 'off') {
     return tonalCenterMode === 'major' ? 'majorPentatonic' : 'minorPentatonic';
   }
 
-  if (tonalCenterMode === 'minor') {
-    return hexatonicMode;
-  }
-
-  const majorFlavorByHexatonic: Record<Exclude<HexatonicModeId, 'off'>, string> = {
-    dorian: 'lydian',
-    aeolian: 'ionian',
-    phrygian: 'mixolydian',
+  const majorToMinorFallbackMap: Record<Exclude<HexatonicModeId, 'off'>, string> = {
+    ionian: 'aeolian',
+    dorian: 'dorian',
+    phrygian: 'phrygian',
+    lydian: 'dorian',
+    mixolydian: 'phrygian',
+    aeolian: 'aeolian',
+    locrian: 'locrian',
   };
-  return majorFlavorByHexatonic[hexatonicMode];
+  const minorToMajorFallbackMap: Record<Exclude<HexatonicModeId, 'off'>, string> = {
+    ionian: 'ionian',
+    dorian: 'lydian',
+    phrygian: 'mixolydian',
+    lydian: 'lydian',
+    mixolydian: 'mixolydian',
+    aeolian: 'ionian',
+    locrian: 'mixolydian',
+  };
+
+  return tonalCenterMode === 'minor'
+    ? majorToMinorFallbackMap[hexatonicMode]
+    : minorToMajorFallbackMap[hexatonicMode];
 }
 
 function dedupeTemplateIds(ids: string[]): string[] {
@@ -576,19 +649,13 @@ export function getPracticeProgressions(
   const tonalKey = context.tonalCenterMode === 'major'
     ? context.majorCenterKey
     : context.minorCenterKey;
-  const flavorId = getFlavorId(context.scaleFamily, context.tonalCenterMode, context.hexatonicMode);
+  const flavorId = getFlavorId(
+    context.scaleFamily,
+    context.tonalCenterMode,
+    context.hexatonicMode,
+    context.visibleTargetIntervals
+  );
   const progressionIds: string[] = [...(BASE_TEMPLATE_IDS_BY_FLAVOR[flavorId] ?? [])];
-
-  // Keep modal selections mode-pure: don't mix in single-tone presets when a hexatonic mode is active.
-  if (context.hexatonicMode === 'off') {
-    context.activeSingleTargetToneIds.forEach((toneId) => {
-      const additions = ADDITIONAL_TEMPLATE_IDS_BY_TONE[toneId];
-      if (!additions) {
-        return;
-      }
-      progressionIds.unshift(...additions);
-    });
-  }
 
   return dedupeTemplateIds(progressionIds)
     .slice(0, 10)

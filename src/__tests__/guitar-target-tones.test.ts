@@ -8,8 +8,11 @@ import {
   getRomanNumeralLabelFromSemitones,
   getActiveTargetTones,
   getHexatonicModeDisplayLabel,
+  getHexatonicModeTonalCenter,
+  getModeLockedSingleTargetToneIds,
   getTargetToneToggleLabel,
   getTargetTonePitchClass,
+  getVisibleTargetTones,
 } from '@/lib/guitar/target-tones';
 
 describe('guitar target tones', () => {
@@ -32,14 +35,22 @@ describe('guitar target tones', () => {
     expect(majorThird).toBe(getPitchClass('G#')); // E major 3rd
   });
 
-  it('defines hexatonic mode presets as two-note additions', () => {
+  it('defines heptatonic mode presets as two-note additions across all seven modes', () => {
+    const ionian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'ionian');
     const dorian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'dorian');
-    const aeolian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'aeolian');
     const phrygian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'phrygian');
+    const lydian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'lydian');
+    const mixolydian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'mixolydian');
+    const aeolian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'aeolian');
+    const locrian = HEXATONIC_MODE_OPTIONS.find((option) => option.id === 'locrian');
 
+    expect(ionian?.toneIds).toEqual(['majorSecond', 'flatSix']);
     expect(dorian?.toneIds).toEqual(['majorSecond', 'majorSixth']);
-    expect(aeolian?.toneIds).toEqual(['majorSecond', 'flatSix']);
     expect(phrygian?.toneIds).toEqual(['flatSecond', 'flatSix']);
+    expect(lydian?.toneIds).toEqual(['majorSecond', 'majorSixth']);
+    expect(mixolydian?.toneIds).toEqual(['flatSecond', 'flatSix']);
+    expect(aeolian?.toneIds).toEqual(['majorSecond', 'flatSix']);
+    expect(locrian?.toneIds).toEqual(['flatSecond', 'flatFive']);
   });
 
   it('resolves dorian/aeolian/phrygian additions for G major / E minor', () => {
@@ -54,14 +65,18 @@ describe('guitar target tones', () => {
     expect(phrygianSecond).toBe(getPitchClass('F'));
   });
 
-  it('maps hexatonic labels from minor to major perspective', () => {
-    expect(getHexatonicModeDisplayLabel('dorian', 'minor')).toBe('Dorian');
-    expect(getHexatonicModeDisplayLabel('aeolian', 'minor')).toBe('Aeolian');
-    expect(getHexatonicModeDisplayLabel('phrygian', 'minor')).toBe('Phrygian');
+  it('uses canonical mode labels and tonal-center targets for mode selection', () => {
+    expect(getHexatonicModeDisplayLabel('ionian')).toBe('Ionian');
+    expect(getHexatonicModeDisplayLabel('mixolydian')).toBe('Mixolydian');
+    expect(getHexatonicModeDisplayLabel('aeolian')).toBe('Aeolian');
 
-    expect(getHexatonicModeDisplayLabel('dorian', 'major')).toBe('Lydian');
-    expect(getHexatonicModeDisplayLabel('aeolian', 'major')).toBe('Ionian');
-    expect(getHexatonicModeDisplayLabel('phrygian', 'major')).toBe('Mixolydian');
+    expect(getHexatonicModeTonalCenter('ionian')).toBe('major');
+    expect(getHexatonicModeTonalCenter('lydian')).toBe('major');
+    expect(getHexatonicModeTonalCenter('mixolydian')).toBe('major');
+    expect(getHexatonicModeTonalCenter('dorian')).toBe('minor');
+    expect(getHexatonicModeTonalCenter('phrygian')).toBe('minor');
+    expect(getHexatonicModeTonalCenter('aeolian')).toBe('minor');
+    expect(getHexatonicModeTonalCenter('locrian')).toBe('minor');
   });
 
   it('maps target-tone labels to the active tonal center interval naming', () => {
@@ -102,5 +117,37 @@ describe('guitar target tones', () => {
 
     expect(flatSixCollision?.source).toBe('single');
     expect(flatSixCollision?.palette).toEqual(TARGET_TONE_BY_ID.flatSix.palette);
+  });
+
+  it('locks equivalent single-target toggles when a mode already includes those notes', () => {
+    const locked = getModeLockedSingleTargetToneIds('mixolydian', 'G', 'E');
+
+    expect(locked.has('flatSeven')).toBe(true); // F in G major
+    expect(locked.has('flatSix')).toBe(true); // C in G major ("4")
+  });
+
+  it('normalizes visible-note state by pitch class so mode and toggles are equivalent', () => {
+    const fromMode = getVisibleTargetTones(
+      DEFAULT_SINGLE_TARGET_TONE_STATE,
+      'mixolydian',
+      'major',
+      'G',
+      'E'
+    );
+    const fromSingles = getVisibleTargetTones(
+      {
+        ...DEFAULT_SINGLE_TARGET_TONE_STATE,
+        flatSix: true, // C in G major ("4")
+        flatSeven: true, // F in G major ("b7")
+      },
+      'off',
+      'major',
+      'G',
+      'E'
+    );
+
+    expect(fromMode.map((tone) => tone.pitchClass)).toEqual(fromSingles.map((tone) => tone.pitchClass));
+    expect(fromMode.map((tone) => tone.intervalFromTonalCenter)).toEqual([5, 10]);
+    expect(fromSingles.map((tone) => tone.intervalFromTonalCenter)).toEqual([5, 10]);
   });
 });

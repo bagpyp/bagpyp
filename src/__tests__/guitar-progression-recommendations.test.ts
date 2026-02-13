@@ -26,26 +26,41 @@ describe('guitar progression recommendations', () => {
       majorCenterKey: 'G',
       minorCenterKey: 'E',
       hexatonicMode: 'off',
-      activeSingleTargetToneIds: ['flatFive'],
+      visibleTargetIntervals: [6],
     });
 
     expect(progressions[0]?.id).toBe('blues12');
     expect(progressions[0]?.chordNames).toBe('E7 E7 E7 E7 | A7 A7 E7 E7 | B7 A7 E7 B7');
   });
 
-  it('maps major phrygian hexatonic view to mixolydian-friendly progressions', () => {
+  it('maps major mixolydian heptatonic view to mixolydian-friendly progressions', () => {
     const progressions = getPracticeProgressions({
       tonalCenterMode: 'major',
       scaleFamily: 'pentatonic',
       majorCenterKey: 'G',
       minorCenterKey: 'E',
-      hexatonicMode: 'phrygian',
-      activeSingleTargetToneIds: [],
+      hexatonicMode: 'mixolydian',
+      visibleTargetIntervals: [5, 10],
     });
 
     expect(progressions.some((progression) => progression.id === 'mixolydianDrive')).toBe(true);
     const mixolydian = progressions.find((progression) => progression.id === 'mixolydianDrive');
     expect(mixolydian?.chordNames).toBe('G7 F C G7');
+  });
+
+  it('prioritizes mixolydian-blues hybrids when b3 is combined with 4 and b7', () => {
+    const progressions = getPracticeProgressions({
+      tonalCenterMode: 'major',
+      scaleFamily: 'pentatonic',
+      majorCenterKey: 'G',
+      minorCenterKey: 'E',
+      hexatonicMode: 'mixolydian',
+      visibleTargetIntervals: [3, 5, 10],
+    });
+
+    expect(progressions[0]?.id).toBe('mixoBluesColor');
+    expect(progressions.some((progression) => progression.id === 'blues12')).toBe(true);
+    expect(progressions.some((progression) => progression.id === 'mixoBluesBackdoor')).toBe(true);
   });
 
   it('keeps minor phrygian mode recommendations phrygian-pure', () => {
@@ -55,7 +70,7 @@ describe('guitar progression recommendations', () => {
       majorCenterKey: 'G',
       minorCenterKey: 'E',
       hexatonicMode: 'phrygian',
-      activeSingleTargetToneIds: ['majorSecond', 'majorSixth'],
+      visibleTargetIntervals: [1, 8],
     });
 
     expect(progressions.length).toBeGreaterThanOrEqual(6);
@@ -71,7 +86,7 @@ describe('guitar progression recommendations', () => {
       majorCenterKey: 'G',
       minorCenterKey: 'E',
       hexatonicMode: 'off',
-      activeSingleTargetToneIds: [],
+      visibleTargetIntervals: [],
     });
     const majorPent = getPracticeProgressions({
       tonalCenterMode: 'major',
@@ -79,7 +94,7 @@ describe('guitar progression recommendations', () => {
       majorCenterKey: 'G',
       minorCenterKey: 'E',
       hexatonicMode: 'off',
-      activeSingleTargetToneIds: [],
+      visibleTargetIntervals: [],
     });
     const majorModes = getPracticeProgressions({
       tonalCenterMode: 'major',
@@ -87,7 +102,7 @@ describe('guitar progression recommendations', () => {
       majorCenterKey: 'Bb',
       minorCenterKey: 'G',
       hexatonicMode: 'off',
-      activeSingleTargetToneIds: [],
+      visibleTargetIntervals: [],
     });
 
     expect(minorPent.length).toBeGreaterThanOrEqual(7);

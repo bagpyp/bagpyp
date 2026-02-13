@@ -10,7 +10,15 @@ export type TargetToneId =
   | 'majorSecond'
   | 'majorSixth';
 
-export type HexatonicModeId = 'off' | 'dorian' | 'aeolian' | 'phrygian';
+export type HexatonicModeId =
+  | 'off'
+  | 'ionian'
+  | 'dorian'
+  | 'phrygian'
+  | 'lydian'
+  | 'mixolydian'
+  | 'aeolian'
+  | 'locrian';
 export type TonalCenterMode = 'minor' | 'major';
 
 export interface TargetTonePalette {
@@ -34,12 +42,23 @@ export interface HexatonicModeOption {
   label: string;
   description: string;
   toneIds: [TargetToneId, TargetToneId];
+  tonalCenter: TonalCenterMode;
 }
 
 export interface ActiveTargetTone {
   config: TargetToneConfig;
   palette: TargetTonePalette;
   source: 'hexatonic' | 'single';
+}
+
+export interface VisibleTargetTone {
+  pitchClass: number;
+  intervalFromTonalCenter: number;
+  toneIds: TargetToneId[];
+  fromMode: boolean;
+  fromSingle: boolean;
+  palette: TargetTonePalette;
+  preferFlatName: boolean;
 }
 
 const ALL_TARGET_TONE_CONFIGS: TargetToneConfig[] = [
@@ -183,22 +202,53 @@ export const SINGLE_TARGET_TONE_CONFIGS: Array<TargetToneConfig & { id: SingleTa
 
 export const HEXATONIC_MODE_OPTIONS: HexatonicModeOption[] = [
   {
+    id: 'ionian',
+    label: 'Ionian',
+    description: 'Add 4 and 7 over major pentatonic',
+    toneIds: ['majorSecond', 'flatSix'],
+    tonalCenter: 'major',
+  },
+  {
     id: 'dorian',
     label: 'Dorian',
     description: 'Add 2 and 6 over minor pentatonic',
     toneIds: ['majorSecond', 'majorSixth'],
-  },
-  {
-    id: 'aeolian',
-    label: 'Aeolian',
-    description: 'Add 2 and b6 over minor pentatonic',
-    toneIds: ['majorSecond', 'flatSix'],
+    tonalCenter: 'minor',
   },
   {
     id: 'phrygian',
     label: 'Phrygian',
     description: 'Add b2 and b6 over minor pentatonic',
     toneIds: ['flatSecond', 'flatSix'],
+    tonalCenter: 'minor',
+  },
+  {
+    id: 'lydian',
+    label: 'Lydian',
+    description: 'Add #4 and 7 over major pentatonic',
+    toneIds: ['majorSecond', 'majorSixth'],
+    tonalCenter: 'major',
+  },
+  {
+    id: 'mixolydian',
+    label: 'Mixolydian',
+    description: 'Add 4 and b7 over major pentatonic',
+    toneIds: ['flatSecond', 'flatSix'],
+    tonalCenter: 'major',
+  },
+  {
+    id: 'aeolian',
+    label: 'Aeolian',
+    description: 'Add 2 and b6 over minor pentatonic',
+    toneIds: ['majorSecond', 'flatSix'],
+    tonalCenter: 'minor',
+  },
+  {
+    id: 'locrian',
+    label: 'Locrian',
+    description: 'Add b2 and b5 over minor pentatonic',
+    toneIds: ['flatSecond', 'flatFive'],
+    tonalCenter: 'minor',
   },
 ];
 
@@ -258,20 +308,115 @@ export function getActiveTargetTones(
 }
 
 export function getHexatonicModeDisplayLabel(
-  modeId: Exclude<HexatonicModeId, 'off'>,
-  tonalCenter: TonalCenterMode
+  modeId: Exclude<HexatonicModeId, 'off'>
 ): string {
-  if (tonalCenter === 'minor') {
-    return modeId.charAt(0).toUpperCase() + modeId.slice(1);
+  return getHexatonicModeOption(modeId)?.label ?? modeId.charAt(0).toUpperCase() + modeId.slice(1);
+}
+
+export function getHexatonicModeTonalCenter(
+  modeId: Exclude<HexatonicModeId, 'off'>
+): TonalCenterMode {
+  return getHexatonicModeOption(modeId)?.tonalCenter ?? 'minor';
+}
+
+export function getModeLockedSingleTargetToneIds(
+  hexatonicMode: HexatonicModeId,
+  majorCenterKey: string,
+  minorCenterKey: string
+): Set<SingleTargetToneId> {
+  if (hexatonicMode === 'off') {
+    return new Set<SingleTargetToneId>();
   }
 
-  const majorLabelByMinorMode: Record<Exclude<HexatonicModeId, 'off'>, string> = {
-    dorian: 'Lydian',
-    aeolian: 'Ionian',
-    phrygian: 'Mixolydian',
+  const modeOption = getHexatonicModeOption(hexatonicMode);
+  if (!modeOption) {
+    return new Set<SingleTargetToneId>();
+  }
+
+  const modePitchClasses = new Set<number>(
+    modeOption.toneIds.map((toneId) => getTargetTonePitchClass(
+      TARGET_TONE_BY_ID[toneId],
+      majorCenterKey,
+      minorCenterKey
+    ))
+  );
+
+  return new Set<SingleTargetToneId>(
+    SINGLE_TARGET_TONE_CONFIGS
+      .filter((config) => modePitchClasses.has(
+        getTargetTonePitchClass(config, majorCenterKey, minorCenterKey)
+      ))
+      .map((config) => config.id)
+  );
+}
+
+export function getVisibleTargetTones(
+  singleTargetToneState: Record<SingleTargetToneId, boolean>,
+  hexatonicMode: HexatonicModeId,
+  tonalCenter: TonalCenterMode,
+  majorCenterKey: string,
+  minorCenterKey: string
+): VisibleTargetTone[] {
+  const tonalCenterPitchClass = getPitchClass(tonalCenter === 'major' ? majorCenterKey : minorCenterKey);
+  const byPitchClass = new Map<number, VisibleTargetTone>();
+
+  const ensureEntry = (pitchClass: number): VisibleTargetTone => {
+    const existing = byPitchClass.get(pitchClass);
+    if (existing) {
+      return existing;
+    }
+
+    const created: VisibleTargetTone = {
+      pitchClass,
+      intervalFromTonalCenter: (pitchClass - tonalCenterPitchClass + 12) % 12,
+      toneIds: [],
+      fromMode: false,
+      fromSingle: false,
+      palette: HEXATONIC_MODE_RING_PALETTE,
+      preferFlatName: false,
+    };
+    byPitchClass.set(pitchClass, created);
+    return created;
   };
 
-  return majorLabelByMinorMode[modeId];
+  const modeOption = getHexatonicModeOption(hexatonicMode);
+  if (modeOption) {
+    modeOption.toneIds.forEach((toneId) => {
+      const config = TARGET_TONE_BY_ID[toneId];
+      const pitchClass = getTargetTonePitchClass(config, majorCenterKey, minorCenterKey);
+      const entry = ensureEntry(pitchClass);
+      if (!entry.toneIds.includes(toneId)) {
+        entry.toneIds.push(toneId);
+      }
+      entry.fromMode = true;
+      entry.preferFlatName = entry.preferFlatName || config.preferFlatName;
+      if (!entry.fromSingle) {
+        entry.palette = HEXATONIC_MODE_RING_PALETTE;
+      }
+    });
+  }
+
+  SINGLE_TARGET_TONE_CONFIGS.forEach((config) => {
+    if (!singleTargetToneState[config.id]) {
+      return;
+    }
+
+    const pitchClass = getTargetTonePitchClass(config, majorCenterKey, minorCenterKey);
+    const entry = ensureEntry(pitchClass);
+    if (!entry.toneIds.includes(config.id)) {
+      entry.toneIds.push(config.id);
+    }
+    entry.fromSingle = true;
+    entry.palette = config.palette;
+    entry.preferFlatName = entry.preferFlatName || config.preferFlatName;
+  });
+
+  return [...byPitchClass.values()].sort((a, b) => {
+    if (a.intervalFromTonalCenter !== b.intervalFromTonalCenter) {
+      return a.intervalFromTonalCenter - b.intervalFromTonalCenter;
+    }
+    return a.pitchClass - b.pitchClass;
+  });
 }
 
 export function getTargetTonePitchClass(

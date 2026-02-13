@@ -22,17 +22,17 @@ import {
 import {
   DEFAULT_SINGLE_TARGET_TONE_STATE,
   HEXATONIC_MODE_OPTIONS,
-  getActiveTargetTones,
-  getHexatonicModeDisplayLabel,
+  getHexatonicModeTonalCenter,
   getIntervalEffectDescriptionFromSemitones,
   getIntervalLabelFromSemitones,
+  getModeLockedSingleTargetToneIds,
   getTargetToneIntervalFromTonalCenter,
   getTargetTonePitchClass,
+  getVisibleTargetTones,
   SINGLE_TARGET_TONE_CONFIGS,
   type HexatonicModeId,
   type SingleTargetToneId,
   type TonalCenterMode,
-  type TargetToneId,
 } from '../lib/target-tones';
 
 interface BoxShapesProps {
@@ -117,19 +117,26 @@ export default function BoxShapes({
     () => getDisplayOrderedBoxPatterns(shapePatterns, activeScaleFamily),
     [shapePatterns, activeScaleFamily]
   );
-  const activeTargetTones = useMemo(
-    () => getActiveTargetTones(singleTargetToneState, hexatonicMode),
-    [singleTargetToneState, hexatonicMode]
+  const visibleTargetTones = useMemo(
+    () => getVisibleTargetTones(
+      singleTargetToneState,
+      hexatonicMode,
+      tonalCenterMode,
+      majorCenterKey,
+      minorCenterKey
+    ),
+    [singleTargetToneState, hexatonicMode, tonalCenterMode, majorCenterKey, minorCenterKey]
   );
 
-  const targetPitchClassById = useMemo(() => {
-    return Object.fromEntries(
-      activeTargetTones.map(({ config }) => [
-        config.id,
-        getTargetTonePitchClass(config, majorCenterKey, minorCenterKey),
-      ])
-    ) as Partial<Record<TargetToneId, number>>;
-  }, [activeTargetTones, majorCenterKey, minorCenterKey]);
+  const visibleTargetToneByPitchClass = useMemo(
+    () => new Map(visibleTargetTones.map((tone) => [tone.pitchClass, tone])),
+    [visibleTargetTones]
+  );
+
+  const modeLockedSingleTargetToneIds = useMemo(
+    () => getModeLockedSingleTargetToneIds(hexatonicMode, majorCenterKey, minorCenterKey),
+    [hexatonicMode, majorCenterKey, minorCenterKey]
+  );
 
   const tonalCenterRootPitchClass = useMemo(() => {
     const rootKey = tonalCenterMode === 'major' ? majorCenterKey : minorCenterKey;
@@ -149,12 +156,6 @@ export default function BoxShapes({
     return labels;
   }, [showIntervalLabels, tonalCenterRootPitchClass]);
 
-  const activeSingleTargetToneIds = useMemo<SingleTargetToneId[]>(
-    () => SINGLE_TARGET_TONE_CONFIGS
-      .filter((config) => singleTargetToneState[config.id])
-      .map((config) => config.id),
-    [singleTargetToneState]
-  );
   const orderedSingleTargetToneConfigs = useMemo(
     () => [...SINGLE_TARGET_TONE_CONFIGS].sort((a, b) => {
       const aInterval = getTargetToneIntervalFromTonalCenter(
@@ -184,8 +185,8 @@ export default function BoxShapes({
       ? 'Major Pentatonic (5 boxes)'
       : 'Minor Pentatonic (5 boxes)';
 
-  const activeSingleTargetToneIdsForProgressions = scaleFamily === 'pentatonic'
-    ? activeSingleTargetToneIds
+  const visibleTargetIntervalsForProgressions = scaleFamily === 'pentatonic'
+    ? visibleTargetTones.map((tone) => tone.intervalFromTonalCenter)
     : [];
 
   const practiceProgressions = useMemo(
@@ -195,7 +196,7 @@ export default function BoxShapes({
       majorCenterKey,
       minorCenterKey,
       hexatonicMode,
-      activeSingleTargetToneIds: activeSingleTargetToneIdsForProgressions,
+      visibleTargetIntervals: visibleTargetIntervalsForProgressions,
     }),
     [
       tonalCenterMode,
@@ -203,7 +204,7 @@ export default function BoxShapes({
       majorCenterKey,
       minorCenterKey,
       hexatonicMode,
-      activeSingleTargetToneIdsForProgressions,
+      visibleTargetIntervalsForProgressions,
     ]
   );
 
@@ -219,14 +220,9 @@ export default function BoxShapes({
 
   const cheatSheetAuraPitchClasses = useMemo(() => {
     const unique = new Set<number>();
-    activeTargetTones.forEach(({ config }) => {
-      const pitchClass = targetPitchClassById[config.id];
-      if (pitchClass !== undefined) {
-        unique.add(pitchClass);
-      }
-    });
+    visibleTargetTones.forEach((tone) => unique.add(tone.pitchClass));
     return [...unique];
-  }, [activeTargetTones, targetPitchClassById]);
+  }, [visibleTargetTones]);
 
   const shouldShowPracticePanels = showPracticePanel || showCheatSheetPanel;
   const shouldFloatCheatSheet = showCheatSheetPanel && floatingPanelPositions?.leftPanelLeft !== null;
@@ -260,6 +256,19 @@ export default function BoxShapes({
       setSingleTargetToneState(DEFAULT_SINGLE_TARGET_TONE_STATE);
       setHexatonicMode('off');
     }
+  };
+
+  const handleHeptatonicModeSelection = (modeId: Exclude<HexatonicModeId, 'off'>) => {
+    if (hexatonicMode === modeId) {
+      setHexatonicMode('off');
+      return;
+    }
+
+    const targetTonalCenter = getHexatonicModeTonalCenter(modeId);
+    if (targetTonalCenter !== tonalCenterMode) {
+      handleTonalCenterChange(targetTonalCenter);
+    }
+    setHexatonicMode(modeId);
   };
 
   useEffect(() => {
@@ -568,7 +577,7 @@ export default function BoxShapes({
               <div className="mt-4 space-y-3 text-center">
                 <div className="flex flex-col items-center">
                   <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                    Hexatonic Modes
+                    Heptatonic Modes
                   </p>
                   <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10">
                     <button
@@ -580,18 +589,15 @@ export default function BoxShapes({
                     </button>
                     {HEXATONIC_MODE_OPTIONS.map((modeOption) => {
                       const isActive = hexatonicMode === modeOption.id;
-                      const modeLabel = getHexatonicModeDisplayLabel(modeOption.id, tonalCenterMode);
                       return (
                         <button
                           key={modeOption.id}
                           type="button"
-                          onClick={() => setHexatonicMode((current) => (
-                            current === modeOption.id ? 'off' : modeOption.id
-                          ))}
+                          onClick={() => handleHeptatonicModeSelection(modeOption.id)}
                           className={getSegmentButtonClass(isActive)}
                           title={modeOption.description}
                         >
-                          {modeLabel}
+                          {modeOption.label}
                         </button>
                       );
                     })}
@@ -604,7 +610,9 @@ export default function BoxShapes({
                   </p>
                   <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10">
                     {orderedSingleTargetToneConfigs.map((config) => {
-                      const isEnabled = singleTargetToneState[config.id];
+                      const pitchClass = getTargetTonePitchClass(config, majorCenterKey, minorCenterKey);
+                      const isVisible = visibleTargetToneByPitchClass.has(pitchClass);
+                      const isLockedByMode = modeLockedSingleTargetToneIds.has(config.id);
                       const intervalSemitones = getTargetToneIntervalFromTonalCenter(
                         config,
                         tonalCenterMode,
@@ -617,7 +625,11 @@ export default function BoxShapes({
                         <button
                           key={config.id}
                           type="button"
+                          disabled={isLockedByMode}
                           onClick={() => {
+                            if (isLockedByMode) {
+                              return;
+                            }
                             setSingleTargetToneState((current) => ({
                               ...current,
                               [config.id]: !current[config.id],
@@ -625,10 +637,12 @@ export default function BoxShapes({
                           }}
                           className={[
                             'inline-flex min-w-[190px] flex-col items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                            isEnabled
+                            isVisible
                               ? 'bg-primary-600 text-white'
                               : 'bg-slate-900/60 text-slate-300 hover:bg-slate-700/70 hover:text-slate-100',
+                            isLockedByMode ? 'cursor-not-allowed opacity-80' : '',
                           ].join(' ')}
+                          title={isLockedByMode ? 'Already included by the selected heptatonic mode' : undefined}
                         >
                           <span className="inline-flex items-center gap-2">
                             <span
@@ -637,8 +651,8 @@ export default function BoxShapes({
                             />
                             <span>{`Add ${intervalLabel} targets`}</span>
                           </span>
-                          <span className={`text-xs ${isEnabled ? 'text-slate-100' : 'text-slate-400'}`}>
-                            {intervalEffectDescription}
+                          <span className={`text-xs ${isVisible ? 'text-slate-100' : 'text-slate-400'}`}>
+                            {isLockedByMode ? `${intervalEffectDescription} (mode)` : intervalEffectDescription}
                           </span>
                         </button>
                       );
@@ -659,18 +673,15 @@ export default function BoxShapes({
                   ? buildPentatonicShapeOverlays(shapeData.pattern, majorCenterKey)
                   : [];
 
-                if (activeScaleFamily === 'pentatonic' && activeTargetTones.length > 0) {
+                if (activeScaleFamily === 'pentatonic' && visibleTargetTones.length > 0) {
                   const mergedPattern = shapeData.pattern.map((stringFrets) => new Set(stringFrets));
                   const minFret = Math.max(0, shapeData.windowStart);
                   const maxFret = Math.min(BOX_FRET_COUNT, shapeData.windowEnd);
                   const minimumTargetsPerPitchClass = 2;
                   const focusFret = maxFret + 1;
 
-                  activeTargetTones.forEach((tone) => {
-                    const targetPitchClass = targetPitchClassById[tone.config.id];
-                    if (targetPitchClass === undefined) {
-                      return;
-                    }
+                  visibleTargetTones.forEach((tone) => {
+                    const targetPitchClass = tone.pitchClass;
                     const targetPositions: [number, number][] = [];
                     const targetPositionKeys = new Set<string>();
 
@@ -739,7 +750,7 @@ export default function BoxShapes({
                         ringOffset: 3,
                         variant: 'vibe',
                         vibePalette: tone.palette,
-                        preferFlatName: tone.config.preferFlatName,
+                        preferFlatName: tone.preferFlatName,
                       });
                     }
                   });

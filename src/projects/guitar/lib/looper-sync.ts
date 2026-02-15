@@ -1,14 +1,60 @@
 import type { PracticeProgression } from './progression-recommendations';
+import type { ChordType } from './chord-types';
+import { buildChord } from './chord-types';
+import { nameToPc } from './core';
 
 export interface LoopSyncConfig {
   progressionKey: string;
   progressionId: string;
   progressionTitle: string;
+  loopLabel?: string;
   chordCount: number;
   loopDurationMs: number;
   startedWithFirstChord: boolean;
   chordOffsetsMs: number[];
   updatedAtMs: number;
+}
+
+function chordTypeFromSuffix(suffix: string): ChordType | null {
+  const normalized = suffix.trim();
+  const map: Record<string, ChordType> = {
+    '': 'major',
+    m: 'minor',
+    dim: 'dim',
+    aug: 'aug',
+    maj7: 'maj7',
+    m7: 'min7',
+    '7': '7',
+    dim7: 'dim7',
+    mMaj7: 'mMaj7',
+    '7b5': '7b5',
+    '7#5': '7#5',
+    m7b5: 'm7b5',
+    '6': '6',
+    m6: 'm6',
+    '9': '9',
+    '11': '11',
+    '13': '13',
+  };
+
+  return map[normalized] ?? null;
+}
+
+export function getChordPitchClassesFromSymbol(chordSymbol: string): number[] {
+  const baseSymbol = chordSymbol.split('/')[0].trim();
+  const match = baseSymbol.match(/^([A-G](?:#|b)?)(.*)$/);
+  if (!match) {
+    return [];
+  }
+
+  const root = match[1];
+  const suffix = match[2];
+  const chordType = chordTypeFromSuffix(suffix);
+  if (!chordType) {
+    return [nameToPc(root)];
+  }
+
+  return buildChord(root as Parameters<typeof buildChord>[0], chordType);
 }
 
 const LOOP_MIN_DURATION_MS = 250;
@@ -117,4 +163,3 @@ export function getActiveChordIndex(
   // Before first offset in loop => previous cycle final chord.
   return offsets.length - 1;
 }
-

@@ -61,10 +61,12 @@ export default function BoxShapes({
   const [tonalCenterMode, setTonalCenterMode] = useState<TonalCenterMode>('minor');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showRectangleAndStack, setShowRectangleAndStack] = useState(true);
-  const [showIntervalLabels, setShowIntervalLabels] = useState(false);
+  const [showIntervalLabels, setShowIntervalLabels] = useState(true);
   const [showRootHalos, setShowRootHalos] = useState(true);
   const [showPracticePanel, setShowPracticePanel] = useState(true);
   const [showCheatSheetPanel, setShowCheatSheetPanel] = useState(true);
+  const [activeChordPitchClasses, setActiveChordPitchClasses] = useState<number[] | null>(null);
+  const [hideNonScaleChordTones, setHideNonScaleChordTones] = useState(false);
   const [singleTargetToneState, setSingleTargetToneState] = useState(
     DEFAULT_SINGLE_TARGET_TONE_STATE
   );
@@ -117,6 +119,9 @@ export default function BoxShapes({
     () => getDisplayOrderedBoxPatterns(shapePatterns, activeScaleFamily),
     [shapePatterns, activeScaleFamily]
   );
+
+  const getPitchClassAtPosition = (stringIndex: number, fret: number) =>
+    (STANDARD_TUNING_PCS[stringIndex] + fret) % 12;
   const visibleTargetTones = useMemo(
     () => getVisibleTargetTones(
       singleTargetToneState,
@@ -673,6 +678,16 @@ export default function BoxShapes({
                 let patternForRender = shapeData.pattern;
                 let rootPositionsForRender = shapeData.rootPositions;
                 const markers: FretboardMarker[] = [];
+                const ghostNotes: {
+                  stringIdx: number;
+                  fret: number;
+                  preferFlatName?: boolean;
+                  vibePalette?: {
+                    outer: string;
+                    mid: string;
+                    inner: string;
+                  };
+                }[] = [];
                 const shapeOverlaysForRender = activeScaleFamily === 'pentatonic' && showRectangleAndStack
                   ? buildPentatonicShapeOverlays(shapeData.pattern, majorCenterKey)
                   : [];
@@ -700,7 +715,7 @@ export default function BoxShapes({
                     };
 
                     const matchesTargetPitchClass = (stringIndex: number, fret: number) =>
-                      (STANDARD_TUNING_PCS[stringIndex] + fret) % 12 === targetPitchClass;
+                      getPitchClassAtPosition(stringIndex, fret) === targetPitchClass;
 
                     // Primary pass: flood this target note inside the current box window.
                     for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
@@ -767,13 +782,115 @@ export default function BoxShapes({
                 const computedRootPositions: [number, number][] = [];
                 patternForRender.forEach((stringFrets, stringIndex) => {
                   stringFrets.forEach((fret) => {
-                    if ((STANDARD_TUNING_PCS[stringIndex] + fret) % 12 === tonalCenterRootPitchClass) {
+                    if (getPitchClassAtPosition(stringIndex, fret) === tonalCenterRootPitchClass) {
                       computedRootPositions.push([stringIndex, fret]);
                     }
                   });
                 });
                 if (computedRootPositions.length > 0) {
                   rootPositionsForRender = computedRootPositions;
+                }
+
+                if (
+                  activeChordPitchClasses
+                  && activeChordPitchClasses.length > 0
+                  && !hideNonScaleChordTones
+                ) {
+                  const visiblePitchClasses = new Set<number>();
+                  patternForRender.forEach((stringFrets, stringIndex) => {
+                    stringFrets.forEach((fret) => {
+                      visiblePitchClasses.add(getPitchClassAtPosition(stringIndex, fret));
+                    });
+                  });
+
+                  const missingPitchClasses = [...new Set(activeChordPitchClasses)]
+                    .map((pitchClass) => ((pitchClass % 12) + 12) % 12)
+                    .filter((pitchClass) => !visiblePitchClasses.has(pitchClass));
+
+                  const temporaryToneStyleByPitchClass = new Map<
+                    number,
+                    {
+                      preferFlatName: boolean;
+                      vibePalette: { outer: string; mid: string; inner: string };
+                    }
+                  >();
+
+                  missingPitchClasses.forEach((pitchClass) => {
+                    const fromVisibleTarget = visibleTargetToneByPitchClass.get(pitchClass);
+                    if (fromVisibleTarget) {
+                      temporaryToneStyleByPitchClass.set(pitchClass, {
+                        preferFlatName: fromVisibleTarget.preferFlatName,
+                        vibePalette: fromVisibleTarget.palette,
+                      });
+                      return;
+                    }
+
+                    const intervalFromTonalCenter = (pitchClass - tonalCenterRootPitchClass + 12) % 12;
+                    const configForInterval = SINGLE_TARGET_TONE_CONFIGS.find((config) => (
+                      getTargetToneIntervalFromTonalCenter(
+                        config,
+                        tonalCenterMode,
+                        majorCenterKey,
+                        minorCenterKey
+                      ) === intervalFromTonalCenter
+                    ));
+
+                    if (configForInterval) {
+                      temporaryToneStyleByPitchClass.set(pitchClass, {
+                        preferFlatName: configForInterval.preferFlatName,
+                        vibePalette: configForInterval.palette,
+                      });
+                    }
+                  });
+
+                  if (missingPitchClasses.length > 0) {
+                    const minFret = Math.max(0, shapeData.windowStart);
+                    const maxFret = Math.min(BOX_FRET_COUNT, shapeData.windowEnd);
+                    const centerFret = (minFret + maxFret) / 2;
+
+                    const getCandidates = (pitchClass: number, fretStart: number, fretEnd: number) => {
+                      const candidates: { stringIdx: number; fret: number; score: number }[] = [];
+                      for (let stringIdx = 0; stringIdx < 6; stringIdx++) {
+                        for (let fret = fretStart; fret <= fretEnd; fret++) {
+                          if (getPitchClassAtPosition(stringIdx, fret) !== pitchClass) {
+                            continue;
+                          }
+                          const score = Math.abs(fret - centerFret) + Math.abs(stringIdx - 2.5) * 0.35;
+                          candidates.push({ stringIdx, fret, score });
+                        }
+                      }
+
+                      return candidates.sort((a, b) => {
+                        if (a.score !== b.score) {
+                          return a.score - b.score;
+                        }
+                        if (a.fret !== b.fret) {
+                          return a.fret - b.fret;
+                        }
+                        return a.stringIdx - b.stringIdx;
+                      });
+                    };
+
+                    missingPitchClasses.forEach((pitchClass) => {
+                      const temporaryToneStyle = temporaryToneStyleByPitchClass.get(pitchClass);
+                      const inWindowCandidates = getCandidates(pitchClass, minFret, maxFret);
+                      const pickedCandidates = inWindowCandidates.length > 0
+                        ? inWindowCandidates.slice(0, 2)
+                        : getCandidates(pitchClass, 0, BOX_FRET_COUNT).slice(0, 2);
+
+                      pickedCandidates.forEach(({ stringIdx, fret }) => {
+                        const key = `${stringIdx}:${fret}`;
+                        if (!ghostNotes.some((note) => `${note.stringIdx}:${note.fret}` === key)) {
+                          ghostNotes.push({
+                            stringIdx,
+                            fret,
+                            preferFlatName: temporaryToneStyle?.preferFlatName,
+                            vibePalette: temporaryToneStyle?.vibePalette,
+                          });
+                        }
+                      });
+                    });
+                  }
                 }
 
                 return (
@@ -783,10 +900,12 @@ export default function BoxShapes({
                     selectedKey={effectiveScaleKey}
                     pattern={patternForRender}
                     rootPositions={rootPositionsForRender}
+                    ghostNotes={ghostNotes}
                     markers={markers}
                     shapeOverlays={shapeOverlaysForRender}
                     pitchClassLabels={pitchClassLabels}
                     showRootHalos={showRootHalos}
+                    activeChordPitchClasses={activeChordPitchClasses ?? undefined}
                     numFrets={BOX_FRET_COUNT}
                     titlePlacement="left"
                     showTitle={false}
@@ -829,6 +948,8 @@ export default function BoxShapes({
                   minorCenterKey={minorCenterKey}
                   scaleFamilyLabel={scaleFamilyLabel}
                   progressions={practiceProgressions}
+                  onActiveChordPitchClassesChange={setActiveChordPitchClasses}
+                  onHideNonScaleChordTonesChange={setHideNonScaleChordTones}
                   onClose={() => setShowPracticePanel(false)}
                 />
               </div>
@@ -852,6 +973,8 @@ export default function BoxShapes({
                     minorCenterKey={minorCenterKey}
                     scaleFamilyLabel={scaleFamilyLabel}
                     progressions={practiceProgressions}
+                    onActiveChordPitchClassesChange={setActiveChordPitchClasses}
+                    onHideNonScaleChordTonesChange={setHideNonScaleChordTones}
                     onClose={() => setShowPracticePanel(false)}
                   />
                 )}

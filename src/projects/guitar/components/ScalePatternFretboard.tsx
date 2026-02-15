@@ -39,11 +39,24 @@ export interface FretboardShapeOverlay {
   dashArray?: string;
 }
 
+export interface FretboardGhostNote {
+  stringIdx: number;
+  fret: number;
+  preferFlatName?: boolean;
+  vibePalette?: {
+    outer: string;
+    mid: string;
+    inner: string;
+  };
+}
+
 interface ScalePatternFretboardProps {
   title: string;
   selectedKey: string;
   pattern: number[][];
   rootPositions: [number, number][];
+  ghostNotes?: FretboardGhostNote[];
+  activeChordPitchClasses?: number[];
   markers?: FretboardMarker[];
   shapeOverlays?: FretboardShapeOverlay[];
   pitchClassLabels?: Partial<Record<number, string>>;
@@ -81,6 +94,8 @@ export default function ScalePatternFretboard({
   selectedKey,
   pattern,
   rootPositions,
+  ghostNotes = [],
+  activeChordPitchClasses,
   markers = [],
   shapeOverlays = [],
   pitchClassLabels,
@@ -92,6 +107,7 @@ export default function ScalePatternFretboard({
 }: ScalePatternFretboardProps) {
   const [hoveredNote, setHoveredNote] = useState<{ string: number; fret: number } | null>(null);
   const overlayClipPathId = useId();
+  const inactiveToneFilterId = useId();
 
   const fretYPositions = calculateFretYPositions(
     DIMENSIONS.startFret,
@@ -145,6 +161,11 @@ export default function ScalePatternFretboard({
     });
     return notes;
   }, [pattern]);
+  const activeChordPitchClassSet = useMemo(
+    () => new Set(activeChordPitchClasses ?? []),
+    [activeChordPitchClasses]
+  );
+  const shouldHighlightActiveChord = activeChordPitchClassSet.size > 0;
 
   useEffect(() => {
     const handleFirstInteraction = () => {
@@ -216,6 +237,15 @@ export default function ScalePatternFretboard({
               rx={DIMENSIONS.fretboardBorderRadius}
             />
           </clipPath>
+          <filter id={inactiveToneFilterId}>
+            <feColorMatrix type="saturate" values="0.18" />
+            <feComponentTransfer>
+              <feFuncR type="linear" slope="0.86" />
+              <feFuncG type="linear" slope="0.86" />
+              <feFuncB type="linear" slope="0.86" />
+              <feFuncA type="linear" slope="1" />
+            </feComponentTransfer>
+          </filter>
         </defs>
 
         <rect
@@ -378,6 +408,86 @@ export default function ScalePatternFretboard({
           );
         })}
 
+        {ghostNotes.map((ghostNote, ghostIdx) => {
+          const noteAtPos = getNoteAtPosition(ghostNote.stringIdx, ghostNote.fret, selectedKey);
+          const displayNoteName = ghostNote.preferFlatName
+            ? toFlatEnharmonic(noteAtPos.noteName)
+            : noteAtPos.noteName;
+          const displayLabel = pitchClassLabels?.[noteAtPos.pitchClass] ?? displayNoteName;
+          const colorData = getNoteColor(displayNoteName);
+          const palette = ghostNote.vibePalette ?? defaultVibePalette;
+          const xPos = getRenderedXForFret(ghostNote.fret);
+          const yPos = stringYPositions[ghostNote.stringIdx];
+          const ghostRadius = DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
+          const baseOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 2);
+
+          return (
+            <g key={`ghost-note-${ghostIdx}-${ghostNote.stringIdx}-${ghostNote.fret}`} pointerEvents="none">
+              <circle
+                cx={xPos}
+                cy={yPos}
+                r={ghostRadius + baseOffset + 2.8}
+                fill="none"
+                stroke={palette.outer}
+                strokeWidth={1}
+                opacity={0.35}
+                strokeDasharray="1.5 3"
+                filter="url(#note-vibe-glow)"
+              />
+              <circle
+                cx={xPos}
+                cy={yPos}
+                r={ghostRadius + baseOffset + 1.35}
+                fill="none"
+                stroke={palette.mid}
+                strokeWidth={1.5}
+                opacity={0.58}
+                strokeDasharray="4 2"
+                filter="url(#note-vibe-glow)"
+              />
+              <circle
+                cx={xPos}
+                cy={yPos}
+                r={ghostRadius + baseOffset}
+                fill="none"
+                stroke={palette.inner}
+                strokeWidth={2}
+                opacity={0.9}
+                filter="url(#note-vibe-glow)"
+              />
+              <circle
+                cx={xPos}
+                cy={yPos}
+                r={ghostRadius}
+                fill={colorData.bg}
+                opacity={0.95}
+              />
+              <circle
+                cx={xPos}
+                cy={yPos}
+                r={ghostRadius + baseOffset + 4}
+                fill="none"
+                stroke={palette.outer}
+                strokeWidth={1.2}
+                strokeDasharray="3 2.2"
+                opacity={0.9}
+              />
+              <text
+                x={xPos}
+                y={yPos}
+                fill={colorData.text}
+                fontSize={DIMENSIONS.noteFontSize}
+                fontWeight="bold"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                opacity={0.95}
+              >
+                {displayLabel}
+              </text>
+            </g>
+          );
+        })}
+
         {patternNotes.map(({ stringIdx, fret }, idx) => {
           const noteAtPos = getNoteAtPosition(stringIdx, fret, selectedKey);
           const prefersFlatName = markers.some((marker) => {
@@ -391,6 +501,9 @@ export default function ScalePatternFretboard({
           const yPos = stringYPositions[stringIdx];
           const isHovered = hoveredNote?.string === stringIdx && hoveredNote?.fret === fret;
           const isRoot = hasPosition(rootPositions, stringIdx, fret);
+          const isActiveChordTone = shouldHighlightActiveChord
+            && activeChordPitchClassSet.has(noteAtPos.pitchClass);
+          const shouldDesaturate = shouldHighlightActiveChord && !isActiveChordTone;
 
           const radius = isHovered
             ? DIMENSIONS.noteRadius * DIMENSIONS.directHoverSizeMultiplier
@@ -400,7 +513,10 @@ export default function ScalePatternFretboard({
           const markerRingOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 3);
 
           return (
-            <g key={`pattern-${idx}`}>
+            <g
+              key={`pattern-${idx}`}
+              filter={shouldDesaturate ? `url(#${inactiveToneFilterId})` : undefined}
+            >
               {isRoot && showRootHalos && (
                 <g pointerEvents="none">
                   <circle
@@ -506,6 +622,19 @@ export default function ScalePatternFretboard({
                 onMouseEnter={() => setHoveredNote({ string: stringIdx, fret })}
                 onMouseLeave={() => setHoveredNote(null)}
               />
+
+              {isActiveChordTone && (
+                <circle
+                  cx={xPos}
+                  cy={yPos}
+                  r={Math.max(2.5, radius - 2.25)}
+                  fill="none"
+                  stroke="#dbeafe"
+                  strokeWidth={1.8}
+                  opacity={0.95}
+                  pointerEvents="none"
+                />
+              )}
 
               <text
                 x={xPos}

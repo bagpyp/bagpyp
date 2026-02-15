@@ -1,5 +1,6 @@
 import {
   buildChordOffsetsMs,
+  getChordPitchClassesFromSymbol,
   getActiveChordIndex,
   getLoopPositionMs,
   getLoopProgress,
@@ -45,5 +46,10 @@ describe('guitar looper sync helpers', () => {
     );
     expect(key).toBe('major:G:Major (7 modes):ionianPop');
   });
-});
 
+  it('maps chord symbols to pitch classes for looper chord highlighting', () => {
+    expect(getChordPitchClassesFromSymbol('Cm')).toEqual([0, 3, 7]);
+    expect(getChordPitchClassesFromSymbol('Bb')).toEqual([10, 2, 5]);
+    expect(getChordPitchClassesFromSymbol('G7')).toEqual([7, 11, 2, 5]);
+  });
+});

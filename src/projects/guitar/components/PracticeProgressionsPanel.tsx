@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { PracticeProgression } from '../lib/progression-recommendations';
 import {
   type LoopSyncConfig,
@@ -8,6 +8,7 @@ import {
   getActiveChordIndex,
   getLoopProgress,
   getProgressionSyncKey,
+  getChordPitchClassesFromSymbol,
   normalizeLoopDurationMs,
   parseChordSequence,
 } from '../lib/looper-sync';
@@ -19,6 +20,8 @@ interface PracticeProgressionsPanelProps {
   minorCenterKey: string;
   scaleFamilyLabel: string;
   progressions: PracticeProgression[];
+  onActiveChordPitchClassesChange?: (pitchClasses: number[] | null) => void;
+  onHideNonScaleChordTonesChange?: (hide: boolean) => void;
   onClose: () => void;
 }
 
@@ -37,6 +40,9 @@ interface LooperSyncModalProps {
   onClose: () => void;
 }
 
+// NOTE: Sync configs persist in localStorage for this browser/session.
+// If we scale to multi-device/user sync, move this to a server-backed store
+// with user scoping and schema versioning.
 const LOOP_SYNC_STORAGE_KEY = 'guitar:loop-sync-configs:v1';
 
 function LoopRing({
@@ -106,6 +112,7 @@ function LooperSyncModal({
   const [startedWithFirstChord, setStartedWithFirstChord] = useState(
     existingConfig?.startedWithFirstChord ?? true
   );
+  const [loopLabel, setLoopLabel] = useState(existingConfig?.loopLabel ?? progression.title);
   const [loopDurationMs, setLoopDurationMs] = useState(
     existingConfig?.loopDurationMs ?? 0
   );
@@ -266,6 +273,7 @@ function LooperSyncModal({
       progressionKey,
       progressionId: progression.id,
       progressionTitle: progression.title,
+      loopLabel: loopLabel.trim().length > 0 ? loopLabel.trim() : progression.title,
       chordCount,
       loopDurationMs: normalizeLoopDurationMs(loopDurationMs),
       startedWithFirstChord,
@@ -315,6 +323,24 @@ function LooperSyncModal({
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
+          <section className="rounded-lg bg-slate-900 p-3 ring-1 ring-slate-700 md:col-span-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+              Loop Identity
+            </p>
+            <div className="mt-2">
+              <label className="block">
+                <span className="text-[11px] text-slate-400">Name</span>
+                <input
+                  type="text"
+                  value={loopLabel}
+                  onChange={(event) => setLoopLabel(event.target.value)}
+                  placeholder={progression.title}
+                  className="mt-1 w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 outline-none ring-primary-500/50 focus:ring-2"
+                />
+              </label>
+            </div>
+          </section>
+
           <section className="rounded-lg bg-slate-900 p-3 ring-1 ring-slate-700">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-300">
               Alignment
@@ -462,6 +488,8 @@ export default function PracticeProgressionsPanel({
   minorCenterKey,
   scaleFamilyLabel,
   progressions,
+  onActiveChordPitchClassesChange,
+  onHideNonScaleChordTonesChange,
   onClose,
 }: PracticeProgressionsPanelProps) {
   const [selectedProgressionKey, setSelectedProgressionKey] = useState<string | null>(null);
@@ -470,7 +498,10 @@ export default function PracticeProgressionsPanel({
   const [syncConfigsByKey, setSyncConfigsByKey] = useState<Record<string, LoopSyncConfig>>({});
   const [syncConfigsLoaded, setSyncConfigsLoaded] = useState(false);
   const [transport, setTransport] = useState<LoopTransportState | null>(null);
+  const [showAllActiveChordTones, setShowAllActiveChordTones] = useState(true);
+  const [hideNonScaleChordTones, setHideNonScaleChordTones] = useState(false);
   const [nowMs, setNowMs] = useState<number>(0);
+  const lastReportedActiveChordKeyRef = useRef<string | null>(null);
 
   const progressionEntries = useMemo(
     () => progressions.map((progression) => {
@@ -545,6 +576,76 @@ export default function PracticeProgressionsPanel({
     }
   }, [transport, progressionByKey]);
 
+  useEffect(() => {
+    if (!onActiveChordPitchClassesChange) {
+      return;
+    }
+
+    if (!showAllActiveChordTones) {
+      if (lastReportedActiveChordKeyRef.current !== null) {
+        lastReportedActiveChordKeyRef.current = null;
+      }
+      onActiveChordPitchClassesChange(null);
+      return;
+    }
+
+    if (!transport || transport.status === 'stopped') {
+      if (lastReportedActiveChordKeyRef.current !== null) {
+        lastReportedActiveChordKeyRef.current = null;
+        onActiveChordPitchClassesChange(null);
+      }
+      return;
+    }
+
+    const progression = progressionByKey.get(transport.progressionKey);
+    const config = syncConfigsByKey[transport.progressionKey];
+    if (!progression || !config) {
+      if (lastReportedActiveChordKeyRef.current !== null) {
+        lastReportedActiveChordKeyRef.current = null;
+        onActiveChordPitchClassesChange(null);
+      }
+      return;
+    }
+
+    const loopDurationMs = normalizeLoopDurationMs(config.loopDurationMs);
+    const elapsedMs = getElapsedMs(transport, nowMs, loopDurationMs);
+    const activeChordIndex = getActiveChordIndex(config.chordOffsetsMs, elapsedMs, loopDurationMs);
+    const chordSequence = parseChordSequence(progression.chordNames);
+    const activeChordSymbol = chordSequence[activeChordIndex];
+    if (!activeChordSymbol) {
+      if (lastReportedActiveChordKeyRef.current !== null) {
+        lastReportedActiveChordKeyRef.current = null;
+        onActiveChordPitchClassesChange(null);
+      }
+      return;
+    }
+
+    const reportKey = `${transport.progressionKey}:${transport.status}:${activeChordIndex}:${activeChordSymbol}`;
+    if (lastReportedActiveChordKeyRef.current === reportKey) {
+      return;
+    }
+
+    lastReportedActiveChordKeyRef.current = reportKey;
+    onActiveChordPitchClassesChange(getChordPitchClassesFromSymbol(activeChordSymbol));
+  }, [
+    transport,
+    nowMs,
+    progressionByKey,
+    syncConfigsByKey,
+    showAllActiveChordTones,
+    onActiveChordPitchClassesChange,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      onActiveChordPitchClassesChange?.(null);
+    };
+  }, [onActiveChordPitchClassesChange]);
+
+  useEffect(() => {
+    onHideNonScaleChordTonesChange?.(hideNonScaleChordTones);
+  }, [hideNonScaleChordTones, onHideNonScaleChordTonesChange]);
+
   const modalProgression = syncModalForKey ? progressionByKey.get(syncModalForKey) : undefined;
 
   const handleSaveSyncConfig = (config: LoopSyncConfig) => {
@@ -615,6 +716,28 @@ export default function PracticeProgressionsPanel({
         pausedElapsedMs: 0,
       };
     });
+  };
+
+  const handleClearLoop = (progressionKey: string) => {
+    setSyncConfigsByKey((current) => {
+      if (!current[progressionKey]) {
+        return current;
+      }
+      const next = { ...current };
+      delete next[progressionKey];
+      return next;
+    });
+
+    setTransport((current) => (
+      current?.progressionKey === progressionKey ? null : current
+    ));
+    setOptionsWheelForKey((current) => (
+      current === progressionKey ? null : current
+    ));
+    setSyncModalForKey((current) => (
+      current === progressionKey ? null : current
+    ));
+    onActiveChordPitchClassesChange?.(null);
   };
 
   return (
@@ -744,6 +867,23 @@ export default function PracticeProgressionsPanel({
 
                       {hasSync && (
                         <div className="mt-2 rounded-md border border-slate-700 bg-slate-800 p-2 shadow-xl">
+                          <div className="mb-2 flex items-center justify-between rounded-md bg-slate-900 px-2 py-1 ring-1 ring-slate-700">
+                            <p className="truncate text-[11px] font-semibold text-slate-200">
+                              {syncConfig?.loopLabel?.trim() || progression.title}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setSyncModalForKey(progressionKey);
+                              }}
+                              className="rounded px-1.5 py-0.5 text-xs text-slate-200 hover:bg-slate-700"
+                              title="Edit loop name"
+                              aria-label="Edit loop name"
+                            >
+                              ✏️
+                            </button>
+                          </div>
                           <div className="flex items-center justify-between">
                             <LoopRing
                               progress={loopProgress}
@@ -758,6 +898,104 @@ export default function PracticeProgressionsPanel({
                               }
                               subLabel={`Active: ${activeRoman} (${activeChord})`}
                             />
+                          </div>
+                          <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5">
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setShowAllActiveChordTones((current) => !current);
+                              }}
+                              className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-sm ring-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                                showAllActiveChordTones
+                                  ? 'bg-sky-500/20 text-sky-200 ring-sky-400/40'
+                                  : 'bg-slate-800 text-slate-300 ring-slate-600'
+                              }`}
+                              title="Show active chord tones"
+                              aria-label="Show active chord tones"
+                            >
+                              🎯
+                            </button>
+                            <div className="inline-flex items-center gap-2">
+                              <span
+                                className={`w-7 text-right text-[10px] font-semibold tracking-wide ${
+                                  showAllActiveChordTones ? 'text-emerald-300' : 'text-slate-400'
+                                }`}
+                              >
+                                {showAllActiveChordTones ? 'ON' : 'OFF'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  setShowAllActiveChordTones((current) => !current);
+                                }}
+                                className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                                  showAllActiveChordTones
+                                    ? 'border-emerald-300 bg-emerald-500'
+                                    : 'border-slate-500 bg-slate-700'
+                                }`}
+                                title="Show active chord tones"
+                                aria-label="Show active chord tones"
+                                role="switch"
+                                aria-checked={showAllActiveChordTones}
+                              >
+                                <span
+                                  className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                                    showAllActiveChordTones ? 'translate-x-5' : 'translate-x-0.5'
+                                  }`}
+                                />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5">
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setHideNonScaleChordTones((current) => !current);
+                              }}
+                              className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-sm ring-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                                hideNonScaleChordTones
+                                  ? 'bg-rose-500/20 text-rose-200 ring-rose-400/40'
+                                  : 'bg-slate-800 text-slate-300 ring-slate-600'
+                              }`}
+                              title="Hide non-scale chord tones on loop playback"
+                              aria-label="Hide non-scale chord tones on loop playback"
+                            >
+                              👻
+                            </button>
+                            <div className="inline-flex items-center gap-2">
+                              <span
+                                className={`w-9 text-right text-[10px] font-semibold tracking-wide ${
+                                  hideNonScaleChordTones ? 'text-rose-300' : 'text-slate-400'
+                                }`}
+                              >
+                                {hideNonScaleChordTones ? 'HIDE' : 'SHOW'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  setHideNonScaleChordTones((current) => !current);
+                                }}
+                                className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                                  hideNonScaleChordTones
+                                    ? 'border-rose-300 bg-rose-500'
+                                    : 'border-slate-500 bg-slate-700'
+                                }`}
+                                title="Hide non-scale chord tones on loop playback"
+                                aria-label="Hide non-scale chord tones on loop playback"
+                                role="switch"
+                                aria-checked={hideNonScaleChordTones}
+                              >
+                                <span
+                                  className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                                    hideNonScaleChordTones ? 'translate-x-5' : 'translate-x-0.5'
+                                  }`}
+                                />
+                              </button>
+                            </div>
                           </div>
                           <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
                             {chordSequence.map((chord, chordIndex) => (
@@ -774,16 +1012,18 @@ export default function PracticeProgressionsPanel({
                               </span>
                             ))}
                           </div>
-                          <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
+                          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
                             <button
                               type="button"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handlePlay(progressionKey);
                               }}
-                              className="rounded bg-emerald-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-emerald-500"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-base text-white hover:bg-emerald-500"
+                              title="Play"
+                              aria-label="Play"
                             >
-                              Play
+                              ▶️
                             </button>
                             <button
                               type="button"
@@ -791,9 +1031,11 @@ export default function PracticeProgressionsPanel({
                                 event.stopPropagation();
                                 handlePause(progressionKey);
                               }}
-                              className="rounded bg-amber-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-amber-500"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-amber-600 text-base text-white hover:bg-amber-500"
+                              title="Pause"
+                              aria-label="Pause"
                             >
-                              Pause
+                              ⏸️
                             </button>
                             <button
                               type="button"
@@ -801,9 +1043,23 @@ export default function PracticeProgressionsPanel({
                                 event.stopPropagation();
                                 handleStop(progressionKey);
                               }}
-                              className="rounded bg-rose-700 px-3 py-1 text-[11px] font-semibold text-white hover:bg-rose-600"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-rose-700 text-base text-white hover:bg-rose-600"
+                              title="Stop"
+                              aria-label="Stop"
                             >
-                              Stop
+                              ⏹️
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleClearLoop(progressionKey);
+                              }}
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-rose-900 text-base text-rose-100 hover:bg-rose-800"
+                              title="Clear Loop"
+                              aria-label="Clear Loop"
+                            >
+                              ❌
                             </button>
                           </div>
                         </div>

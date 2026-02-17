@@ -94,6 +94,21 @@ describe('guitar progression recommendations', () => {
     expect(progressions.some((progression) => progression.id === 'phrygianB5Drone')).toBe(true);
   });
 
+  it('surfaces locrian-specific recommendations in locrian mode', () => {
+    const progressions = getPracticeProgressions({
+      tonalCenterMode: 'minor',
+      scaleFamily: 'pentatonic',
+      majorCenterKey: 'G',
+      minorCenterKey: 'E',
+      hexatonicMode: 'locrian',
+      visibleTargetIntervals: [1, 6],
+    });
+
+    expect(progressions[0]?.id).toBe('locrianHalfDimPedal');
+    expect(progressions[0]?.chordNames).toBe('Em7b5 F Dm7 Em7b5');
+    expect(progressions.some((progression) => progression.id === 'locrianTritoneFrame')).toBe(true);
+  });
+
   it('returns a larger progression set across quality/key combinations', () => {
     const minorPent = getPracticeProgressions({
       tonalCenterMode: 'minor',

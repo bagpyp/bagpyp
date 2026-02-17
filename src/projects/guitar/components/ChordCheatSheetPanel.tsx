@@ -9,6 +9,8 @@ interface ChordCheatSheetPanelProps {
   data: ChordCheatSheetData;
   rootPitchClasses: number[];
   auraPitchClasses: number[];
+  activeChordPitchClasses?: number[];
+  activeChordSymbol?: string;
   onClose?: () => void;
 }
 
@@ -16,9 +18,17 @@ interface NoteBadgeProps {
   note: string;
   isRoot: boolean;
   hasAura: boolean;
+  opacity?: number;
+  chordSymbol?: string;
 }
 
-function NoteBadge({ note, isRoot, hasAura }: NoteBadgeProps) {
+function NoteBadge({
+  note,
+  isRoot,
+  hasAura,
+  opacity = 1,
+  chordSymbol,
+}: NoteBadgeProps) {
   const color = getNoteColor(note);
   const badgeSize = 24;
   const auraOuterSize = 32;
@@ -31,6 +41,9 @@ function NoteBadge({ note, isRoot, hasAura }: NoteBadgeProps) {
       className="relative inline-flex items-center justify-center"
       style={{ width: `${haloContainerSize}px`, height: `${haloContainerSize}px` }}
       title={note}
+      data-chord-note={note}
+      data-chord-symbol={chordSymbol}
+      data-root={isRoot ? 'true' : 'false'}
     >
       {hasAura && (
         <>
@@ -77,6 +90,7 @@ function NoteBadge({ note, isRoot, hasAura }: NoteBadgeProps) {
           fontSize: '10px',
           lineHeight: 1,
           zIndex: 2,
+          opacity,
         }}
       >
         {note}
@@ -85,19 +99,49 @@ function NoteBadge({ note, isRoot, hasAura }: NoteBadgeProps) {
   );
 }
 
+function normalizeChordSymbolForMatch(symbol: string | undefined): string {
+  if (!symbol) {
+    return '';
+  }
+  return symbol
+    .trim()
+    .replace(/♭/g, 'b')
+    .replace(/♯/g, '#');
+}
+
+function getChordRootPitchClassFromSymbol(symbol: string | undefined): number | null {
+  const normalized = normalizeChordSymbolForMatch(symbol);
+  if (!normalized) {
+    return null;
+  }
+  const match = normalized.match(/^([A-G](?:#|b)?)/);
+  if (!match) {
+    return null;
+  }
+  return getPitchClass(match[1]);
+}
+
 export default function ChordCheatSheetPanel({
   data,
   rootPitchClasses,
   auraPitchClasses,
+  activeChordPitchClasses,
+  activeChordSymbol,
   onClose,
 }: ChordCheatSheetPanelProps) {
   const rootSet = useMemo(() => new Set(rootPitchClasses), [rootPitchClasses]);
   const auraSet = useMemo(() => new Set(auraPitchClasses), [auraPitchClasses]);
+  const normalizedActiveChordSymbol = normalizeChordSymbolForMatch(activeChordSymbol);
+  const activeChordRootPitchClass = getChordRootPitchClassFromSymbol(activeChordSymbol);
+  const hasActiveChord = normalizedActiveChordSymbol.length > 0
+    && data.entries.some(
+      (entry) => normalizeChordSymbolForMatch(entry.chordSymbol) === normalizedActiveChordSymbol
+    );
 
   return (
     <aside
       className="w-full rounded-xl bg-slate-800/92 shadow-2xl backdrop-blur ring-1 ring-white/10"
-      style={{ maxWidth: '320px' }}
+      style={{ maxWidth: '260px' }}
     >
       <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-200">
@@ -117,29 +161,51 @@ export default function ChordCheatSheetPanel({
 
       <div className="max-h-[70vh] overflow-auto px-3 py-2">
         <div className="space-y-2">
-          {data.entries.map((entry) => (
-            <div
-              key={entry.chordSymbol}
-              className="rounded bg-slate-900/65 px-2.5 py-2 ring-1 ring-white/10"
-            >
-              <p className="text-xs font-semibold text-slate-100">
-                {entry.chordSymbol}
-              </p>
-              <div className="mt-1 flex flex-wrap gap-1.5">
-                {entry.notes.map((note, noteIndex) => {
-                  const pitchClass = getPitchClass(note);
-                  return (
-                    <NoteBadge
-                      key={`${entry.chordSymbol}-${note}-${noteIndex}`}
-                      note={note}
-                      isRoot={rootSet.has(pitchClass)}
-                      hasAura={auraSet.has(pitchClass)}
-                    />
-                  );
-                })}
+          {data.entries.map((entry) => {
+            const isActive = hasActiveChord
+              && normalizeChordSymbolForMatch(entry.chordSymbol) === normalizedActiveChordSymbol;
+            const isInactive = hasActiveChord && !isActive;
+            return (
+              <div
+                key={entry.chordSymbol}
+                data-chord-row={entry.chordSymbol}
+                data-active={isActive ? 'true' : 'false'}
+                className={`rounded px-2 py-1.5 ring-1 transition-all ${
+                  isActive
+                    ? 'bg-slate-900/95 ring-sky-400/80'
+                    : 'bg-slate-900/65 ring-white/10'
+                }`}
+                style={{
+                  opacity: isInactive ? 0.34 : 1,
+                  filter: isInactive ? 'saturate(0.25)' : 'none',
+                  boxShadow: isActive ? '0 0 0 1px rgba(56, 189, 248, 0.35)' : 'none',
+                }}
+              >
+                <p className="text-xs font-semibold text-slate-100">
+                  {entry.chordSymbol}
+                </p>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {entry.notes.map((note, noteIndex) => {
+                    const pitchClass = getPitchClass(note);
+                    return (
+                      <NoteBadge
+                        key={`${entry.chordSymbol}-${note}-${noteIndex}`}
+                        note={note}
+                        isRoot={
+                          hasActiveChord
+                            ? (isActive && activeChordRootPitchClass === pitchClass)
+                            : rootSet.has(pitchClass)
+                        }
+                        hasAura={auraSet.has(pitchClass)}
+                        opacity={isInactive ? 0.55 : 1}
+                        chordSymbol={entry.chordSymbol}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </aside>

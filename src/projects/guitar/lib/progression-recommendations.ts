@@ -370,6 +370,42 @@ const PROGRESSION_TEMPLATES: Record<string, ProgressionTemplate> = {
     romanNumerals: 'I7 bIII7 IV7 I7',
     whyItFits: 'Injects blues color into a major-pentatonic frame.',
   },
+  locrianHalfDimPedal: {
+    id: 'locrianHalfDimPedal',
+    title: 'Locrian Half-Dim Pedal',
+    romanNumerals: 'im7b5 bII bVIIm7 im7b5',
+    whyItFits: 'Keeps the half-diminished tonic central while cycling b2 and b7 color.',
+  },
+  locrianTritoneFrame: {
+    id: 'locrianTritoneFrame',
+    title: 'Locrian Tritone Frame',
+    romanNumerals: 'im7b5 bV bII im7b5',
+    whyItFits: 'Frames locrian tension around b5 and b2 against the tonic.',
+  },
+  locrianAxis: {
+    id: 'locrianAxis',
+    title: 'Locrian Axis',
+    romanNumerals: 'im7b5 bII bV bVIIm7',
+    whyItFits: 'Alternates locrian axis tones for dark, stable loop phrasing.',
+  },
+  locrianShadowTurn: {
+    id: 'locrianShadowTurn',
+    title: 'Locrian Shadow Turn',
+    romanNumerals: 'im7b5 bVI bV bII',
+    whyItFits: 'Descending borrowed-minor energy with explicit locrian landmarks.',
+  },
+  locrianGrind: {
+    id: 'locrianGrind',
+    title: 'Locrian Grind',
+    romanNumerals: 'im7b5 bII iv im7b5',
+    whyItFits: 'Adds iv momentum but resolves to the half-diminished home chord.',
+  },
+  locrianCycle: {
+    id: 'locrianCycle',
+    title: 'Locrian Cycle',
+    romanNumerals: 'im7b5 bVIIm7 bII bV',
+    whyItFits: 'A cyclical locrian route that keeps b2 and b5 audible.',
+  },
 };
 
 const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
@@ -452,12 +488,12 @@ const BASE_TEMPLATE_IDS_BY_FLAVOR: Record<string, string[]> = {
     'blues12',
   ],
   locrian: [
-    'phrygianVamp',
-    'phrygianDrop',
-    'phrygianFrame',
-    'phrygianShadow',
-    'minorResolve',
-    'minorBluesLoop',
+    'locrianHalfDimPedal',
+    'locrianTritoneFrame',
+    'locrianAxis',
+    'locrianShadowTurn',
+    'locrianGrind',
+    'locrianCycle',
   ],
   mixolydianBlues: [
     'mixoBluesColor',
@@ -517,11 +553,28 @@ function formatChordSuffix(coreRoman: string, rawSuffix: string): string {
   if (rawSuffix === '7') {
     return isUpper ? '7' : 'm7';
   }
+  if (
+    rawSuffix === 'm7b5' ||
+    rawSuffix === 'dim' ||
+    rawSuffix === 'dim7' ||
+    rawSuffix === 'mMaj7' ||
+    rawSuffix === '7b5' ||
+    rawSuffix === '7#5' ||
+    rawSuffix === '6' ||
+    rawSuffix === 'm6' ||
+    rawSuffix === '9' ||
+    rawSuffix === '11' ||
+    rawSuffix === '13'
+  ) {
+    return rawSuffix;
+  }
   return isUpper ? '' : 'm';
 }
 
 function renderRomanTokenAsChord(token: string, tonicKey: string): string {
-  const match = token.match(/^([b#]?)([ivIV]+)(maj7|m7|7)?$/);
+  const match = token.match(
+    /^([b#]?)([ivIV]+)(maj7|mMaj7|m7b5|m7|dim7|dim|7b5|7#5|13|11|9|m6|6|7)?$/
+  );
   if (!match) {
     return token;
   }

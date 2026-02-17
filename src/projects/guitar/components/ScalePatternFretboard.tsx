@@ -50,11 +50,25 @@ export interface FretboardGhostNote {
   };
 }
 
+export interface FretboardOtherPositionNote {
+  stringIdx: number;
+  fret: number;
+  preferFlatName?: boolean;
+  isTemporaryNonScale?: boolean;
+  vibePalette?: {
+    outer: string;
+    mid: string;
+    inner: string;
+  };
+}
+
 interface ScalePatternFretboardProps {
   title: string;
   selectedKey: string;
   pattern: number[][];
   rootPositions: [number, number][];
+  rootPitchClassOverride?: number | null;
+  otherPositionNotes?: FretboardOtherPositionNote[];
   ghostNotes?: FretboardGhostNote[];
   activeChordPitchClasses?: number[];
   markers?: FretboardMarker[];
@@ -94,6 +108,8 @@ export default function ScalePatternFretboard({
   selectedKey,
   pattern,
   rootPositions,
+  rootPitchClassOverride,
+  otherPositionNotes = [],
   ghostNotes = [],
   activeChordPitchClasses,
   markers = [],
@@ -161,6 +177,16 @@ export default function ScalePatternFretboard({
     });
     return notes;
   }, [pattern]);
+  const rootPitchClass = useMemo(() => {
+    if (rootPitchClassOverride !== undefined && rootPitchClassOverride !== null) {
+      return ((rootPitchClassOverride % 12) + 12) % 12;
+    }
+    if (rootPositions.length === 0) {
+      return null;
+    }
+    const [stringIdx, fret] = rootPositions[0];
+    return getNoteAtPosition(stringIdx, fret, selectedKey).pitchClass;
+  }, [rootPitchClassOverride, rootPositions, selectedKey]);
   const activeChordPitchClassSet = useMemo(
     () => new Set(activeChordPitchClasses ?? []),
     [activeChordPitchClasses]
@@ -408,6 +434,199 @@ export default function ScalePatternFretboard({
           );
         })}
 
+        {otherPositionNotes.map((otherNote, idx) => {
+          const { stringIdx, fret } = otherNote;
+          const noteAtPos = getNoteAtPosition(stringIdx, fret, selectedKey);
+          const prefersFlatName = markers.some((marker) => {
+            const shouldUseFlat = marker.preferFlatName ?? marker.variant === 'blue-vibe';
+            return shouldUseFlat && hasPosition(marker.positions, stringIdx, fret);
+          }) || Boolean(otherNote.preferFlatName);
+          const displayNoteName = prefersFlatName ? toFlatEnharmonic(noteAtPos.noteName) : noteAtPos.noteName;
+          const isRoot = rootPitchClass !== null && noteAtPos.pitchClass === rootPitchClass;
+          const radius = DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
+          const rootRingOffset = DIMENSIONS.rootNoteRingOffset;
+          const markerRingOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 3);
+          const isActiveChordTone = shouldHighlightActiveChord
+            && activeChordPitchClassSet.has(noteAtPos.pitchClass);
+          const shouldDesaturateOtherNote = shouldHighlightActiveChord && !isActiveChordTone;
+          const otherNoteOpacity = 0.3;
+          const temporaryPalette = otherNote.vibePalette ?? defaultVibePalette;
+          const colorData = getNoteColor(displayNoteName);
+          const xPos = getRenderedXForFret(fret);
+          const yPos = stringYPositions[stringIdx];
+          const displayLabel = pitchClassLabels?.[noteAtPos.pitchClass] ?? displayNoteName;
+
+          return (
+            <g
+              key={`other-position-note-${idx}-${stringIdx}-${fret}`}
+              pointerEvents="none"
+              opacity={otherNoteOpacity}
+              filter={shouldDesaturateOtherNote ? `url(#${inactiveToneFilterId})` : undefined}
+            >
+              {isRoot && showRootHalos && (
+                <g pointerEvents="none">
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 3}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={1}
+                    opacity={0.3}
+                    filter="url(#note-root-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 1.5}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={1.5}
+                    opacity={0.5}
+                    filter="url(#note-root-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={DIMENSIONS.rootNoteRingWidth}
+                    opacity={0.9}
+                    filter="url(#note-root-glow)"
+                  />
+                </g>
+              )}
+
+              {markers.map((marker, markerIdx) => {
+                if (!hasPosition(marker.positions, stringIdx, fret)) {
+                  return null;
+                }
+
+                if (marker.variant === 'vibe' || marker.variant === 'blue-vibe') {
+                  const palette = marker.vibePalette ?? defaultVibePalette;
+                  const baseOffset = marker.ringOffset ?? (rootRingOffset + 1);
+                  return (
+                    <g key={`other-marker-${idx}-${markerIdx}`} pointerEvents="none">
+                      <circle
+                        cx={xPos}
+                        cy={yPos}
+                        r={radius + baseOffset + 2.5}
+                        fill="none"
+                        stroke={palette.outer}
+                        strokeWidth={1}
+                        opacity={0.3}
+                        strokeDasharray="1.5 3"
+                        filter="url(#note-vibe-glow)"
+                      />
+                      <circle
+                        cx={xPos}
+                        cy={yPos}
+                        r={radius + baseOffset + 1.25}
+                        fill="none"
+                        stroke={palette.mid}
+                        strokeWidth={1.6}
+                        opacity={0.55}
+                        strokeDasharray="4 2"
+                        filter="url(#note-vibe-glow)"
+                      />
+                      <circle
+                        cx={xPos}
+                        cy={yPos}
+                        r={radius + baseOffset}
+                        fill="none"
+                        stroke={palette.inner}
+                        strokeWidth={2}
+                        opacity={0.9}
+                        filter="url(#note-vibe-glow)"
+                      />
+                    </g>
+                  );
+                }
+
+                return (
+                  <circle
+                    key={`other-marker-${idx}-${markerIdx}`}
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + (marker.ringOffset ?? (markerRingOffset + 1))}
+                    fill="none"
+                    stroke={marker.stroke}
+                    strokeWidth={marker.strokeWidth ?? 2}
+                    opacity={marker.opacity ?? 0.9}
+                    strokeDasharray={marker.dashArray}
+                  />
+                );
+              })}
+
+              {otherNote.isTemporaryNonScale && (
+                <g pointerEvents="none">
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 2.8}
+                    fill="none"
+                    stroke={temporaryPalette.outer}
+                    strokeWidth={1}
+                    opacity={0.35}
+                    strokeDasharray="1.5 3"
+                    filter="url(#note-vibe-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 1.35}
+                    fill="none"
+                    stroke={temporaryPalette.mid}
+                    strokeWidth={1.5}
+                    opacity={0.58}
+                    strokeDasharray="4 2"
+                    filter="url(#note-vibe-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset}
+                    fill="none"
+                    stroke={temporaryPalette.inner}
+                    strokeWidth={2}
+                    opacity={0.9}
+                    filter="url(#note-vibe-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={radius + rootRingOffset + 4}
+                    fill="none"
+                    stroke={temporaryPalette.outer}
+                    strokeWidth={1.1}
+                    strokeDasharray="3 2.2"
+                    opacity={0.85}
+                  />
+                </g>
+              )}
+
+              <circle
+                cx={xPos}
+                cy={yPos}
+                r={radius}
+                fill={colorData.bg}
+              />
+              <text
+                x={xPos}
+                y={yPos}
+                fill={colorData.text}
+                fontSize={DIMENSIONS.noteFontSize}
+                fontWeight="bold"
+                textAnchor="middle"
+                dominantBaseline="middle"
+              >
+                {displayLabel}
+              </text>
+            </g>
+          );
+        })}
+
         {ghostNotes.map((ghostNote, ghostIdx) => {
           const noteAtPos = getNoteAtPosition(ghostNote.stringIdx, ghostNote.fret, selectedKey);
           const displayNoteName = ghostNote.preferFlatName
@@ -420,9 +639,44 @@ export default function ScalePatternFretboard({
           const yPos = stringYPositions[ghostNote.stringIdx];
           const ghostRadius = DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
           const baseOffset = Math.max(2, DIMENSIONS.rootNoteRingOffset - 2);
+          const isRoot = rootPitchClass !== null && noteAtPos.pitchClass === rootPitchClass;
 
           return (
             <g key={`ghost-note-${ghostIdx}-${ghostNote.stringIdx}-${ghostNote.fret}`} pointerEvents="none">
+              {isRoot && showRootHalos && (
+                <g pointerEvents="none">
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={ghostRadius + DIMENSIONS.rootNoteRingOffset + 3}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={1}
+                    opacity={0.3}
+                    filter="url(#note-root-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={ghostRadius + DIMENSIONS.rootNoteRingOffset + 1.5}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={1.5}
+                    opacity={0.5}
+                    filter="url(#note-root-glow)"
+                  />
+                  <circle
+                    cx={xPos}
+                    cy={yPos}
+                    r={ghostRadius + DIMENSIONS.rootNoteRingOffset}
+                    fill="none"
+                    stroke="#ffd700"
+                    strokeWidth={DIMENSIONS.rootNoteRingWidth}
+                    opacity={0.9}
+                    filter="url(#note-root-glow)"
+                  />
+                </g>
+              )}
               <circle
                 cx={xPos}
                 cy={yPos}
@@ -500,7 +754,7 @@ export default function ScalePatternFretboard({
           const xPos = getRenderedXForFret(fret);
           const yPos = stringYPositions[stringIdx];
           const isHovered = hoveredNote?.string === stringIdx && hoveredNote?.fret === fret;
-          const isRoot = hasPosition(rootPositions, stringIdx, fret);
+          const isRoot = rootPitchClass !== null && noteAtPos.pitchClass === rootPitchClass;
           const isActiveChordTone = shouldHighlightActiveChord
             && activeChordPitchClassSet.has(noteAtPos.pitchClass);
           const shouldDesaturate = shouldHighlightActiveChord && !isActiveChordTone;

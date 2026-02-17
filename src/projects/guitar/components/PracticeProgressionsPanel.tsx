@@ -47,11 +47,92 @@ interface LooperSyncModalProps {
 // If we scale to multi-device/user sync, move this to a server-backed store
 // with user scoping and schema versioning.
 const LOOP_SYNC_STORAGE_KEY = 'guitar:loop-sync-configs:v1';
+const BACKING_TRACK_DEFAULT_BPM = 84;
+const BACKING_TRACK_BEATS_PER_CHORD = 4;
+const NOTE_NAME_TO_PITCH_CLASS: Record<string, number> = {
+  C: 0,
+  'C#': 1,
+  Db: 1,
+  D: 2,
+  'D#': 3,
+  Eb: 3,
+  E: 4,
+  F: 5,
+  'F#': 6,
+  Gb: 6,
+  G: 7,
+  'G#': 8,
+  Ab: 8,
+  A: 9,
+  'A#': 10,
+  Bb: 10,
+  B: 11,
+  Cb: 11,
+};
 
 interface AutoStateEvent {
   stateIndex: number;
   timeMs: number;
   confidence: number;
+}
+
+function midiToFrequency(midi: number): number {
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+function getBackingTrackChordDurationMs(bpm: number): number {
+  const safeBpm = Math.min(220, Math.max(40, bpm));
+  return (60_000 / safeBpm) * BACKING_TRACK_BEATS_PER_CHORD;
+}
+
+function getChordRootPitchClass(chordSymbol: string): number | null {
+  const rootMatch = chordSymbol.match(/^([A-G](?:#|b)?)/);
+  if (!rootMatch) {
+    return null;
+  }
+  return NOTE_NAME_TO_PITCH_CLASS[rootMatch[1]] ?? null;
+}
+
+function buildChordMidiVoicing(chordSymbol: string | null | undefined): number[] {
+  if (typeof chordSymbol !== 'string') {
+    return [];
+  }
+
+  const chordPitchClasses = [...new Set(getChordPitchClassesFromSymbol(chordSymbol))];
+  if (chordPitchClasses.length === 0) {
+    return [];
+  }
+
+  const rootPitchClass = getChordRootPitchClass(chordSymbol);
+  const orderedPitchClasses = [...chordPitchClasses].sort((left, right) => {
+    if (rootPitchClass === null) {
+      return left - right;
+    }
+    return ((left - rootPitchClass + 12) % 12) - ((right - rootPitchClass + 12) % 12);
+  });
+
+  const rootBaseMidi = rootPitchClass === null ? 45 : 48 + rootPitchClass;
+  let previousMidi = 40;
+
+  return orderedPitchClasses.map((pitchClass, idx) => {
+    let midi = rootBaseMidi + (rootPitchClass === null
+      ? pitchClass
+      : ((pitchClass - rootPitchClass + 12) % 12));
+
+    while (idx > 0 && midi <= previousMidi) {
+      midi += 12;
+    }
+
+    while (midi < 43) {
+      midi += 12;
+    }
+    while (midi > 74) {
+      midi -= 12;
+    }
+
+    previousMidi = midi;
+    return midi;
+  });
 }
 
 function getAutoLockRequirements(
@@ -1189,10 +1270,14 @@ export default function PracticeProgressionsPanel({
   const [syncConfigsByKey, setSyncConfigsByKey] = useState<Record<string, LoopSyncConfig>>({});
   const [syncConfigsLoaded, setSyncConfigsLoaded] = useState(false);
   const [transport, setTransport] = useState<LoopTransportState | null>(null);
+  const [backingTransport, setBackingTransport] = useState<LoopTransportState | null>(null);
+  const [backingTempoByKey, setBackingTempoByKey] = useState<Record<string, number>>({});
   const [showAllActiveChordTones, setShowAllActiveChordTones] = useState(true);
   const [hideNonScaleChordTones, setHideNonScaleChordTones] = useState(false);
   const [nowMs, setNowMs] = useState<number>(0);
   const lastReportedActiveChordKeyRef = useRef<string | null>(null);
+  const backingAudioContextRef = useRef<AudioContext | null>(null);
+  const lastPlayedBackingChordRef = useRef<string | null>(null);
   const resolvedPanelHeightPx = typeof panelHeightPx === 'number' && Number.isFinite(panelHeightPx)
     ? Math.max(260, Math.floor(panelHeightPx))
     : null;
@@ -1245,7 +1330,18 @@ export default function PracticeProgressionsPanel({
   }, [syncConfigsByKey, syncConfigsLoaded]);
 
   useEffect(() => {
-    if (!transport || transport.status !== 'playing') {
+    return () => {
+      if (backingAudioContextRef.current) {
+        void backingAudioContextRef.current.close();
+        backingAudioContextRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const isLoopSyncPlaying = transport?.status === 'playing';
+    const isBackingTrackPlaying = backingTransport?.status === 'playing';
+    if (!isLoopSyncPlaying && !isBackingTrackPlaying) {
       return;
     }
 
@@ -1259,7 +1355,7 @@ export default function PracticeProgressionsPanel({
     return () => {
       window.cancelAnimationFrame(rafId);
     };
-  }, [transport]);
+  }, [transport, backingTransport]);
 
   useEffect(() => {
     if (!transport) {
@@ -1271,11 +1367,28 @@ export default function PracticeProgressionsPanel({
   }, [transport, progressionByKey]);
 
   useEffect(() => {
+    if (!backingTransport) {
+      return;
+    }
+    if (!progressionByKey.has(backingTransport.progressionKey)) {
+      setBackingTransport(null);
+    }
+  }, [backingTransport, progressionByKey]);
+
+  useEffect(() => {
     if (!showAllActiveChordTones) {
       onActiveChordPitchClassesChange?.(null);
     }
 
-    if (!transport || transport.status === 'stopped') {
+    const activeLoopTransport = transport && transport.status !== 'stopped'
+      ? transport
+      : null;
+    const activeBackingTransport = !activeLoopTransport && backingTransport && backingTransport.status !== 'stopped'
+      ? backingTransport
+      : null;
+    const activeTransport = activeLoopTransport ?? activeBackingTransport;
+
+    if (!activeTransport) {
       if (lastReportedActiveChordKeyRef.current !== null) {
         lastReportedActiveChordKeyRef.current = null;
         onActiveChordPitchClassesChange?.(null);
@@ -1284,9 +1397,8 @@ export default function PracticeProgressionsPanel({
       return;
     }
 
-    const progression = progressionByKey.get(transport.progressionKey);
-    const config = syncConfigsByKey[transport.progressionKey];
-    if (!progression || !config) {
+    const progression = progressionByKey.get(activeTransport.progressionKey);
+    if (!progression) {
       if (lastReportedActiveChordKeyRef.current !== null) {
         lastReportedActiveChordKeyRef.current = null;
         onActiveChordPitchClassesChange?.(null);
@@ -1295,11 +1407,40 @@ export default function PracticeProgressionsPanel({
       return;
     }
 
-    const loopDurationMs = normalizeLoopDurationMs(config.loopDurationMs);
-    const elapsedMs = getElapsedMs(transport, nowMs, loopDurationMs);
-    const activeChordIndex = getActiveChordIndex(config.chordOffsetsMs, elapsedMs, loopDurationMs);
     const chordSequence = parseChordSequence(progression.chordNames);
-    const activeChordSymbol = chordSequence[activeChordIndex];
+    const chordCount = chordSequence.length;
+    if (chordCount === 0) {
+      return;
+    }
+
+    let activeChordIndex = 0;
+    let activeChordSymbol: string | undefined;
+    let reportKeyPrefix = 'loop';
+
+    if (activeLoopTransport) {
+      const config = syncConfigsByKey[activeLoopTransport.progressionKey];
+      if (!config) {
+        if (lastReportedActiveChordKeyRef.current !== null) {
+          lastReportedActiveChordKeyRef.current = null;
+          onActiveChordPitchClassesChange?.(null);
+          onActiveChordSymbolChange?.(null);
+        }
+        return;
+      }
+      const loopDurationMs = normalizeLoopDurationMs(config.loopDurationMs);
+      const elapsedMs = getElapsedMs(activeLoopTransport, nowMs, loopDurationMs);
+      activeChordIndex = getActiveChordIndex(config.chordOffsetsMs, elapsedMs, loopDurationMs);
+      activeChordSymbol = chordSequence[activeChordIndex];
+    } else if (activeBackingTransport) {
+      const bpm = backingTempoByKey[activeBackingTransport.progressionKey] ?? BACKING_TRACK_DEFAULT_BPM;
+      const chordDurationMs = getBackingTrackChordDurationMs(bpm);
+      const loopDurationMs = normalizeLoopDurationMs(chordDurationMs * chordCount);
+      const elapsedMs = getElapsedMs(activeBackingTransport, nowMs, loopDurationMs);
+      activeChordIndex = Math.floor(elapsedMs / chordDurationMs) % chordCount;
+      activeChordSymbol = chordSequence[activeChordIndex];
+      reportKeyPrefix = 'backing';
+    }
+
     if (!activeChordSymbol) {
       if (lastReportedActiveChordKeyRef.current !== null) {
         lastReportedActiveChordKeyRef.current = null;
@@ -1309,7 +1450,7 @@ export default function PracticeProgressionsPanel({
       return;
     }
 
-    const reportKey = `${transport.progressionKey}:${transport.status}:${activeChordIndex}:${activeChordSymbol}`;
+    const reportKey = `${reportKeyPrefix}:${activeTransport.progressionKey}:${activeTransport.status}:${activeChordIndex}:${activeChordSymbol}`;
     if (lastReportedActiveChordKeyRef.current === reportKey) {
       return;
     }
@@ -1323,9 +1464,11 @@ export default function PracticeProgressionsPanel({
     onActiveChordSymbolChange?.(activeChordSymbol);
   }, [
     transport,
+    backingTransport,
     nowMs,
     progressionByKey,
     syncConfigsByKey,
+    backingTempoByKey,
     showAllActiveChordTones,
     onActiveChordPitchClassesChange,
     onActiveChordSymbolChange,
@@ -1371,10 +1514,7 @@ export default function PracticeProgressionsPanel({
   }, []);
 
   const handlePanelWheel = useCallback((event: React.WheelEvent<HTMLElement>) => {
-    const handled = applyPanelWheelScroll(event.deltaX, event.deltaY);
-    if (!handled) {
-      return;
-    }
+    applyPanelWheelScroll(event.deltaX, event.deltaY);
     event.preventDefault();
     event.stopPropagation();
   }, [applyPanelWheelScroll]);
@@ -1386,10 +1526,7 @@ export default function PracticeProgressionsPanel({
     }
 
     const handleNativeWheel = (event: WheelEvent) => {
-      const handled = applyPanelWheelScroll(event.deltaX, event.deltaY);
-      if (!handled) {
-        return;
-      }
+      applyPanelWheelScroll(event.deltaX, event.deltaY);
       event.preventDefault();
       event.stopPropagation();
     };
@@ -1414,6 +1551,8 @@ export default function PracticeProgressionsPanel({
     }));
     setSelectedProgressionKey(config.progressionKey);
     setOptionsWheelForKey(null);
+    setBackingTransport(null);
+    lastPlayedBackingChordRef.current = null;
     setTransport({
       progressionKey: config.progressionKey,
       status: 'playing',
@@ -1422,12 +1561,78 @@ export default function PracticeProgressionsPanel({
     });
   };
 
+  const playBackingChord = useCallback((chordSymbol: string, chordDurationMs: number) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const windowWithWebkit = window as Window & { webkitAudioContext?: typeof AudioContext };
+    const AudioContextCtor = window.AudioContext ?? windowWithWebkit.webkitAudioContext;
+    if (!AudioContextCtor) {
+      return;
+    }
+
+    if (!backingAudioContextRef.current || backingAudioContextRef.current.state === 'closed') {
+      backingAudioContextRef.current = new AudioContextCtor();
+    }
+
+    const audioContext = backingAudioContextRef.current;
+    if (!audioContext) {
+      return;
+    }
+
+    if (audioContext.state === 'suspended') {
+      void audioContext.resume();
+    }
+
+    const midiVoicing = buildChordMidiVoicing(chordSymbol);
+    if (midiVoicing.length === 0) {
+      return;
+    }
+
+    const now = audioContext.currentTime;
+    const attackSec = 0.02;
+    const releaseSec = Math.min(2.2, Math.max(0.35, (chordDurationMs / 1000) * 0.85));
+    const stopAt = now + releaseSec;
+    const noteGain = Math.max(0.035, 0.12 / midiVoicing.length);
+
+    midiVoicing.forEach((midi, index) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.type = index === 0 ? 'sawtooth' : 'triangle';
+      oscillator.frequency.value = midiToFrequency(midi);
+      oscillator.detune.value = (index - 1) * 4;
+
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.linearRampToValueAtTime(noteGain, now + attackSec);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, stopAt);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.start(now);
+      oscillator.stop(stopAt + 0.02);
+    });
+  }, []);
+
+  const getBackingLoopDuration = useCallback((progressionKey: string): number | null => {
+    const progression = progressionByKey.get(progressionKey);
+    if (!progression) {
+      return null;
+    }
+    const chordCount = Math.max(1, parseChordSequence(progression.chordNames).length);
+    const bpm = backingTempoByKey[progressionKey] ?? BACKING_TRACK_DEFAULT_BPM;
+    return normalizeLoopDurationMs(getBackingTrackChordDurationMs(bpm) * chordCount);
+  }, [progressionByKey, backingTempoByKey]);
+
   const handlePlay = (progressionKey: string) => {
     const config = syncConfigsByKey[progressionKey];
     if (!config) {
       return;
     }
     const now = performance.now();
+    setBackingTransport(null);
+    lastPlayedBackingChordRef.current = null;
 
     setTransport((current) => {
       if (current && current.progressionKey === progressionKey) {
@@ -1449,6 +1654,113 @@ export default function PracticeProgressionsPanel({
       };
     });
   };
+
+  const handleBackingPlay = (progressionKey: string) => {
+    const progression = progressionByKey.get(progressionKey);
+    if (!progression) {
+      return;
+    }
+
+    const chordCount = parseChordSequence(progression.chordNames).length;
+    if (chordCount === 0) {
+      return;
+    }
+
+    const now = performance.now();
+    setTransport(null);
+    lastPlayedBackingChordRef.current = null;
+
+    setBackingTransport((current) => {
+      if (current && current.progressionKey === progressionKey) {
+        if (current.status === 'playing') {
+          return current;
+        }
+        return {
+          ...current,
+          status: 'playing',
+          startedAtMs: now - current.pausedElapsedMs,
+        };
+      }
+
+      return {
+        progressionKey,
+        status: 'playing',
+        startedAtMs: now,
+        pausedElapsedMs: 0,
+      };
+    });
+  };
+
+  const handleBackingPause = (progressionKey: string) => {
+    const loopDurationMs = getBackingLoopDuration(progressionKey);
+    if (!loopDurationMs) {
+      return;
+    }
+
+    const now = performance.now();
+    setBackingTransport((current) => {
+      if (!current || current.progressionKey !== progressionKey || current.status !== 'playing') {
+        return current;
+      }
+      return {
+        ...current,
+        status: 'paused',
+        pausedElapsedMs: (now - current.startedAtMs + loopDurationMs) % loopDurationMs,
+      };
+    });
+  };
+
+  const handleBackingStop = (progressionKey: string) => {
+    lastPlayedBackingChordRef.current = null;
+    setBackingTransport((current) => {
+      if (!current || current.progressionKey !== progressionKey) {
+        return current;
+      }
+      return {
+        ...current,
+        status: 'stopped',
+        pausedElapsedMs: 0,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (!backingTransport || backingTransport.status !== 'playing') {
+      lastPlayedBackingChordRef.current = null;
+      return;
+    }
+
+    const progression = progressionByKey.get(backingTransport.progressionKey);
+    if (!progression) {
+      return;
+    }
+
+    const chordSequence = parseChordSequence(progression.chordNames);
+    const chordCount = chordSequence.length;
+    if (chordCount === 0) {
+      return;
+    }
+
+    const bpm = backingTempoByKey[backingTransport.progressionKey] ?? BACKING_TRACK_DEFAULT_BPM;
+    const chordDurationMs = getBackingTrackChordDurationMs(bpm);
+    const loopDurationMs = normalizeLoopDurationMs(chordDurationMs * chordCount);
+    const elapsedMs = getElapsedMs(backingTransport, nowMs, loopDurationMs);
+    const activeChordIndex = Math.floor(elapsedMs / chordDurationMs) % chordCount;
+    const elapsedSinceStart = Math.max(0, nowMs - backingTransport.startedAtMs);
+    const loopCycle = Math.floor(elapsedSinceStart / loopDurationMs);
+    const chordSymbol = chordSequence[activeChordIndex];
+    if (!chordSymbol) {
+      return;
+    }
+    const chordCycleKey = `${backingTransport.progressionKey}:${loopCycle}:${activeChordIndex}:${chordSymbol}`;
+
+    if (lastPlayedBackingChordRef.current === chordCycleKey) {
+      return;
+    }
+
+    lastPlayedBackingChordRef.current = chordCycleKey;
+    playBackingChord(chordSymbol, chordDurationMs);
+  }, [backingTransport, progressionByKey, backingTempoByKey, nowMs, playBackingChord]);
 
   const handlePause = (progressionKey: string) => {
     const config = syncConfigsByKey[progressionKey];
@@ -1536,7 +1848,7 @@ export default function PracticeProgressionsPanel({
 
         <div
           ref={scrollRegionRef}
-          className={`overflow-auto px-3 py-2 ${
+          className={`h-full overflow-x-hidden overflow-y-auto px-3 py-2 ${
             resolvedPanelHeightPx ? 'min-h-0 flex-1' : 'max-h-[70vh]'
           } overscroll-contain`}
         >
@@ -1574,11 +1886,36 @@ export default function PracticeProgressionsPanel({
                 : 0;
               const activeRoman = romanSequence[activeChordIndex] ?? '—';
               const activeChord = chordSequence[activeChordIndex] ?? '—';
+              const backingTempo = backingTempoByKey[progressionKey] ?? BACKING_TRACK_DEFAULT_BPM;
+              const backingChordDurationMs = getBackingTrackChordDurationMs(backingTempo);
+              const backingLoopDurationMs = normalizeLoopDurationMs(
+                backingChordDurationMs * Math.max(1, chordSequence.length)
+              );
+              const isBackingProgression = backingTransport?.progressionKey === progressionKey;
+              const backingElapsedMs = isBackingProgression && backingTransport
+                ? getElapsedMs(backingTransport, nowMs, backingLoopDurationMs)
+                : 0;
+              const backingProgress = chordSequence.length > 0
+                ? getLoopProgress(backingElapsedMs, backingLoopDurationMs)
+                : 0;
+              const backingActiveChordIndex = chordSequence.length > 0
+                ? Math.floor(backingElapsedMs / backingChordDurationMs) % chordSequence.length
+                : 0;
+              const backingActiveRoman = romanSequence[backingActiveChordIndex] ?? '—';
+              const backingActiveChord = chordSequence[backingActiveChordIndex] ?? '—';
+              const backingStatus = isBackingProgression
+                ? backingTransport?.status === 'playing'
+                  ? 'Playing'
+                  : backingTransport?.status === 'paused'
+                    ? 'Paused'
+                    : 'Stopped'
+                : 'Stopped';
+              const shouldHighlightBackingChord = isBackingProgression && backingTransport?.status !== 'stopped';
 
               return (
                 <div
                   key={progressionKey}
-                  className={`rounded px-2.5 py-2 ring-1 transition-colors ${
+                  className={`rounded px-2.5 py-1.5 ring-1 transition-colors ${
                     isSelected
                       ? 'bg-slate-900 ring-sky-400/60'
                       : 'bg-slate-900 ring-slate-700'
@@ -1588,20 +1925,27 @@ export default function PracticeProgressionsPanel({
                     setOptionsWheelForKey(progressionKey);
                   }}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs font-semibold text-slate-100">{progression.title}</p>
-                    {hasSync && (
-                      <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
-                        Synced
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-semibold text-slate-100">{progression.title}</p>
+                      <p className="mt-0.5 truncate font-mono text-[10px] text-slate-400">{progression.romanNumerals}</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {hasSync && (
+                        <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
+                          Synced
+                        </span>
+                      )}
+                      <span className="text-[11px] font-semibold text-slate-400">
+                        {isSelected ? '▾' : '▸'}
                       </span>
-                    )}
+                    </div>
                   </div>
-                  <p className="mt-1 font-mono text-[11px] text-slate-300">{progression.romanNumerals}</p>
-                  <p className="mt-1 font-mono text-[11px] text-sky-300">{progression.chordNames}</p>
-                  <p className="mt-1 text-[11px] text-slate-400">{progression.whyItFits}</p>
 
                   {isSelected && (
                     <div className="mt-2 rounded-md bg-slate-800 p-2 ring-1 ring-slate-700">
+                      <p className="font-mono text-[11px] text-sky-300">{progression.chordNames}</p>
+                      <p className="mt-1 text-[11px] text-slate-400">{progression.whyItFits}</p>
                       <div className="flex items-center justify-between">
                         <button
                           type="button"
@@ -1643,6 +1987,102 @@ export default function PracticeProgressionsPanel({
                           </button>
                         </div>
                       )}
+
+                      <div className="mt-2 rounded-md border border-slate-700 bg-slate-800 p-2 shadow-xl">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">
+                            Backing Track
+                          </p>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                            {backingStatus}
+                          </p>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                            BPM
+                          </span>
+                          <input
+                            type="range"
+                            min={50}
+                            max={160}
+                            step={1}
+                            value={backingTempo}
+                            onClick={(event) => event.stopPropagation()}
+                            onPointerDown={(event) => event.stopPropagation()}
+                            onChange={(event) => {
+                              event.stopPropagation();
+                              const bpm = Math.min(160, Math.max(50, Number(event.target.value) || BACKING_TRACK_DEFAULT_BPM));
+                              setBackingTempoByKey((current) => ({
+                                ...current,
+                                [progressionKey]: bpm,
+                              }));
+                            }}
+                            className="h-1.5 w-full cursor-pointer accent-sky-500"
+                            aria-label="Backing track tempo"
+                          />
+                          <span className="w-9 text-right font-mono text-[10px] text-slate-300">{backingTempo}</span>
+                        </div>
+                        <div className="mt-2">
+                          <LoopRing
+                            progress={backingProgress}
+                            label={backingStatus}
+                            subLabel={`Active: ${backingActiveRoman} (${backingActiveChord})`}
+                          />
+                        </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
+                          {chordSequence.map((chord, chordIndex) => (
+                            <span
+                              key={`${progressionKey}-backing-chord-${chordIndex}`}
+                              title={romanSequence[chordIndex] ? `${romanSequence[chordIndex]} ${chord}` : chord}
+                              className={`rounded px-3 py-0.5 text-[10px] font-semibold ${
+                                shouldHighlightBackingChord && chordIndex === backingActiveChordIndex
+                                  ? 'bg-sky-600 text-white'
+                                  : 'bg-slate-700 text-slate-300'
+                              }`}
+                            >
+                              {chord}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleBackingPlay(progressionKey);
+                            }}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-emerald-600 text-base text-white hover:bg-emerald-500"
+                            title="Play backing track"
+                            aria-label="Play backing track"
+                          >
+                            ▶️
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleBackingPause(progressionKey);
+                            }}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-amber-600 text-base text-white hover:bg-amber-500"
+                            title="Pause backing track"
+                            aria-label="Pause backing track"
+                          >
+                            ⏸️
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleBackingStop(progressionKey);
+                            }}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-rose-700 text-base text-white hover:bg-rose-600"
+                            title="Stop backing track"
+                            aria-label="Stop backing track"
+                          >
+                            ⏹️
+                          </button>
+                        </div>
+                      </div>
 
                       {hasSync && (
                         <div className="mt-2 rounded-md border border-slate-700 bg-slate-800 p-2 shadow-xl">

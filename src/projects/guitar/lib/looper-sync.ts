@@ -52,8 +52,16 @@ function chordTypeFromSuffix(suffix: string): ChordType | null {
   return map[normalized] ?? null;
 }
 
-export function getChordPitchClassesFromSymbol(chordSymbol: string): number[] {
-  const baseSymbol = chordSymbol.split('/')[0].trim();
+export function getChordPitchClassesFromSymbol(chordSymbol: string | null | undefined): number[] {
+  if (typeof chordSymbol !== 'string') {
+    return [];
+  }
+
+  const baseSymbol = chordSymbol.split('/')[0]?.trim();
+  if (!baseSymbol) {
+    return [];
+  }
+
   const match = baseSymbol.match(/^([A-G](?:#|b)?)(.*)$/);
   if (!match) {
     return [];

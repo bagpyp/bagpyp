@@ -52,6 +52,14 @@ describe('guitar looper sync helpers', () => {
     expect(getChordPitchClassesFromSymbol('Cm')).toEqual([0, 3, 7]);
     expect(getChordPitchClassesFromSymbol('Bb')).toEqual([10, 2, 5]);
     expect(getChordPitchClassesFromSymbol('G7')).toEqual([7, 11, 2, 5]);
+    expect(getChordPitchClassesFromSymbol('D/F#')).toEqual([2, 6, 9]);
+    expect(getChordPitchClassesFromSymbol('  Em7b5  ')).toEqual([4, 7, 10, 2]);
+  });
+
+  it('safely returns an empty list for invalid chord symbols', () => {
+    expect(getChordPitchClassesFromSymbol(undefined)).toEqual([]);
+    expect(getChordPitchClassesFromSymbol(null)).toEqual([]);
+    expect(getChordPitchClassesFromSymbol('')).toEqual([]);
   });
 
   it('detects loop duration and chord offsets from onset timing', () => {

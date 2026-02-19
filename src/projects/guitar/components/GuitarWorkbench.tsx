@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MajorTriads from './MajorTriads';
 import BoxShapes from './BoxShapes';
 import { normalizeMajorKeyName } from '../lib/box-shapes';
@@ -16,6 +16,45 @@ export default function GuitarWorkbench({
 }: GuitarWorkbenchProps) {
   const [section, setSection] = useState<GuitarWorkbenchSection>(initialSection);
   const [selectedMajorKey, setSelectedMajorKey] = useState<string>('E');
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  const releaseWakeLock = useCallback(async () => {
+    const wakeLock = wakeLockRef.current;
+    wakeLockRef.current = null;
+    if (!wakeLock) {
+      return;
+    }
+    try {
+      await wakeLock.release();
+    } catch {
+      // Ignore release failures; browser may have already released it.
+    }
+  }, []);
+
+  const requestWakeLock = useCallback(async () => {
+    if (wakeLockRef.current || typeof document === 'undefined') {
+      return;
+    }
+    if (document.visibilityState !== 'visible') {
+      return;
+    }
+
+    if (!('wakeLock' in navigator)) {
+      return;
+    }
+
+    try {
+      const wakeLock = await navigator.wakeLock.request('screen');
+      wakeLockRef.current = wakeLock;
+      wakeLock.addEventListener('release', () => {
+        if (wakeLockRef.current === wakeLock) {
+          wakeLockRef.current = null;
+        }
+      });
+    } catch {
+      // Ignore request failures (unsupported device/power saver/etc.).
+    }
+  }, []);
 
   const handleMajorKeyChange = useCallback((nextKey: string) => {
     setSelectedMajorKey(normalizeMajorKeyName(nextKey));
@@ -24,6 +63,30 @@ export default function GuitarWorkbench({
   useEffect(() => {
     setSection(initialSection);
   }, [initialSection]);
+
+  useEffect(() => {
+    void requestWakeLock();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        void requestWakeLock();
+      } else {
+        void releaseWakeLock();
+      }
+    };
+
+    const handlePageHide = () => {
+      void releaseWakeLock();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pagehide', handlePageHide);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', handlePageHide);
+      void releaseWakeLock();
+    };
+  }, [requestWakeLock, releaseWakeLock]);
 
   return (
     <div className="w-full min-h-screen bg-slate-950">

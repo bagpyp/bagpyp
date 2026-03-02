@@ -1911,6 +1911,7 @@ export default function PracticeProgressionsPanel({
                     : 'Stopped'
                 : 'Stopped';
               const shouldHighlightBackingChord = isBackingProgression && backingTransport?.status !== 'stopped';
+              const addNonScaleChordTones = !hideNonScaleChordTones;
 
               return (
                 <div
@@ -1929,6 +1930,7 @@ export default function PracticeProgressionsPanel({
                     <div className="min-w-0">
                       <p className="truncate text-xs font-semibold text-slate-100">{progression.title}</p>
                       <p className="mt-0.5 truncate font-mono text-[10px] text-slate-400">{progression.romanNumerals}</p>
+                      <p className="mt-0.5 truncate font-mono text-[10px] text-sky-300/85">{progression.chordNames}</p>
                     </div>
                     <div className="flex items-center gap-1">
                       {hasSync && (
@@ -2084,6 +2086,110 @@ export default function PracticeProgressionsPanel({
                         </div>
                       </div>
 
+                      <div className="mt-2 rounded-md border border-slate-700 bg-slate-800 p-2 shadow-xl">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-200">
+                          Loop Tone Display
+                        </p>
+                        <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setShowAllActiveChordTones((current) => !current);
+                            }}
+                            className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-sm ring-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                              showAllActiveChordTones
+                                ? 'bg-sky-500/20 text-sky-200 ring-sky-400/40'
+                                : 'bg-slate-800 text-slate-300 ring-slate-600'
+                            }`}
+                            title="Show active chord tones on loop playback"
+                            aria-label="Show active chord tones on loop playback"
+                          >
+                            🎯
+                          </button>
+                          <div className="inline-flex items-center gap-2">
+                            <span
+                              className={`w-8 text-right text-[10px] font-semibold tracking-wide ${
+                                showAllActiveChordTones ? 'text-emerald-300' : 'text-slate-400'
+                              }`}
+                            >
+                              {showAllActiveChordTones ? 'ON' : 'OFF'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setShowAllActiveChordTones((current) => !current);
+                              }}
+                              className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                                showAllActiveChordTones
+                                  ? 'border-emerald-300 bg-emerald-500'
+                                  : 'border-slate-500 bg-slate-700'
+                              }`}
+                              title="Show active chord tones on loop playback"
+                              aria-label="Show active chord tones on loop playback"
+                              role="switch"
+                              aria-checked={showAllActiveChordTones}
+                            >
+                              <span
+                                className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                                  showAllActiveChordTones ? 'translate-x-5' : 'translate-x-0.5'
+                                }`}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setHideNonScaleChordTones((current) => !current);
+                            }}
+                            className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-sm ring-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                              addNonScaleChordTones
+                                ? 'bg-sky-500/20 text-sky-200 ring-sky-400/40'
+                                : 'bg-slate-800 text-slate-300 ring-slate-600'
+                            }`}
+                            title="Add non-scale chord tones on loop playback"
+                            aria-label="Add non-scale chord tones on loop playback"
+                          >
+                            👻
+                          </button>
+                          <div className="inline-flex items-center gap-2">
+                            <span
+                              className={`w-9 text-right text-[10px] font-semibold tracking-wide ${
+                                addNonScaleChordTones ? 'text-sky-300' : 'text-slate-400'
+                              }`}
+                            >
+                              {addNonScaleChordTones ? 'ADD' : 'OFF'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setHideNonScaleChordTones((current) => !current);
+                              }}
+                              className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
+                                addNonScaleChordTones
+                                  ? 'border-sky-300 bg-sky-500'
+                                  : 'border-slate-500 bg-slate-700'
+                              }`}
+                              title="Add non-scale chord tones on loop playback"
+                              aria-label="Add non-scale chord tones on loop playback"
+                              role="switch"
+                              aria-checked={addNonScaleChordTones}
+                            >
+                              <span
+                                className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                                  addNonScaleChordTones ? 'translate-x-5' : 'translate-x-0.5'
+                                }`}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
                       {hasSync && (
                         <div className="mt-2 rounded-md border border-slate-700 bg-slate-800 p-2 shadow-xl">
                           <div className="mb-2 flex items-center justify-between rounded-md bg-slate-900 px-2 py-1 ring-1 ring-slate-700">
@@ -2117,104 +2223,6 @@ export default function PracticeProgressionsPanel({
                               }
                               subLabel={`Active: ${activeRoman} (${activeChord})`}
                             />
-                          </div>
-                          <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5">
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setShowAllActiveChordTones((current) => !current);
-                              }}
-                              className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-sm ring-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
-                                showAllActiveChordTones
-                                  ? 'bg-sky-500/20 text-sky-200 ring-sky-400/40'
-                                  : 'bg-slate-800 text-slate-300 ring-slate-600'
-                              }`}
-                              title="Show active chord tones"
-                              aria-label="Show active chord tones"
-                            >
-                              🎯
-                            </button>
-                            <div className="inline-flex items-center gap-2">
-                              <span
-                                className={`w-7 text-right text-[10px] font-semibold tracking-wide ${
-                                  showAllActiveChordTones ? 'text-emerald-300' : 'text-slate-400'
-                                }`}
-                              >
-                                {showAllActiveChordTones ? 'ON' : 'OFF'}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  setShowAllActiveChordTones((current) => !current);
-                                }}
-                                className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
-                                  showAllActiveChordTones
-                                    ? 'border-emerald-300 bg-emerald-500'
-                                    : 'border-slate-500 bg-slate-700'
-                                }`}
-                                title="Show active chord tones"
-                                aria-label="Show active chord tones"
-                                role="switch"
-                                aria-checked={showAllActiveChordTones}
-                              >
-                                <span
-                                  className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                                    showAllActiveChordTones ? 'translate-x-5' : 'translate-x-0.5'
-                                  }`}
-                                />
-                              </button>
-                            </div>
-                          </div>
-                          <div className="mt-2 flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5">
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setHideNonScaleChordTones((current) => !current);
-                              }}
-                              className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-sm ring-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
-                                hideNonScaleChordTones
-                                  ? 'bg-rose-500/20 text-rose-200 ring-rose-400/40'
-                                  : 'bg-slate-800 text-slate-300 ring-slate-600'
-                              }`}
-                              title="Hide non-scale chord tones on loop playback"
-                              aria-label="Hide non-scale chord tones on loop playback"
-                            >
-                              👻
-                            </button>
-                            <div className="inline-flex items-center gap-2">
-                              <span
-                                className={`w-9 text-right text-[10px] font-semibold tracking-wide ${
-                                  hideNonScaleChordTones ? 'text-rose-300' : 'text-slate-400'
-                                }`}
-                              >
-                                {hideNonScaleChordTones ? 'HIDE' : 'SHOW'}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  setHideNonScaleChordTones((current) => !current);
-                                }}
-                                className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 ${
-                                  hideNonScaleChordTones
-                                    ? 'border-rose-300 bg-rose-500'
-                                    : 'border-slate-500 bg-slate-700'
-                                }`}
-                                title="Hide non-scale chord tones on loop playback"
-                                aria-label="Hide non-scale chord tones on loop playback"
-                                role="switch"
-                                aria-checked={hideNonScaleChordTones}
-                              >
-                                <span
-                                  className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                                    hideNonScaleChordTones ? 'translate-x-5' : 'translate-x-0.5'
-                                  }`}
-                                />
-                              </button>
-                            </div>
                           </div>
                           <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
                             {chordSequence.map((chord, chordIndex) => (

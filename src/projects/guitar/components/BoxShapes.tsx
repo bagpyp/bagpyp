@@ -79,7 +79,7 @@ export default function BoxShapes({
   const [tonalCenterMode, setTonalCenterMode] = useState<TonalCenterMode>('minor');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showRectangleAndStack, setShowRectangleAndStack] = useState(true);
-  const [showIntervalLabels, setShowIntervalLabels] = useState(true);
+  const [showIntervalLabels, setShowIntervalLabels] = useState(false);
   const [showRootHalos, setShowRootHalos] = useState(true);
   const [showPracticePanel, setShowPracticePanel] = useState(true);
   const [showCheatSheetPanel, setShowCheatSheetPanel] = useState(true);
@@ -137,8 +137,14 @@ export default function BoxShapes({
   }, [effectiveScaleKey, activeScaleFamily]);
 
   const displayPatterns = useMemo(
-    () => getDisplayOrderedBoxPatterns(shapePatterns, activeScaleFamily),
-    [shapePatterns, activeScaleFamily]
+    () => getDisplayOrderedBoxPatterns(
+      shapePatterns,
+      activeScaleFamily,
+      activeScaleFamily === 'pentatonic' && tonalCenterMode === 'major' && majorCenterKey === 'F'
+        ? 2
+        : undefined
+    ),
+    [shapePatterns, activeScaleFamily, tonalCenterMode, majorCenterKey]
   );
 
   const getPitchClassAtPosition = (stringIndex: number, fret: number) =>

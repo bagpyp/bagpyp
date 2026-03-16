@@ -689,7 +689,8 @@ export function getBoxScaleFamilyOptions(): BoxScaleFamilyOption[] {
 
 export function getDisplayOrderedBoxPatterns(
   patterns: BoxShapePattern[],
-  family: BoxScaleFamily
+  family: BoxScaleFamily,
+  preferredStartShapeNumber?: number
 ): BoxShapePattern[] {
   if (patterns.length === 0) {
     return patterns;
@@ -697,7 +698,7 @@ export function getDisplayOrderedBoxPatterns(
 
   if (family !== 'major') {
     const byShapeNumber = new Map(patterns.map((pattern) => [pattern.shapeNumber, pattern]));
-    const candidateOrders = patterns.length >= 6
+    const defaultCandidateOrders = patterns.length >= 6
       ? [
           [4, 5, 6, 1, 2, 3],
           [5, 6, 1, 2, 3, 4],
@@ -707,6 +708,20 @@ export function getDisplayOrderedBoxPatterns(
           [4, 5, 1, 2, 3],
           [5, 1, 2, 3, 4],
         ];
+    const preferredCandidateOrder = preferredStartShapeNumber
+      ? Array.from({ length: patterns.length }, (_, index) =>
+          ((preferredStartShapeNumber - 1 + index) % patterns.length) + 1
+        )
+      : null;
+    const candidateOrders = preferredCandidateOrder
+      ? [
+          preferredCandidateOrder,
+          ...defaultCandidateOrders.filter((order) =>
+            order.length !== preferredCandidateOrder.length
+            || order.some((shapeNumber, index) => shapeNumber !== preferredCandidateOrder[index])
+          ),
+        ]
+      : defaultCandidateOrders;
 
     const transposeDownOctave = (shape: BoxShapePattern): BoxShapePattern | null => {
       const allFrets = shape.pattern.flat();

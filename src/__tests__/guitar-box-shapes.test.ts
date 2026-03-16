@@ -396,4 +396,16 @@ describe('box shape generation', () => {
       });
     });
   });
+
+  it('can start F major pentatonic from position 2 so low E shows F at fret 1', () => {
+    const ordered = getDisplayOrderedBoxPatterns(
+      generateBoxShapePatterns('D', 'pentatonic'),
+      'pentatonic',
+      2
+    );
+
+    expect(ordered[0]?.shapeNumber).toBe(2);
+    expect(ordered[0]?.pattern[0]).toEqual([1, 3]);
+    expect(ordered.map((box) => box.shapeNumber)).toEqual([2, 3, 4, 5, 1]);
+  });
 });

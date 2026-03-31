@@ -12,7 +12,7 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 	return (
 		<Layout
 			title="Experience | Bagpyp"
-			description="Professional experience in AI engineering, software development, and enterprise systems. Work with Mayo Clinic, eBay, Ford, Trust & Will, and more."
+			description="Professional experience in agentic AI engineering, evaluation, reliability, and enterprise systems. Work with Mayo Clinic, eBay, Ford, Trust & Will, and more."
 		>
 			{/* Header */}
 			<section className="bg-gradient-to-br from-slate-900 to-primary-900 text-white py-20">
@@ -20,9 +20,9 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 					<div className="max-w-4xl">
 						<h1 className="mb-6">Professional Experience</h1>
 						<p className="text-xl text-slate-300 leading-relaxed">
-							Enterprise AI engineering, software development, and system
-							architecture for Fortune 500 companies, healthcare institutions,
-							and innovative startups.
+							Enterprise AI engineering, evaluation, and system architecture for
+							Fortune 500 companies, healthcare institutions, and high-stakes
+							production workflows.
 						</p>
 					</div>
 				</div>
@@ -37,8 +37,8 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 							AI Engineering at Artium AI
 						</h2>
 						<p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-3xl">
-							As one of only eight official OpenAI partners worldwide, delivered
-							production AI systems for leading organizations.
+							Delivered production AI systems with a focus on agentic
+							architecture, reliability, and operational trust.
 						</p>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -134,7 +134,7 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 											/>
 										</svg>
 										<span className="text-slate-700 dark:text-slate-300">
-											LLM System Design & AI Engineering
+											Agentic AI Architecture, Evals & Reliability
 										</span>
 									</li>
 									<li className="flex items-start">

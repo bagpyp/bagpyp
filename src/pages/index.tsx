@@ -23,7 +23,7 @@ const HomePage = ({ featuredItems }: Props) => {
 	return (
 		<Layout
 			title="Bagpyp | AI Engineering Consultancy"
-			description="Expert AI engineering and software consultancy. Creator of Continuous Alignment Testing (CAT). Specializing in production LLM systems, multi-agent architectures, and enterprise AI deployment."
+			description="Agentic AI engineering consultancy focused on evaluation, reliability, and production deployment. Creator of Continuous Alignment Testing (CAT) for high-stakes AI systems."
 		>
 			{/* Critical: Hillcrest Ski & Sports must be visible on homepage for client software check */}
 			{/* Hero Section */}
@@ -35,8 +35,8 @@ const HomePage = ({ featuredItems }: Props) => {
 					<div className="text-center mb-16">
 						<h2 className="mb-4">Featured Work</h2>
 						<p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-							Production AI systems for Fortune 500 companies, interactive
-							projects, and technical thought leadership.
+							Public writing, production case studies, and systems work centered
+							on agentic architecture, evaluation, and reliability engineering.
 						</p>
 					</div>
 
@@ -71,10 +71,10 @@ const HomePage = ({ featuredItems }: Props) => {
 					<div className="max-w-4xl mx-auto text-center">
 						<h2 className="mb-6">Continuous Alignment Testing (CAT)</h2>
 						<p className="text-xl text-primary-100 mb-8 leading-relaxed">
-							A framework for validating and monitoring agentic AI architectures
-							in production. Using reliability tensors, validators, and
-							statistical rigor to ensure AI systems behave consistently and
-							predictably at scale.
+							A framework for evaluating and monitoring agentic AI systems in
+							production. CAT combines validators, reliability tensors, and
+							statistical rigor to make high-leverage AI systems more observable,
+							auditable, and dependable at scale.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
 							<Link href="/blog/reliability-testing-llm-systems">

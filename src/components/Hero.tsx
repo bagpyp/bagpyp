@@ -14,27 +14,28 @@ const Hero = () => {
 					<div className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-8 animate-fade-in">
 						<span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
 						<span className="text-sm font-medium">
-							Directly associated with one of 8 official OpenAI partners worldwide
+							Agentic AI, evals, and reliability engineering for high-stakes domains
 						</span>
 					</div>
 
 					{/* Main headline */}
 					<h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-slide-up">
-						Expert in AI Engineering for
+						Agentic AI Systems
 						<span className="block bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 bg-clip-text text-transparent">
-							Production Systems
+							That Hold Up in Production
 						</span>
 					</h1>
 
 					{/* Subheadline */}
 					<p className="text-xl md:text-2xl text-slate-300 mb-8 leading-relaxed animate-slide-up animation-delay-100">
-						Creator of{" "}
+						I design, evaluate, and ship AI systems for healthcare, legal, and
+						enterprise workflows. Creator of{" "}
 						<span className="font-semibold text-white">
 							Continuous Alignment Testing (CAT)
 						</span>
-						, bringing statistical rigor and mathematical foundations to
-						enterprise AI systems at Mayo Clinic, eBay, Trust & Will, and Arrive
-						Health.
+						, bringing mathematical rigor, evaluation discipline, and production
+						reliability to systems deployed at Mayo Clinic, eBay, Trust & Will,
+						and Arrive Health.
 					</p>
 
 					{/* Value props */}
@@ -54,9 +55,9 @@ const Hero = () => {
 								/>
 							</svg>
 							<div>
-								<h3 className="font-semibold mb-1">Multi-Agent Systems</h3>
+								<h3 className="font-semibold mb-1">Agentic Architectures</h3>
 								<p className="text-sm text-slate-400">
-									Production-grade RAG & agentic architectures
+									Production-grade RAG, orchestration, and workflow design
 								</p>
 							</div>
 						</div>
@@ -76,9 +77,9 @@ const Hero = () => {
 								/>
 							</svg>
 							<div>
-								<h3 className="font-semibold mb-1">Statistical Rigor</h3>
+								<h3 className="font-semibold mb-1">Evals & Reliability</h3>
 								<p className="text-sm text-slate-400">
-									MS Applied Mathematics background
+									Validators, monitoring, regression thinking, and CAT
 								</p>
 							</div>
 						</div>
@@ -98,9 +99,9 @@ const Hero = () => {
 								/>
 							</svg>
 							<div>
-								<h3 className="font-semibold mb-1">Enterprise Scale</h3>
+								<h3 className="font-semibold mb-1">High-Stakes Domains</h3>
 								<p className="text-sm text-slate-400">
-									Fortune 500 deployment experience
+									Healthcare, legal, commerce, identity, and payments
 								</p>
 							</div>
 						</div>

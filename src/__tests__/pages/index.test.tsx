@@ -38,7 +38,7 @@ describe("Home Page", () => {
 	it("renders the hero section", () => {
 		render(<HomePage featuredItems={mockFeaturedItems} />);
 		expect(
-			screen.getByText("AI Engineering for", { exact: false })
+			screen.getByRole("heading", { level: 1, name: /Agentic AI Systems/i })
 		).toBeInTheDocument();
 	});
 
@@ -58,10 +58,12 @@ describe("Home Page", () => {
 		expect(screen.getByText("View All Experience")).toBeInTheDocument();
 	});
 
-	it("shows OpenAI partner badge", () => {
+	it("shows reliability positioning badge", () => {
 		render(<HomePage featuredItems={mockFeaturedItems} />);
 		expect(
-			screen.getByText(/one of 8 official OpenAI partners worldwide/i)
+			screen.getByText(
+				/Agentic AI, evals, and reliability engineering for high-stakes domains/i
+			)
 		).toBeInTheDocument();
 	});
 

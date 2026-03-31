@@ -24,30 +24,20 @@ export type FeaturedItemConfig = {
  * - { type: "blog", id: "reliability-testing" }
  */
 export const featuredItems: FeaturedItemConfig[] = [
-	// AI Case Studies - Top 3
+	// Public AI thinking first: artifacts > claims
+	{ type: "blog", id: "reliability-testing" },
+	{ type: "blog", id: "agentic-architecture" },
+	{ type: "blog", id: "agentic-algebra" },
+
+	// High-stakes production case studies
 	{ type: "case-study", id: "ebay" },
 	{ type: "case-study", id: "mayo-clinic" },
 	{ type: "case-study", id: "trust-and-will" },
+	{ type: "case-study", id: "arrive-health" },
 
-	// Ford, TriMet, and Hillcrest Experience
-	{ type: "case-study", id: "ford" },
-	{ type: "case-study", id: "trimet" },
-	{ type: "case-study", id: "hillcrest" },
-
-	// Thought Leadership
-	{ type: "blog", id: "reliability-testing" },
-
-	// More Blog Content
-	{ type: "blog", id: "agentic-architecture" },
-	{ type: "blog", id: "agentic-algebra" },
-	{ type: "blog", id: "mathematics-of-trust" },
-
-	// More Projects
+	// Long-arc systems thinking + ongoing client proof
 	{ type: "project", id: "graph-dynamics" },
-
-	// Music Theory Projects
-	{ type: "project", id: "tonnetz-lattice" },
-	{ type: "project", id: "guitar-triads" },
+	{ type: "case-study", id: "hillcrest" },
 ];
 
 /**

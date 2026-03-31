@@ -10,14 +10,16 @@ jest.mock("next/link", () => ({
 describe("Hero", () => {
 	it("renders main headline", () => {
 		render(<Hero />);
-		expect(screen.getByText("AI Engineering for", { exact: false })).toBeInTheDocument();
-		expect(screen.getByText("Production Systems")).toBeInTheDocument();
+		expect(screen.getByText(/Agentic AI Systems/i)).toBeInTheDocument();
+		expect(screen.getByText(/That Hold Up in Production/i)).toBeInTheDocument();
 	});
 
-	it("shows OpenAI partner badge", () => {
+	it("shows reliability positioning badge", () => {
 		render(<Hero />);
 		expect(
-			screen.getByText(/one of 8 official OpenAI partners worldwide/i)
+			screen.getByText(
+				/Agentic AI, evals, and reliability engineering for high-stakes domains/i
+			)
 		).toBeInTheDocument();
 	});
 
@@ -43,8 +45,8 @@ describe("Hero", () => {
 
 	it("shows value props", () => {
 		render(<Hero />);
-		expect(screen.getByText("Multi-Agent Systems")).toBeInTheDocument();
-		expect(screen.getByText("Statistical Rigor")).toBeInTheDocument();
-		expect(screen.getByText("Enterprise Scale")).toBeInTheDocument();
+		expect(screen.getByText("Agentic Architectures")).toBeInTheDocument();
+		expect(screen.getByText("Evals & Reliability")).toBeInTheDocument();
+		expect(screen.getByText("High-Stakes Domains")).toBeInTheDocument();
 	});
 });

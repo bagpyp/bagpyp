@@ -50,12 +50,12 @@ describe("HomePage - Content Pinning Tests", () => {
 	});
 
 	describe("Hero Section", () => {
-		it("shows main headline about AI Engineering", () => {
+		it("shows main headline about agentic AI systems", () => {
 			render(<HomePage featuredItems={mockFeaturedItems} />);
 			expect(
-				screen.getByText("AI Engineering for", { exact: false })
+				screen.getByRole("heading", { level: 1, name: /Agentic AI Systems/i })
 			).toBeInTheDocument();
-			expect(screen.getByText("Production Systems")).toBeInTheDocument();
+			expect(screen.getByText(/That Hold Up in Production/i)).toBeInTheDocument();
 		});
 
 		it("mentions CAT framework in hero", () => {
@@ -66,10 +66,12 @@ describe("HomePage - Content Pinning Tests", () => {
 			expect(catElements.length).toBeGreaterThanOrEqual(1);
 		});
 
-		it("shows OpenAI partner badge", () => {
+		it("shows reliability positioning badge", () => {
 			render(<HomePage featuredItems={mockFeaturedItems} />);
 			expect(
-				screen.getByText(/one of 8 official OpenAI partners worldwide/i)
+				screen.getByText(
+					/Agentic AI, evals, and reliability engineering for high-stakes domains/i
+				)
 			).toBeInTheDocument();
 		});
 
@@ -81,10 +83,9 @@ describe("HomePage - Content Pinning Tests", () => {
 
 		it("shows value propositions", () => {
 			render(<HomePage featuredItems={mockFeaturedItems} />);
-			const multiAgentElements = screen.getAllByText(/Multi-Agent Systems/i);
-			expect(multiAgentElements.length).toBeGreaterThanOrEqual(1);
-			expect(screen.getByText("Statistical Rigor")).toBeInTheDocument();
-			expect(screen.getByText("Enterprise Scale")).toBeInTheDocument();
+			expect(screen.getByText("Agentic Architectures")).toBeInTheDocument();
+			expect(screen.getByText("Evals & Reliability")).toBeInTheDocument();
+			expect(screen.getByText("High-Stakes Domains")).toBeInTheDocument();
 		});
 
 		it("has CTA buttons", () => {
@@ -100,9 +101,13 @@ describe("HomePage - Content Pinning Tests", () => {
 			expect(screen.getByText("Featured Work")).toBeInTheDocument();
 		});
 
-		it("shows description mentioning Fortune 500 and Hillcrest", () => {
+		it("shows description tying featured work to agentic architecture and Hillcrest", () => {
 			render(<HomePage featuredItems={mockFeaturedItems} />);
-			expect(screen.getByText(/Fortune 500 companies/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					/public writing, production case studies, and systems work centered on agentic architecture, evaluation, and reliability engineering\./i
+				)
+			).toBeInTheDocument();
 			const hillcrestElements = screen.getAllByText(/Hillcrest Ski & Sports/i);
 			expect(hillcrestElements.length).toBeGreaterThanOrEqual(1);
 		});
@@ -127,7 +132,9 @@ describe("HomePage - Content Pinning Tests", () => {
 		it("describes CAT framework", () => {
 			render(<HomePage featuredItems={mockFeaturedItems} />);
 			expect(
-				screen.getByText(/reliability tensors, validators, and statistical rigor/i)
+				screen.getByText(
+					/CAT combines validators, reliability tensors, and statistical rigor to make high-leverage AI systems more observable, auditable, and dependable at scale\./i
+				)
 			).toBeInTheDocument();
 		});
 

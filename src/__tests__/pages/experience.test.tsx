@@ -39,7 +39,7 @@ describe("Experience Page", () => {
 	it("shows core competencies", () => {
 		render(<ExperiencePage {...mockProps} />);
 		expect(
-			screen.getByText("LLM System Design & AI Engineering")
+			screen.getByText("Agentic AI Architecture, Evals & Reliability")
 		).toBeInTheDocument();
 		expect(
 			screen.getByText("Continuous Alignment Testing (CAT)")

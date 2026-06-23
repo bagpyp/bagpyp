@@ -64,7 +64,10 @@ export default function TwelveKeysGrid({
   return (
     <div className="grid grid-cols-3 gap-3 w-full">
       {cells.map(cell => (
-        <div key={cell.root} className="flex justify-center w-full">
+        <div key={cell.root} className="flex flex-col items-center w-full">
+          <div className="text-center text-sm font-semibold text-slate-100 mb-1">
+            {cell.chordName}
+          </div>
           {cell.voicing ? (
             <CompactHorizontalFretboard
               voicing={cell.voicing}

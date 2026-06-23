@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import LongFretboardDiagram from './LongFretboardDiagram';
 import CircleOfFifthsSelector from './CircleOfFifthsSelector';
+import VoicingPositionSelector from './VoicingPositionSelector';
+import type { VoicingSlot } from './VoicingPositionSelector';
+import TwelveKeysGrid from './TwelveKeysGrid';
 import { generateChordData } from '../lib/chords';
 import type { ChordData } from '../lib/chords';
 import { buildChord } from '../lib/chord-types';
@@ -75,6 +78,11 @@ export default function MajorTriads({
   const [settings, setSettings] = useState<TriadSettings>(DEFAULT_TRIAD_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [viewMode, setViewMode] = useState<'by-key' | 'by-voicing'>('by-voicing');
+  const [selectedVoicingSlot, setSelectedVoicingSlot] = useState<VoicingSlot>({
+    stringGroup: 0,
+    position: 0,
+  });
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
@@ -361,12 +369,47 @@ export default function MajorTriads({
       {/* Help Modal */}
       <HelpModal />
 
+      {/* View Mode Toggle */}
+      <div className="flex items-center justify-center pt-4">
+        <div className="inline-flex rounded-lg border border-slate-700 bg-slate-800 p-1">
+          <button
+            type="button"
+            onClick={() => setViewMode('by-key')}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              viewMode === 'by-key'
+                ? 'bg-primary-600 text-white'
+                : 'text-slate-400 hover:text-slate-100'
+            }`}
+          >
+            By Key
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('by-voicing')}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              viewMode === 'by-voicing'
+                ? 'bg-primary-600 text-white'
+                : 'text-slate-400 hover:text-slate-100'
+            }`}
+          >
+            By Voicing
+          </button>
+        </div>
+      </div>
+
       {/* Chord Type Selector with Help Icon */}
       <div className="flex items-center justify-between p-4">
         <div className="flex-1" /> {/* Spacer */}
         <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
           {(() => {
             const labels = getChordTypeLabels(settings.chordLabelNotation);
+            const isByVoicing = viewMode === 'by-voicing';
+            const nonMajorDisabledClass = isByVoicing
+              ? 'opacity-40 cursor-not-allowed'
+              : '';
+            const nonMajorTitle = isByVoicing
+              ? 'Coming soon — only major triads are available in "By Voicing" mode for now'
+              : undefined;
             return (
               <>
                 <button
@@ -380,8 +423,10 @@ export default function MajorTriads({
                   {labels.major}
                 </button>
                 <button
+                  disabled={isByVoicing}
+                  title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'minor' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'minor'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -390,8 +435,10 @@ export default function MajorTriads({
                   {labels.minor}
                 </button>
                 <button
+                  disabled={isByVoicing}
+                  title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'dim' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'dim'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -400,8 +447,10 @@ export default function MajorTriads({
                   {labels.dim}
                 </button>
                 <button
+                  disabled={isByVoicing}
+                  title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'aug' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'aug'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -410,8 +459,10 @@ export default function MajorTriads({
                   {labels.aug}
                 </button>
                 <button
+                  disabled={isByVoicing}
+                  title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: '7' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === '7'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -420,8 +471,10 @@ export default function MajorTriads({
                   {labels.dominant7}
                 </button>
                 <button
+                  disabled={isByVoicing}
+                  title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'min7' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'min7'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -430,8 +483,10 @@ export default function MajorTriads({
                   {labels.minor7}
                 </button>
                 <button
+                  disabled={isByVoicing}
+                  title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'maj7' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'maj7'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -443,7 +498,13 @@ export default function MajorTriads({
             );
           })()}
         </div>
-        <div className="flex-1 flex justify-end">
+        <div className="flex-1 flex justify-end items-center gap-3">
+          {viewMode === 'by-voicing' && (
+            <VoicingPositionSelector
+              selected={selectedVoicingSlot}
+              onChange={setSelectedVoicingSlot}
+            />
+          )}
           {/* Question mark icon button */}
           <button
             onClick={() => setShowHelpModal(true)}
@@ -469,6 +530,7 @@ export default function MajorTriads({
       </div>
 
       {/* Circle of Fifths Visual Selector with Settings Icon */}
+      {viewMode === 'by-key' && (
       <div className="w-full max-w-[970px] mx-auto relative">
           <CircleOfFifthsSelector
             selectedKey={selectedKey}
@@ -628,9 +690,10 @@ export default function MajorTriads({
             </div>
           )}
       </div>
+      )}
 
-      {/* Triads display - stacked vertically */}
-      {triadsData && (
+      {/* Triads display - stacked vertically (By Key mode) */}
+      {viewMode === 'by-key' && triadsData && (
         <div className="w-full">
           <div className="flex flex-col gap-0">
             {[...triadsData.stringGroups].reverse().map((group, groupIdx) => {
@@ -657,6 +720,17 @@ export default function MajorTriads({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* By Voicing mode: 4x3 grid of 12 keys (selector is inline in the chord-type row above) */}
+      {viewMode === 'by-voicing' && (
+        <div className="w-full max-w-6xl mx-auto px-4 pb-6">
+          <TwelveKeysGrid
+            stringGroup={selectedVoicingSlot.stringGroup}
+            position={selectedVoicingSlot.position}
+            chordType="major"
+          />
         </div>
       )}
     </div>

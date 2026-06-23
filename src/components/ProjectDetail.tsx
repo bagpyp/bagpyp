@@ -13,9 +13,7 @@ const ProjectDetail = ({ project }: ProjectDetailProps) => {
 		project.slug === "guitar" || project.slug.startsWith("guitar-");
 	const isTonnetzProject = project.slug === "tonnetz-lattice";
 	const guitarInitialSection =
-		project.slug === "guitar" || project.slug === "guitar-modes-3nps"
-			? "boxes"
-			: "triads";
+		project.slug === "guitar-modes-3nps" ? "boxes" : "triads";
 
 	// Dynamically load guitar components
 	const GuitarComponent = isGuitarProject

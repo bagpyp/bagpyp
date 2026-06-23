@@ -63,7 +63,7 @@ export const MAJOR_TRIAD_POSITIONS: Record<string, any> = {
   },
   'B': {
     G0: [{ pos: 0, frets: [2, 2, 1], inv: 'second' }, { pos: 1, frets: [7, 6, 4], inv: 'root' }, { pos: 2, frets: [11, 9, 9], inv: 'first' }, { pos: 3, frets: [14, 14, 13], inv: 'second' }],
-    G1: [{ pos: 0, frets: [6, 4, 4], inv: 'first' }, { pos: 1, frets: [9, 9, 8], inv: 'second' }, { pos: 2, frets: [14, 13, 11], inv: 'root' }, { pos: 3, frets: [6, 9, 11], inv: 'first' }],  // Note: Position 3 ordering issue
+    G1: [{ pos: 0, frets: [6, 4, 4], inv: 'first' }, { pos: 1, frets: [9, 9, 8], inv: 'second' }, { pos: 2, frets: [14, 13, 11], inv: 'root' }, { pos: 3, frets: [18, 16, 16], inv: 'first' }],
     G2: [{ pos: 0, frets: [4, 4, 4], inv: 'second' }, { pos: 1, frets: [9, 8, 7], inv: 'root' }, { pos: 2, frets: [13, 11, 12], inv: 'first' }, { pos: 3, frets: [16, 16, 16], inv: 'second' }],
     G3: [{ pos: 0, frets: [4, 4, 2], inv: 'root' }, { pos: 1, frets: [8, 7, 7], inv: 'first' }, { pos: 2, frets: [11, 12, 11], inv: 'second' }, { pos: 3, frets: [16, 16, 14], inv: 'root' }],
   },

@@ -47,6 +47,23 @@ const TRIAD_PLAY_KEYS: Record<number, string[]> = {
   3: ['m', ',', '.', '/'],     // Group 3 (E-A-D)
 };
 
+// By-Voicing mode hotkeys: 4 string-group rows × 3 positions (left-to-right, top-to-bottom)
+// Position 3 has no hotkey by design (click only).
+const VOICING_POSITION_HOTKEYS: Record<string, { stringGroup: number; position: number }> = {
+  '1': { stringGroup: 0, position: 0 },
+  '2': { stringGroup: 0, position: 1 },
+  '3': { stringGroup: 0, position: 2 },
+  'q': { stringGroup: 1, position: 0 },
+  'w': { stringGroup: 1, position: 1 },
+  'e': { stringGroup: 1, position: 2 },
+  'a': { stringGroup: 2, position: 0 },
+  's': { stringGroup: 2, position: 1 },
+  'd': { stringGroup: 2, position: 2 },
+  'z': { stringGroup: 3, position: 0 },
+  'x': { stringGroup: 3, position: 1 },
+  'c': { stringGroup: 3, position: 2 },
+};
+
 const STRING_GROUP_LABELS = [
   'Strings 3-2-1 (G-B-E)',
   'Strings 4-3-2 (D-G-B)',
@@ -162,6 +179,16 @@ export default function MajorTriads({
         return;
       }
 
+      // By-Voicing mode: position hotkeys take priority over chord type / note keys
+      if (viewMode === 'by-voicing') {
+        const slot = VOICING_POSITION_HOTKEYS[e.key];
+        if (slot) {
+          e.preventDefault();
+          setSelectedVoicingSlot(slot);
+          return;
+        }
+      }
+
       // Check for chord type toggles (1-7)
       if (e.key === '1') {
         e.preventDefault();
@@ -227,7 +254,7 @@ export default function MajorTriads({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onSelectedKeyChange, settings, triadsData]);
+  }, [onSelectedKeyChange, settings, triadsData, viewMode]);
 
   // Help Modal Component
   const HelpModal = () => {

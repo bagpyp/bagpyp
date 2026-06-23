@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import CompactHorizontalFretboard from './CompactHorizontalFretboard';
+import UnionFretboard from './UnionFretboard';
 import { generateChordData } from '../lib/chords';
 import { buildChord, getChordName } from '../lib/chord-types';
 import type { ChordType } from '../lib/chord-types';
@@ -62,6 +63,7 @@ export default function TwelveKeysGrid({
   }, [noteOrder, chordType, internalGroupIdx, position]);
 
   return (
+    <div className="w-full space-y-6">
     <div className="grid grid-cols-3 gap-3 w-full">
       {cells.map(cell => (
         <div key={cell.root} className="flex flex-col items-center w-full">
@@ -81,6 +83,11 @@ export default function TwelveKeysGrid({
           )}
         </div>
       ))}
+    </div>
+    <UnionFretboard
+      voicings={cells.map(c => c.voicing)}
+      fretRange={{ start: 0, end: MAX_FRET }}
+    />
     </div>
   );
 }

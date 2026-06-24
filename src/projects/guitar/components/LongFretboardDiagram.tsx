@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import type { TriadVoicing } from '../lib/triads';
+import { computeNeighborNotes } from '../lib/triads';
 import { calculateFretYPositions, getNoteYPosition, getStringThickness, getNoteAtPosition, getOctaveAtPosition } from '../lib/fretboard-physics';
 import { getNoteColor, getNoteColorWithOctave, getAllNoteColorsInCircleOfFifths } from '../lib/note-colors';
 import { playNote, playChord, stopAllSounds, resumeAudioContext } from '../lib/sound';
@@ -314,6 +315,49 @@ export default function LongFretboardDiagram({
               })}
             </g>
           )}
+
+          {/* Neighborhood notes - grayed chord tones on the 3 unused strings */}
+          {settings.showNeighborhoods && (() => {
+            // Collect neighbors across all positions, deduped by string+fret
+            const seen = new Set<string>();
+            const neighborDots: { globalStringIdx: number; fret: number; noteName: string }[] = [];
+            voicings.forEach(voicing => {
+              computeNeighborNotes(voicing, triadPcs, selectedKey).forEach(n => {
+                const k = `${n.globalStringIdx}-${n.fret}`;
+                if (seen.has(k)) return;
+                seen.add(k);
+                neighborDots.push(n);
+              });
+            });
+
+            const radius = DIMENSIONS.noteRadius * DIMENSIONS.defaultTriadNoteMultiplier;
+
+            return (
+              <g pointerEvents="none">
+                {neighborDots.map(n => {
+                  const x = getNoteXPosition(n.fret);
+                  const y = allStringYPositions[n.globalStringIdx];
+                  const noteColor = getNoteColor(n.noteName);
+                  return (
+                    <g key={`neighbor-${n.globalStringIdx}-${n.fret}`} opacity={0.3}>
+                      <circle cx={x} cy={y} r={radius} fill={noteColor.bg} />
+                      <text
+                        x={x}
+                        y={y}
+                        fill={noteColor.text}
+                        fontSize={DIMENSIONS.noteFontSize}
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        {n.noteName}
+                      </text>
+                    </g>
+                  );
+                })}
+              </g>
+            );
+          })()}
 
           {/* Layer 1: Position hover detection areas (background) */}
           <g>

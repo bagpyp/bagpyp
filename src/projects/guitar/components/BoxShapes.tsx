@@ -41,6 +41,8 @@ import {
 interface BoxShapesProps {
   selectedMajorKey: string;
   onSelectedMajorKeyChange: (key: string) => void;
+  scaleFamily?: BoxScaleFamily;
+  onScaleFamilyChange?: (scaleFamily: BoxScaleFamily) => void;
 }
 
 const STANDARD_TUNING_PCS = [4, 9, 2, 7, 11, 4]; // E A D G B E
@@ -74,11 +76,18 @@ function getChordRootPitchClassFromSymbol(symbol: string | null): number | null 
 export default function BoxShapes({
   selectedMajorKey,
   onSelectedMajorKeyChange,
+  scaleFamily: controlledScaleFamily,
+  onScaleFamilyChange,
 }: BoxShapesProps) {
-  const [scaleFamily, setScaleFamily] = useState<BoxScaleFamily>('pentatonic');
+  const [internalScaleFamily, setInternalScaleFamily] = useState<BoxScaleFamily>(controlledScaleFamily ?? 'pentatonic');
+  const scaleFamily = controlledScaleFamily ?? internalScaleFamily;
+  const setScaleFamily = (next: BoxScaleFamily) => {
+    setInternalScaleFamily(next);
+    onScaleFamilyChange?.(next);
+  };
   const [tonalCenterMode, setTonalCenterMode] = useState<TonalCenterMode>('minor');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [showRectangleAndStack, setShowRectangleAndStack] = useState(true);
+  const [showRectangleAndStack, setShowRectangleAndStack] = useState(false);
   const [showIntervalLabels, setShowIntervalLabels] = useState(false);
   const [showRootHalos, setShowRootHalos] = useState(true);
   const [showPracticePanel, setShowPracticePanel] = useState(true);
@@ -720,7 +729,7 @@ export default function BoxShapes({
                   <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                     Single-Note Targets
                   </p>
-                  <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10">
+                  <div className="flex w-full items-stretch justify-center gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10">
                     {orderedSingleTargetToneConfigs.map((config) => {
                       const pitchClass = getTargetTonePitchClass(config, majorCenterKey, minorCenterKey);
                       const isVisible = visibleTargetToneByPitchClass.has(pitchClass);
@@ -748,7 +757,7 @@ export default function BoxShapes({
                             }));
                           }}
                           className={[
-                            'inline-flex min-w-[190px] flex-col items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                            'inline-flex min-w-0 flex-1 flex-col items-center gap-1 rounded-md px-2 py-2 text-sm font-medium transition-colors',
                             isVisible
                               ? 'bg-primary-600 text-white'
                               : 'bg-slate-900/60 text-slate-300 hover:bg-slate-700/70 hover:text-slate-100',

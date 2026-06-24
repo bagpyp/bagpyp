@@ -2,21 +2,63 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MajorTriads from './MajorTriads';
+import type { TriadsViewMode } from './MajorTriads';
 import BoxShapes from './BoxShapes';
 import { normalizeMajorKeyName } from '../lib/box-shapes';
+import type { BoxScaleFamily } from '../lib/box-shapes';
 
 export type GuitarWorkbenchSection = 'triads' | 'boxes';
 
+export interface GuitarWorkbenchLocation {
+  section: GuitarWorkbenchSection;
+  triadsView: TriadsViewMode;
+  boxFamily: BoxScaleFamily;
+}
+
 interface GuitarWorkbenchProps {
   initialSection?: GuitarWorkbenchSection;
+  triadsView?: TriadsViewMode;
+  boxFamily?: BoxScaleFamily;
+  // Called whenever the section or a sub-view changes, so a host (e.g. a routed
+  // page) can mirror the current location into the URL.
+  onNavigate?: (location: GuitarWorkbenchLocation) => void;
 }
 
 export default function GuitarWorkbench({
   initialSection = 'boxes',
+  triadsView: triadsViewProp,
+  boxFamily: boxFamilyProp,
+  onNavigate,
 }: GuitarWorkbenchProps) {
   const [section, setSection] = useState<GuitarWorkbenchSection>(initialSection);
+  const [triadsView, setTriadsView] = useState<TriadsViewMode>(triadsViewProp ?? 'by-voicing');
+  const [boxFamily, setBoxFamily] = useState<BoxScaleFamily>(boxFamilyProp ?? 'pentatonic');
   const [selectedMajorKey, setSelectedMajorKey] = useState<string>('E');
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  // Keep local state in sync when the host drives navigation (e.g. browser back).
+  useEffect(() => {
+    if (triadsViewProp) setTriadsView(triadsViewProp);
+  }, [triadsViewProp]);
+  useEffect(() => {
+    if (boxFamilyProp) setBoxFamily(boxFamilyProp);
+  }, [boxFamilyProp]);
+
+  const navigate = useCallback(
+    (next: Partial<GuitarWorkbenchLocation>) => {
+      const target: GuitarWorkbenchLocation = {
+        section: next.section ?? section,
+        triadsView: next.triadsView ?? triadsView,
+        boxFamily: next.boxFamily ?? boxFamily,
+      };
+      // Update local state immediately so the UI stays responsive.
+      if (next.section) setSection(next.section);
+      if (next.triadsView) setTriadsView(next.triadsView);
+      if (next.boxFamily) setBoxFamily(next.boxFamily);
+      onNavigate?.(target);
+    },
+    [section, triadsView, boxFamily, onNavigate]
+  );
 
   const releaseWakeLock = useCallback(async () => {
     const wakeLock = wakeLockRef.current;
@@ -94,7 +136,7 @@ export default function GuitarWorkbench({
         <div className="max-w-[1760px] mx-auto px-4 py-3 xl:px-6">
           <div className="flex items-center justify-center gap-2 flex-wrap">
             <button
-              onClick={() => setSection('triads')}
+              onClick={() => navigate({ section: 'triads' })}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
                 section === 'triads'
                   ? 'bg-blue-600 text-white border-blue-500'
@@ -104,7 +146,7 @@ export default function GuitarWorkbench({
               Triads
             </button>
             <button
-              onClick={() => setSection('boxes')}
+              onClick={() => navigate({ section: 'boxes' })}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
                 section === 'boxes'
                   ? 'bg-blue-600 text-white border-blue-500'
@@ -122,12 +164,16 @@ export default function GuitarWorkbench({
           <MajorTriads
             selectedKey={selectedMajorKey}
             onSelectedKeyChange={handleMajorKeyChange}
+            viewMode={triadsView}
+            onViewModeChange={(next) => navigate({ triadsView: next })}
           />
         </div>
       ) : (
         <BoxShapes
           selectedMajorKey={selectedMajorKey}
           onSelectedMajorKeyChange={handleMajorKeyChange}
+          scaleFamily={boxFamily}
+          onScaleFamilyChange={(next) => navigate({ boxFamily: next })}
         />
       )}
     </div>

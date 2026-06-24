@@ -11,6 +11,7 @@ export interface TriadSettings {
   showChromaticNotes: boolean;      // Show all chromatic notes (30% opacity background)
   showOctaveColors: boolean;        // Use brightness/saturation to show octave differences
   showRootHalos: boolean;           // Show golden halos around root notes
+  showNeighborhoods: boolean;       // Fill the 3 unused strings with grayed chord tones
 
   // Sound options
   enableHoverSound: boolean;        // Play sound when hovering over notes
@@ -30,6 +31,7 @@ export const DEFAULT_TRIAD_SETTINGS: TriadSettings = {
   showChromaticNotes: false,
   showOctaveColors: false,
   showRootHalos: true,
+  showNeighborhoods: false,
   enableHoverSound: false,
   inversionNotation: 'symbols',
   chordLabelNotation: 'standard',

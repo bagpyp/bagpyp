@@ -35,9 +35,13 @@ const ProjectPage = ({ project, errors }: Props) => {
 export default ProjectPage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	const paths = projectsData.map((project) => ({
-		params: { slug: project.slug }
-	}));
+	// "guitar" is served by the dedicated nested pages under /projects/guitar/*,
+	// so it must not also be generated here (would conflict with that index page).
+	const paths = projectsData
+		.filter((project) => project.slug !== "guitar")
+		.map((project) => ({
+			params: { slug: project.slug }
+		}));
 
 	return { paths, fallback: false };
 };

@@ -6,7 +6,9 @@ import {
   findAllTriadVoicings,
   select4Positions,
   generateTriadsData,
+  computeNeighborNotes,
 } from '../lib/triads';
+import type { TriadVoicing } from '../lib/triads';
 import { buildFretboard } from '../lib';
 
 describe('Major Triads Logic', () => {
@@ -56,6 +58,67 @@ describe('Major Triads Logic', () => {
 
       const notes2 = [0, 7, 4]; // C, G, E - root position (lowest is C)
       expect(identifyInversion(notes2, triadPcs)).toBe('root');
+    });
+  });
+
+  describe('computeNeighborNotes', () => {
+    const cPcs = [0, 4, 7]; // C, E, G
+
+    it('fills the open-C top-string shape with the "same fret-box" neighbors', () => {
+      // C major, G3 pos0 = [0,1,0] on strings 3-4-5 (G-B-e)
+      const data = generateTriadsData('C');
+      const voicing = data.stringGroups[3].voicings.find(v => v.position === 0)!;
+      expect(voicing.frets).toEqual([0, 1, 0]);
+
+      const neighbors = computeNeighborNotes(voicing, cPcs, 'C');
+
+      const byString = new Map(neighbors.map(n => [n.globalStringIdx, n.fret]));
+      expect(byString.get(0)).toBe(3); // low E -> fret 3 (G), NOT open E
+      expect(byString.get(1)).toBe(3); // A -> fret 3 (C)
+      expect(byString.get(2)).toBe(2); // D -> fret 2 (E)
+    });
+
+    it('returns one neighbor per unused string (3 total) on chord tones', () => {
+      const data = generateTriadsData('C');
+      const voicing = data.stringGroups[3].voicings.find(v => v.position === 0)!;
+      const neighbors = computeNeighborNotes(voicing, cPcs, 'C');
+
+      expect(neighbors).toHaveLength(3);
+      const used = new Set(voicing.strings);
+      neighbors.forEach(n => {
+        expect(used.has(n.globalStringIdx)).toBe(false);
+        expect(cPcs).toContain(n.pc);
+      });
+    });
+
+    it('excludes open strings when the shape has a fretted note', () => {
+      // A mid-neck C voicing: G3 pos2 = [9,8,8]
+      const data = generateTriadsData('C');
+      const voicing = data.stringGroups[3].voicings.find(v => v.position === 2)!;
+      const neighbors = computeNeighborNotes(voicing, cPcs, 'C');
+
+      expect(neighbors).toHaveLength(3);
+      neighbors.forEach(n => {
+        expect(n.fret).toBeGreaterThan(0);
+        expect(cPcs).toContain(n.pc);
+      });
+    });
+
+    it('allows open strings when the voicing itself is entirely open', () => {
+      // Synthetic all-open voicing on the low three strings (E-A-D).
+      const openVoicing: TriadVoicing = {
+        position: 0,
+        strings: [0, 1, 2],
+        frets: [0, 0, 0],
+        notes: [4, 9, 2],
+        noteNames: ['E', 'A', 'D'],
+        inversion: 'unknown',
+        avgFret: 0,
+      };
+      // E minor (E, G, B): the open G string (idx 3) is a chord tone.
+      const neighbors = computeNeighborNotes(openVoicing, [4, 7, 11], 'G');
+      const gString = neighbors.find(n => n.globalStringIdx === 3);
+      expect(gString?.fret).toBe(0); // open G string is a chord tone, allowed when shape is all-open
     });
   });
 

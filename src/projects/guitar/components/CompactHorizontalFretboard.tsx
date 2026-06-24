@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import type { TriadVoicing } from '../lib/triads';
+import type { TriadVoicing, NeighborNote } from '../lib/triads';
 import { getNoteColor } from '../lib/note-colors';
 import {
   calculateFretYPositions,
@@ -14,6 +14,7 @@ interface CompactHorizontalFretboardProps {
   voicing: TriadVoicing;
   triadPcs: [number, number, number];
   fretRange: { start: number; end: number };
+  neighbors?: NeighborNote[];
 }
 
 const STRING_SPACING = 11;
@@ -35,6 +36,7 @@ export default function CompactHorizontalFretboard({
   voicing,
   triadPcs,
   fretRange,
+  neighbors = [],
 }: CompactHorizontalFretboardProps) {
   const startFret = fretRange.start;
   const endFret = fretRange.end;
@@ -162,6 +164,28 @@ export default function CompactHorizontalFretboard({
             stroke={color}
             strokeWidth={thickness}
           />
+        );
+      })}
+
+      {neighbors.map(n => {
+        const cy = stringY(n.globalStringIdx);
+        const cx = notePositionX(n.fret);
+        const neighborColor = getNoteColor(n.noteName);
+        return (
+          <g key={`neighbor-${n.globalStringIdx}-${n.fret}`} opacity={0.3}>
+            <circle cx={cx} cy={cy} r={NOTE_RADIUS} fill={neighborColor.bg} />
+            <text
+              x={cx}
+              y={cy + 2.3}
+              fill={neighborColor.text}
+              fontSize={6.5}
+              fontWeight="bold"
+              textAnchor="middle"
+              fontFamily="ui-sans-serif, system-ui, sans-serif"
+            >
+              {n.noteName}
+            </text>
+          </g>
         );
       })}
 

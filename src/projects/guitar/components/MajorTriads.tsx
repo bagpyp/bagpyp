@@ -83,19 +83,30 @@ const INTERVAL_LABELS_BY_SEMITONES: Record<number, string> = {
   11: '7',
 };
 
+export type TriadsViewMode = 'by-key' | 'by-voicing';
+
 interface MajorTriadsProps {
   selectedKey: string;
   onSelectedKeyChange: (key: string) => void;
+  viewMode?: TriadsViewMode;
+  onViewModeChange?: (viewMode: TriadsViewMode) => void;
 }
 
 export default function MajorTriads({
   selectedKey,
   onSelectedKeyChange,
+  viewMode: controlledViewMode,
+  onViewModeChange,
 }: MajorTriadsProps) {
   const [settings, setSettings] = useState<TriadSettings>(DEFAULT_TRIAD_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
-  const [viewMode, setViewMode] = useState<'by-key' | 'by-voicing'>('by-voicing');
+  const [internalViewMode, setInternalViewMode] = useState<TriadsViewMode>(controlledViewMode ?? 'by-voicing');
+  const viewMode = controlledViewMode ?? internalViewMode;
+  const setViewMode = (next: TriadsViewMode) => {
+    setInternalViewMode(next);
+    onViewModeChange?.(next);
+  };
   const [selectedVoicingSlot, setSelectedVoicingSlot] = useState<VoicingSlot>({
     stringGroup: 0,
     position: 0,
@@ -655,6 +666,33 @@ export default function MajorTriads({
                     </span>
                   </div>
 
+                  {/* Show Neighborhoods */}
+                  <div
+                    onClick={() => setSettings({ ...settings, showNeighborhoods: !settings.showNeighborhoods })}
+                    className="flex items-center gap-3 cursor-pointer py-1"
+                  >
+                    <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
+                      <div
+                        className="absolute inset-0 rounded-full transition-colors"
+                        style={{ backgroundColor: settings.showNeighborhoods ? '#34C759' : '#E5E7EB' }}
+                      />
+                      <div
+                        className="absolute bg-white rounded-full shadow-sm pointer-events-none"
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          left: '2px',
+                          top: '2px',
+                          transform: settings.showNeighborhoods ? 'translateX(16px)' : 'translateX(0)',
+                          transition: 'transform 0.2s ease'
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-700 dark:text-slate-300 select-none">
+                      Neighborhoods
+                    </span>
+                  </div>
+
                   {/* Enable Hover Sound */}
                   <div
                     onClick={() => setSettings({ ...settings, enableHoverSound: !settings.enableHoverSound })}
@@ -757,6 +795,7 @@ export default function MajorTriads({
             stringGroup={selectedVoicingSlot.stringGroup}
             position={selectedVoicingSlot.position}
             chordType="major"
+            showNeighborhoods={settings.showNeighborhoods}
           />
         </div>
       )}

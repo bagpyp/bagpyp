@@ -24,6 +24,11 @@ const nextConfig = {
 				source: "/projects/guitar-major-triads",
 				destination: "/projects/guitar",
 				permanent: true
+			},
+			{
+				source: "/projects/guitar",
+				destination: "/projects/guitar/boxes",
+				permanent: true
 			}
 		];
 	}

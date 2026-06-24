@@ -7,6 +7,7 @@ import { generateChordData } from '../lib/chords';
 import { buildChord, getChordName } from '../lib/chord-types';
 import type { ChordType } from '../lib/chord-types';
 import { getCircleOfFifthsOrder } from '../lib/circle-of-fifths';
+import { computeNeighborNotes } from '../lib/triads';
 import type { NoteName } from '../lib/types';
 
 interface TwelveKeysGridProps {
@@ -14,6 +15,7 @@ interface TwelveKeysGridProps {
   position: number;
   chordType?: ChordType;
   noteOrder?: NoteName[];
+  showNeighborhoods?: boolean;
 }
 
 const DEFAULT_NOTE_ORDER = getCircleOfFifthsOrder('F', 'cw');
@@ -24,6 +26,7 @@ export default function TwelveKeysGrid({
   position,
   chordType = 'major',
   noteOrder = DEFAULT_NOTE_ORDER,
+  showNeighborhoods = false,
 }: TwelveKeysGridProps) {
   const internalGroupIdx = 3 - stringGroup;
 
@@ -43,11 +46,18 @@ export default function TwelveKeysGrid({
         group?.voicings[position] ??
         null;
       const chordName = getChordName(root, chordType);
+      const neighbors =
+        showNeighborhoods && voicing
+          ? computeNeighborNotes(voicing, chordPcs, root)
+          : [];
 
-      return { root, chordName, triadPcs, voicing };
+      return { root, chordName, triadPcs, voicing, neighbors };
     });
 
-    const allFrets = built.flatMap(cell => cell.voicing?.frets ?? []);
+    const allFrets = built.flatMap(cell => [
+      ...(cell.voicing?.frets ?? []),
+      ...cell.neighbors.map(n => n.fret),
+    ]);
     let start: number;
     let end: number;
     if (allFrets.length === 0) {
@@ -60,7 +70,7 @@ export default function TwelveKeysGrid({
     }
 
     return { cells: built, fretRange: { start, end } };
-  }, [noteOrder, chordType, internalGroupIdx, position]);
+  }, [noteOrder, chordType, internalGroupIdx, position, showNeighborhoods]);
 
   return (
     <div className="w-full space-y-6">
@@ -75,6 +85,7 @@ export default function TwelveKeysGrid({
               voicing={cell.voicing}
               triadPcs={cell.triadPcs}
               fretRange={fretRange}
+              neighbors={cell.neighbors}
             />
           ) : (
             <div className="text-xs text-slate-400 py-6 text-center bg-slate-800 rounded w-full">

@@ -18,6 +18,13 @@ export interface TriadVoicing {
   avgFret: number;
 }
 
+export interface NeighborNote {
+  globalStringIdx: number; // 0 = low E … 5 = high e
+  fret: number;
+  pc: number;
+  noteName: string;
+}
+
 export interface StringGroupTriads {
   strings: number[]; // [low_string_idx, mid_string_idx, high_string_idx]
   stringNames: string[]; // ["E", "A", "D"]
@@ -59,6 +66,70 @@ export function identifyInversion(
   if (bassNote === third) return 'first';
   if (bassNote === fifth) return 'second';
   return 'unknown';
+}
+
+/**
+ * Compute the "neighborhood" notes for a voicing: for each of the 3 strings NOT
+ * used by the voicing, find the chord tone nearest the voicing's fret box and
+ * return it as a grayed-out neighbor. Open strings are only allowed when the
+ * voicing itself is entirely open, so a fretted shape stays in its own box
+ * (e.g. open-C top-3-string shape fills low E with fret 3 / G, not open E).
+ *
+ * @param voicing The voicing whose neighborhood we want
+ * @param chordPcs The full pitch-class set of the displayed chord
+ * @param key Optional key for note name display (sharps vs flats)
+ * @param maxFret Maximum fret number (default 18)
+ * @returns Up to 3 neighbor notes, one per unused string
+ */
+export function computeNeighborNotes(
+  voicing: TriadVoicing,
+  chordPcs: number[],
+  key?: string,
+  maxFret: number = 18
+): NeighborNote[] {
+  const fretboard = buildFretboard();
+  const chordSet = new Set(chordPcs);
+  const usedStrings = new Set(voicing.strings);
+
+  const fretted = voicing.frets.filter(f => f > 0);
+  const boxMin = fretted.length > 0 ? Math.min(...fretted) : 0;
+  const boxMax = Math.max(...voicing.frets);
+  const allowOpen = fretted.length === 0;
+
+  const distanceToBox = (fret: number): number =>
+    fret < boxMin ? boxMin - fret : fret > boxMax ? fret - boxMax : 0;
+
+  const neighbors: NeighborNote[] = [];
+
+  for (let stringIdx = 0; stringIdx < 6; stringIdx++) {
+    if (usedStrings.has(stringIdx)) continue;
+
+    let best: { fret: number; pc: number } | null = null;
+    let bestDist = Infinity;
+
+    for (let fret = allowOpen ? 0 : 1; fret <= maxFret; fret++) {
+      const pc = fretboard[stringIdx][fret];
+      if (!chordSet.has(pc)) continue;
+
+      const dist = distanceToBox(fret);
+      // Lower fret wins ties (loop ascends, so only replace on strictly smaller).
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = { fret, pc };
+      }
+    }
+
+    if (best) {
+      neighbors.push({
+        globalStringIdx: stringIdx,
+        fret: best.fret,
+        pc: best.pc,
+        noteName: pcToDisplayName(best.pc, key),
+      });
+    }
+  }
+
+  return neighbors;
 }
 
 /**

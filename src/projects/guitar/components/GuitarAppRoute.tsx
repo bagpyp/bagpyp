@@ -25,6 +25,9 @@ const BASE_PATH = '/projects/guitar';
  *   boxes  -> /projects/guitar/boxes/pentatonic | .../major
  */
 export function hrefForLocation(loc: GuitarWorkbenchLocation): string {
+  if (loc.section === 'notes') {
+    return `${BASE_PATH}/notes`;
+  }
   if (loc.section === 'triads') {
     return `${BASE_PATH}/triads/${loc.triadsView === 'by-key' ? 'bykey' : 'byvoicing'}`;
   }

@@ -4,10 +4,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MajorTriads from './MajorTriads';
 import type { TriadsViewMode } from './MajorTriads';
 import BoxShapes from './BoxShapes';
+import NotesExplorer from './NotesExplorer';
 import { normalizeMajorKeyName } from '../lib/box-shapes';
 import type { BoxScaleFamily } from '../lib/box-shapes';
 
-export type GuitarWorkbenchSection = 'triads' | 'boxes';
+export type GuitarWorkbenchSection = 'triads' | 'boxes' | 'notes';
 
 export interface GuitarWorkbenchLocation {
   section: GuitarWorkbenchSection;
@@ -155,11 +156,21 @@ export default function GuitarWorkbench({
             >
               Box Shapes
             </button>
+            <button
+              onClick={() => navigate({ section: 'notes' })}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
+                section === 'notes'
+                  ? 'bg-blue-600 text-white border-blue-500'
+                  : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+              }`}
+            >
+              Notes
+            </button>
           </div>
         </div>
       </div>
 
-      {section === 'triads' ? (
+      {section === 'triads' && (
         <div className="bg-slate-900 min-h-screen">
           <MajorTriads
             selectedKey={selectedMajorKey}
@@ -168,7 +179,9 @@ export default function GuitarWorkbench({
             onViewModeChange={(next) => navigate({ triadsView: next })}
           />
         </div>
-      ) : (
+      )}
+
+      {section === 'boxes' && (
         <BoxShapes
           selectedMajorKey={selectedMajorKey}
           onSelectedMajorKeyChange={handleMajorKeyChange}
@@ -176,6 +189,8 @@ export default function GuitarWorkbench({
           onScaleFamilyChange={(next) => navigate({ boxFamily: next })}
         />
       )}
+
+      {section === 'notes' && <NotesExplorer />}
     </div>
   );
 }

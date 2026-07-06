@@ -1,0 +1,155 @@
+'use client';
+
+import React, { useEffect, useMemo, useState } from 'react';
+import CircleOfFifthsSelector from './CircleOfFifthsSelector';
+import NoteMapFretboard from './NoteMapFretboard';
+import { nameToPc, pcToDisplayName } from '../lib/core';
+import { getNoteAtPosition, getOctaveAtPosition } from '../lib/fretboard-physics';
+
+const NUM_FRETS = 22;
+
+// Plain key -> natural note
+const NATURAL_MAP: Record<string, string> = {
+  c: 'C', d: 'D', e: 'E', f: 'F', g: 'G', a: 'A', b: 'B',
+};
+
+// Shift + key -> sharp (E#=F, B#=C)
+const SHARP_MAP: Record<string, string> = {
+  c: 'C#', d: 'D#', f: 'F#', g: 'G#', a: 'A#', e: 'F', b: 'C',
+};
+
+// Ctrl + key -> flat
+const FLAT_MAP: Record<string, string> = {
+  d: 'Db', e: 'Eb', g: 'Gb', a: 'Ab', b: 'Bb',
+};
+
+/**
+ * Notes explorer: pick a note, see one neck with every occurrence across the
+ * fretboard (colored by octave brightness), then one neck per octave the note
+ * sounds in (highest octave first) — that octave at full opacity, the other
+ * octaves dimmed.
+ */
+export default function NotesExplorer() {
+  const [note, setNote] = useState('F');
+  const [showAll, setShowAll] = useState(true);
+
+  const pitchClass = nameToPc(note);
+  const displayName = pcToDisplayName(pitchClass, note);
+
+  // Keyboard note selection (matches the other views: shift = sharp, ctrl = flat).
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) {
+        return;
+      }
+      if (e.altKey || e.metaKey) {
+        return;
+      }
+      const letter = e.key.toLowerCase();
+      if (e.ctrlKey) {
+        const flat = FLAT_MAP[letter];
+        if (flat) {
+          e.preventDefault();
+          setNote(flat);
+        }
+        return;
+      }
+      if (e.shiftKey) {
+        const sharp = SHARP_MAP[letter];
+        if (sharp) {
+          setNote(sharp);
+        }
+        return;
+      }
+      const natural = NATURAL_MAP[letter];
+      if (natural) {
+        setNote(natural);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Distinct octaves in which this pitch class occurs, highest first.
+  const octaves = useMemo(() => {
+    const found = new Set<number>();
+    for (let stringIdx = 0; stringIdx < 6; stringIdx++) {
+      for (let fret = 0; fret <= NUM_FRETS; fret++) {
+        if (getNoteAtPosition(stringIdx, fret).pitchClass === pitchClass) {
+          found.add(getOctaveAtPosition(stringIdx, fret));
+        }
+      }
+    }
+    return [...found].sort((a, b) => b - a);
+  }, [pitchClass]);
+
+  return (
+    <div className="w-full min-h-screen bg-slate-900 pb-10">
+      <div className="mx-auto w-full max-w-[970px] px-4 pt-4">
+        <CircleOfFifthsSelector selectedKey={note} onSelectKey={setNote} />
+      </div>
+
+      <h2 className="text-center text-2xl font-bold text-white mt-2 mb-4">
+        {displayName} — All Positions
+      </h2>
+
+      {/* Legend / controls */}
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-2 px-4 text-[11px] text-slate-400">
+        <span>Hover a note (tap on mobile) to see its octave shapes:</span>
+        <span>NE = 2 strings up</span>
+        <span>NW = 3 strings up</span>
+        <span className="text-slate-500">dashed = B-string wrinkle</span>
+        <button
+          onClick={() => setShowAll((v) => !v)}
+          className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
+            showAll
+              ? 'bg-blue-600 text-white border-blue-500'
+              : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+          }`}
+        >
+          {showAll ? 'Hide all lines' : 'Show all lines'}
+        </button>
+      </div>
+
+      {/* Mobile: a single vertical whole-neck board */}
+      <div className="md:hidden px-2">
+        <p className="text-center text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+          Whole neck
+        </p>
+        <NoteMapFretboard
+          pitchClass={pitchClass}
+          selectedKey={note}
+          activeOctave={null}
+          enableOctaveShapes
+          showAllShapes={showAll}
+          orientation="vertical"
+        />
+      </div>
+
+      {/* Desktop: horizontal whole-neck + one board per octave */}
+      <div className="hidden md:block px-2">
+        <p className="text-center text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+          Whole neck
+        </p>
+        <NoteMapFretboard
+          pitchClass={pitchClass}
+          selectedKey={note}
+          activeOctave={null}
+          enableOctaveShapes
+          showAllShapes={showAll}
+        />
+
+        {/* One neck per octave (highest first) */}
+        {octaves.map((octave) => (
+          <div key={octave} className="mt-4">
+            <p className="text-center text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+              {`${displayName}${octave}`}
+            </p>
+            <NoteMapFretboard pitchClass={pitchClass} selectedKey={note} activeOctave={octave} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

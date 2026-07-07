@@ -97,6 +97,22 @@ export const blogPostsData: BlogPost[] = [
 		readingTime: 20,
 		featured: true,
 		image: "reliability-tensor.webp"
+	},
+	{
+		id: "octave-lattice",
+		slug: "octave-lattice",
+		title: "The Octave Lattice",
+		subtitle: "Why a Guitar Fretboard Is Secretly the Integer Grid",
+		excerpt:
+			"Every octave shape on a guitar is a vector, and the two compact ones form a unimodular basis—so the tangled octave map on the fretboard is, up to a change of basis, the integer grid ℤ². A graph-theoretic tour of the neck, and why the B-string wrinkle is invisible to the math.",
+		content: "/blog/octave-lattice.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-07-07",
+		tags: ["Graph Theory", "Music Theory", "Lattices", "Guitar", "Visualization"],
+		category: "Music & Mathematics",
+		readingTime: 9,
+		featured: true,
+		image: "octave-lattice.svg"
 	}
 ];
 

@@ -94,12 +94,8 @@ export default function NotesExplorer() {
         {displayName} — All Positions
       </h2>
 
-      {/* Legend / controls */}
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-2 px-4 text-[11px] text-slate-400">
-        <span>Hover a note (tap on mobile) to see its octave shapes:</span>
-        <span>NE = 2 strings up</span>
-        <span>NW = 3 strings up</span>
-        <span className="text-slate-500">dashed = B-string wrinkle</span>
+      {/* Controls */}
+      <div className="flex justify-center mb-2 px-4">
         <button
           onClick={() => setShowAll((v) => !v)}
           className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${

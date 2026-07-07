@@ -17,9 +17,11 @@ const STRING_MIDI = [40, 45, 50, 55, 59, 64];
 // The two compact octave shapes we illustrate (octave UP).
 //   NE = 2 strings up, +2 frets (clean) / +3 (across the G–B wrinkle)
 //   NW = 3 strings up, −3 frets (clean) / −2 (across the G–B wrinkle)
+// dashOnClean: NW is dashed when it does NOT cross the G–B wrinkle (its common
+// crossing case is solid); NE is dashed when it does cross the wrinkle.
 const OCTAVE_SHAPES = [
-  { key: 'NE', stringSpan: 2, cleanOffset: 2 },
-  { key: 'NW', stringSpan: 3, cleanOffset: -3 },
+  { key: 'NE', stringSpan: 2, cleanOffset: 2, dashOnClean: false },
+  { key: 'NW', stringSpan: 3, cleanOffset: -3, dashOnClean: true },
 ] as const;
 
 const NUM_FRETS = 22;
@@ -110,13 +112,14 @@ export default function NoteMapFretboard({
       const targetFret = STRING_MIDI[pos.stringIdx] + pos.fret + 12 - STRING_MIDI[targetString];
       if (targetFret < 0 || targetFret > NUM_FRETS) return [];
       const delta = targetFret - pos.fret;
+      const isWrinkle = delta !== shape.cleanOffset;
       return [
         {
           key: shape.key,
           stringIdx: targetString,
           fret: targetFret,
           delta,
-          wrinkle: delta !== shape.cleanOffset,
+          dashed: shape.dashOnClean ? !isWrinkle : isWrinkle,
         },
       ];
     });
@@ -295,7 +298,7 @@ export default function NoteMapFretboard({
                   stroke={colorFor(pos)}
                   strokeWidth={3}
                   strokeLinecap="round"
-                  strokeDasharray={p.wrinkle ? '7 5' : undefined}
+                  strokeDasharray={p.dashed ? '7 5' : undefined}
                   opacity={0.95}
                   pointerEvents="none"
                 />
@@ -318,22 +321,9 @@ export default function NoteMapFretboard({
                   stroke={colorFor(anchor)}
                   strokeWidth={3}
                   strokeLinecap="round"
-                  strokeDasharray={p.wrinkle ? '7 5' : undefined}
+                  strokeDasharray={p.dashed ? '7 5' : undefined}
                   opacity={0.95}
                 />
-                <text
-                  x={(a.x + b.x) / 2}
-                  y={(a.y + b.y) / 2 - 6}
-                  fill={colorFor(anchor)}
-                  fontSize={DIMENSIONS.noteFontSize}
-                  fontWeight="bold"
-                  textAnchor="middle"
-                  stroke="#0f172a"
-                  strokeWidth={0.6}
-                  paintOrder="stroke"
-                >
-                  {`${p.key} ${p.delta > 0 ? '+' : ''}${p.delta}`}
-                </text>
               </g>
             );
           })}

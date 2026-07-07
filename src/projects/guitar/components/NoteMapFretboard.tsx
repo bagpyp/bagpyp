@@ -24,7 +24,6 @@ const OCTAVE_SHAPES = [
   { key: 'NW', stringSpan: 3, cleanOffset: -3, dashOnClean: true },
 ] as const;
 
-const NUM_FRETS = 22;
 const MARKER_FRETS = [3, 5, 7, 9, 15, 17, 19, 21];
 
 // Vertical-layout geometry (viewBox units).
@@ -56,6 +55,8 @@ interface NoteMapFretboardProps {
   showAllShapes?: boolean;
   /** 'horizontal' (desktop) or 'vertical' (mobile). */
   orientation?: 'horizontal' | 'vertical';
+  /** Number of frets on the neck (default 22). */
+  numFrets?: number;
 }
 
 /**
@@ -71,6 +72,7 @@ export default function NoteMapFretboard({
   enableOctaveShapes = false,
   showAllShapes = false,
   orientation = 'horizontal',
+  numFrets = 22,
 }: NoteMapFretboardProps) {
   const vertical = orientation === 'vertical';
   const startFret = DIMENSIONS.startFret;
@@ -78,7 +80,7 @@ export default function NoteMapFretboard({
   // Fret axis (exponential spacing) runs along the neck's long dimension.
   const longAxisLen = vertical ? V_FRET_LEN : DIMENSIONS.svgWidth;
   const openOffset = vertical ? V_OPEN_OFFSET : DIMENSIONS.openStringOffset;
-  const fretRel = calculateFretYPositions(startFret, NUM_FRETS, longAxisLen);
+  const fretRel = calculateFretYPositions(startFret, numFrets, longAxisLen);
   const fretAxis = fretRel.map((v) => v + openOffset);
 
   // String axis.
@@ -110,7 +112,7 @@ export default function NoteMapFretboard({
       const targetString = pos.stringIdx + shape.stringSpan;
       if (targetString > 5) return [];
       const targetFret = STRING_MIDI[pos.stringIdx] + pos.fret + 12 - STRING_MIDI[targetString];
-      if (targetFret < 0 || targetFret > NUM_FRETS) return [];
+      if (targetFret < 0 || targetFret > numFrets) return [];
       const delta = targetFret - pos.fret;
       const isWrinkle = delta !== shape.cleanOffset;
       return [
@@ -134,7 +136,7 @@ export default function NoteMapFretboard({
 
   const notePositions: Pos[] = [];
   for (let s = 0; s < 6; s++) {
-    for (let f = 0; f <= NUM_FRETS; f++) {
+    for (let f = 0; f <= numFrets; f++) {
       if (getNoteAtPosition(s, f, selectedKey).pitchClass === pitchClass) {
         notePositions.push({ stringIdx: s, fret: f });
       }
@@ -144,7 +146,7 @@ export default function NoteMapFretboard({
   const isSamePos = (a: Pos | null, b: Pos) =>
     a != null && a.stringIdx === b.stringIdx && a.fret === b.fret;
 
-  const fretEnd = fretAxis[NUM_FRETS];
+  const fretEnd = fretAxis[numFrets];
   const stringMid = (stringAxisV[0] + stringAxisV[5]) / 2;
 
   return (
@@ -187,7 +189,7 @@ export default function NoteMapFretboard({
         )}
 
         {/* Fret lines + inlays */}
-        {Array.from({ length: NUM_FRETS + 1 }).map((_, fretIdx) => {
+        {Array.from({ length: numFrets + 1 }).map((_, fretIdx) => {
           const p = fretAxis[fretIdx];
           const isNut = fretIdx === 0;
           const strokeW = isNut ? DIMENSIONS.nutWidth : DIMENSIONS.fretLineWidth;
@@ -207,7 +209,7 @@ export default function NoteMapFretboard({
                   strokeWidth={strokeW}
                 />
               )}
-              {MARKER_FRETS.includes(fretIdx) && fretIdx < NUM_FRETS && (
+              {MARKER_FRETS.includes(fretIdx) && fretIdx < numFrets && (
                 <circle
                   cx={vertical ? stringMid : inlayPos}
                   cy={vertical ? inlayPos : height / 2}

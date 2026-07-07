@@ -6,7 +6,6 @@ import NoteMapFretboard from './NoteMapFretboard';
 import { nameToPc, pcToDisplayName } from '../lib/core';
 import { getNoteAtPosition, getOctaveAtPosition } from '../lib/fretboard-physics';
 
-const NUM_FRETS = 22;
 
 // Plain key -> natural note
 const NATURAL_MAP: Record<string, string> = {
@@ -32,6 +31,7 @@ const FLAT_MAP: Record<string, string> = {
 export default function NotesExplorer() {
   const [note, setNote] = useState('F');
   const [showAll, setShowAll] = useState(true);
+  const [fretCount, setFretCount] = useState(22);
 
   const pitchClass = nameToPc(note);
   const displayName = pcToDisplayName(pitchClass, note);
@@ -75,14 +75,14 @@ export default function NotesExplorer() {
   const octaves = useMemo(() => {
     const found = new Set<number>();
     for (let stringIdx = 0; stringIdx < 6; stringIdx++) {
-      for (let fret = 0; fret <= NUM_FRETS; fret++) {
+      for (let fret = 0; fret <= fretCount; fret++) {
         if (getNoteAtPosition(stringIdx, fret).pitchClass === pitchClass) {
           found.add(getOctaveAtPosition(stringIdx, fret));
         }
       }
     }
     return [...found].sort((a, b) => b - a);
-  }, [pitchClass]);
+  }, [pitchClass, fretCount]);
 
   return (
     <div className="w-full min-h-screen bg-slate-900 pb-10">
@@ -95,7 +95,7 @@ export default function NotesExplorer() {
       </h2>
 
       {/* Controls */}
-      <div className="flex justify-center mb-2 px-4">
+      <div className="flex items-center justify-center gap-3 mb-2 px-4">
         <button
           onClick={() => setShowAll((v) => !v)}
           className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
@@ -106,6 +106,21 @@ export default function NotesExplorer() {
         >
           {showAll ? 'Hide all lines' : 'Show all lines'}
         </button>
+        <div className="inline-flex rounded border border-slate-700 overflow-hidden">
+          {[22, 20].map((n) => (
+            <button
+              key={n}
+              onClick={() => setFretCount(n)}
+              className={`px-2 py-1 text-[11px] font-semibold transition-colors ${
+                fretCount === n
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-800 text-slate-200 hover:bg-slate-700'
+              }`}
+            >
+              {n} frets
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Mobile: a single vertical whole-neck board */}
@@ -120,6 +135,7 @@ export default function NotesExplorer() {
           enableOctaveShapes
           showAllShapes={showAll}
           orientation="vertical"
+          numFrets={fretCount}
         />
       </div>
 
@@ -134,6 +150,7 @@ export default function NotesExplorer() {
           activeOctave={null}
           enableOctaveShapes
           showAllShapes={showAll}
+          numFrets={fretCount}
         />
 
         {/* One neck per octave (highest first) */}
@@ -142,7 +159,12 @@ export default function NotesExplorer() {
             <p className="text-center text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
               {`${displayName}${octave}`}
             </p>
-            <NoteMapFretboard pitchClass={pitchClass} selectedKey={note} activeOctave={octave} />
+            <NoteMapFretboard
+              pitchClass={pitchClass}
+              selectedKey={note}
+              activeOctave={octave}
+              numFrets={fretCount}
+            />
           </div>
         ))}
       </div>

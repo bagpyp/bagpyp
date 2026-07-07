@@ -26,9 +26,9 @@ const NUM_FRETS = 22;
 const MARKER_FRETS = [3, 5, 7, 9, 15, 17, 19, 21];
 
 // Vertical-layout geometry (viewBox units).
-const V_FRET_LEN = 1000;
-const V_STRING_GAP = 44;
-const V_SIDE_MARGIN = 34;
+const V_FRET_LEN = 900;
+const V_STRING_GAP = 56;
+const V_SIDE_MARGIN = 40;
 const V_OPEN_OFFSET = 35;
 
 interface Pos {
@@ -151,7 +151,11 @@ export default function NoteMapFretboard({
         className="rounded-lg"
         viewBox={`0 0 ${viewBoxW} ${viewBoxH}`}
         preserveAspectRatio="xMidYMid meet"
-        style={vertical ? { maxWidth: 420, margin: '0 auto', display: 'block' } : undefined}
+        style={
+          vertical
+            ? { height: '80vh', width: 'auto', maxWidth: '100%', display: 'block', margin: '0 auto' }
+            : undefined
+        }
       >
         {/* Fretboard wood */}
         {vertical ? (

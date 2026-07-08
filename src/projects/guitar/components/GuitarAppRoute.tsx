@@ -29,7 +29,8 @@ export function hrefForLocation(loc: GuitarWorkbenchLocation): string {
     return `${BASE_PATH}/notes`;
   }
   if (loc.section === 'triads') {
-    return `${BASE_PATH}/triads/${loc.triadsView === 'by-key' ? 'bykey' : 'byvoicing'}`;
+    const slug = loc.triadsView === 'by-key' ? 'bykey' : loc.triadsView === 'all' ? 'all' : 'byvoicing';
+    return `${BASE_PATH}/triads/${slug}`;
   }
   return `${BASE_PATH}/boxes/${loc.boxFamily === 'major' ? 'major' : 'pentatonic'}`;
 }

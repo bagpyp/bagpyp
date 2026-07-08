@@ -6,6 +6,7 @@ import CircleOfFifthsSelector from './CircleOfFifthsSelector';
 import VoicingPositionSelector from './VoicingPositionSelector';
 import type { VoicingSlot } from './VoicingPositionSelector';
 import TwelveKeysGrid from './TwelveKeysGrid';
+import AllTriadsFretboard from './AllTriadsFretboard';
 import { generateChordData } from '../lib/chords';
 import type { ChordData } from '../lib/chords';
 import { buildChord } from '../lib/chord-types';
@@ -83,7 +84,7 @@ const INTERVAL_LABELS_BY_SEMITONES: Record<number, string> = {
   11: '7',
 };
 
-export type TriadsViewMode = 'by-key' | 'by-voicing';
+export type TriadsViewMode = 'by-key' | 'by-voicing' | 'all';
 
 interface MajorTriadsProps {
   selectedKey: string;
@@ -111,6 +112,8 @@ export default function MajorTriads({
     stringGroup: 0,
     position: 0,
   });
+  const [showRootLattice, setShowRootLattice] = useState(false);
+  const [dimNonRoots, setDimNonRoots] = useState(true);
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
@@ -432,8 +435,47 @@ export default function MajorTriads({
           >
             By Voicing
           </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('all')}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              viewMode === 'all'
+                ? 'bg-primary-600 text-white'
+                : 'text-slate-400 hover:text-slate-100'
+            }`}
+          >
+            All
+          </button>
         </div>
       </div>
+
+      {/* All-view controls */}
+      {viewMode === 'all' && (
+        <div className="flex items-center justify-center gap-3 pt-3">
+          <button
+            type="button"
+            onClick={() => setShowRootLattice((v) => !v)}
+            className={`px-3 py-1.5 text-xs font-semibold rounded border transition-colors ${
+              showRootLattice
+                ? 'bg-blue-600 text-white border-blue-500'
+                : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+            }`}
+          >
+            Root lattice
+          </button>
+          <button
+            type="button"
+            onClick={() => setDimNonRoots((v) => !v)}
+            className={`px-3 py-1.5 text-xs font-semibold rounded border transition-colors ${
+              dimNonRoots
+                ? 'bg-blue-600 text-white border-blue-500'
+                : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+            }`}
+          >
+            Dim 3rd &amp; 5th
+          </button>
+        </div>
+      )}
 
       {/* Chord Type Selector with Help Icon */}
       <div className="flex items-center justify-between p-4">
@@ -785,6 +827,24 @@ export default function MajorTriads({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* All mode: every voicing on one neck, with optional root lattice */}
+      {viewMode === 'all' && triadsData && (
+        <div className="w-full">
+          <AllTriadsFretboard
+            voicings={triadsData.stringGroups.flatMap((g) => g.voicings)}
+            triadPcs={[
+              displayedChordPitchClasses[0],
+              displayedChordPitchClasses[1],
+              displayedChordPitchClasses[2],
+            ]}
+            settings={settings}
+            selectedKey={selectedKey}
+            showRootLattice={showRootLattice}
+            dimNonRoots={dimNonRoots}
+          />
         </div>
       )}
 

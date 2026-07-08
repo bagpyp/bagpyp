@@ -22,6 +22,58 @@ const OCTAVE_SHAPES = [
   { stringSpan: 3, cleanOffset: -3, dashOnClean: true },
 ] as const;
 
+interface Pt {
+  x: number;
+  y: number;
+}
+
+// Convex hull of the note disks (Minkowski sum of the center-triangle with a
+// disc of radius r): straight edges offset outward by r, joined by true r-radius
+// arcs around each note center — so the boundary wraps each note's full radius.
+function circlesHullPath(centers: Pt[], r: number): string {
+  const n = centers.length;
+  if (n < 1) return '';
+  if (n === 1) {
+    const c = centers[0];
+    return `M ${(c.x - r).toFixed(1)} ${c.y.toFixed(1)} A ${r} ${r} 0 1 0 ${(c.x + r).toFixed(1)} ${c.y.toFixed(1)} A ${r} ${r} 0 1 0 ${(c.x - r).toFixed(1)} ${c.y.toFixed(1)} Z`;
+  }
+  const cx = centers.reduce((a, p) => a + p.x, 0) / n;
+  const cy = centers.reduce((a, p) => a + p.y, 0) / n;
+  const pts = [...centers].sort((a, b) => Math.atan2(a.y - cy, a.x - cx) - Math.atan2(b.y - cy, b.x - cx));
+  const A: Pt[] = [];
+  const B: Pt[] = [];
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    const q = pts[(i + 1) % n];
+    const ex = q.x - p.x;
+    const ey = q.y - p.y;
+    const len = Math.hypot(ex, ey) || 1;
+    let nx = ey / len;
+    let ny = -ex / len;
+    const mx = (p.x + q.x) / 2 - cx;
+    const my = (p.y + q.y) / 2 - cy;
+    if (nx * mx + ny * my < 0) {
+      nx = -nx;
+      ny = -ny;
+    }
+    A.push({ x: p.x + nx * r, y: p.y + ny * r });
+    B.push({ x: q.x + nx * r, y: q.y + ny * r });
+  }
+  let d = `M ${A[0].x.toFixed(1)} ${A[0].y.toFixed(1)}`;
+  for (let i = 0; i < n; i++) {
+    d += ` L ${B[i].x.toFixed(1)} ${B[i].y.toFixed(1)}`;
+    const V = pts[(i + 1) % n];
+    const nextA = A[(i + 1) % n];
+    const v1x = B[i].x - V.x;
+    const v1y = B[i].y - V.y;
+    const v2x = nextA.x - V.x;
+    const v2y = nextA.y - V.y;
+    const sweep = v1x * v2y - v1y * v2x > 0 ? 1 : 0;
+    d += ` A ${r} ${r} 0 0 ${sweep} ${nextA.x.toFixed(1)} ${nextA.y.toFixed(1)}`;
+  }
+  return d + ' Z';
+}
+
 interface AllTriadsFretboardProps {
   voicings: TriadVoicing[]; // all voicings, flattened across string groups
   triadPcs: [number, number, number]; // [root, third, fifth] pitch classes
@@ -29,6 +81,7 @@ interface AllTriadsFretboardProps {
   selectedKey?: string;
   showRootLattice: boolean;
   dimNonRoots: boolean;
+  showGroups: boolean;
 }
 
 interface Dot {
@@ -50,6 +103,7 @@ export default function AllTriadsFretboard({
   selectedKey,
   showRootLattice,
   dimNonRoots,
+  showGroups,
 }: AllTriadsFretboardProps) {
   const width = DIMENSIONS.svgWidth;
   const height = DIMENSIONS.svgHeight;
@@ -111,6 +165,14 @@ export default function AllTriadsFretboard({
         });
       });
   }
+
+  // Boundary that wraps each voicing's three note disks.
+  const groupPaths = showGroups
+    ? voicings.map((v) => {
+        const centers: Pt[] = v.frets.map((f, i) => ({ x: noteX(f), y: stringY[v.strings[i]] }));
+        return circlesHullPath(centers, noteRadius + 4);
+      })
+    : [];
 
   return (
     <div className="relative w-full" style={{ padding: '10px' }}>
@@ -194,6 +256,20 @@ export default function AllTriadsFretboard({
           />
         ))}
 
+        {/* Triad-group boundaries (behind everything else) */}
+        {groupPaths.map((d, i) => (
+          <path
+            key={`group-${i}`}
+            d={d}
+            fill="#e2e8f0"
+            fillOpacity={0.06}
+            stroke="#e2e8f0"
+            strokeWidth={1.25}
+            strokeOpacity={0.4}
+            pointerEvents="none"
+          />
+        ))}
+
         {/* Root lattice (under the dots) */}
         {latticeEdges.map((e, i) => (
           <line
@@ -217,7 +293,7 @@ export default function AllTriadsFretboard({
           const color = colorOf(d);
           const x = noteX(d.fret);
           const y = stringY[d.s];
-          const opacity = isRoot || !dimNonRoots ? 1 : 0.3;
+          const opacity = isRoot || !dimNonRoots ? 1 : 0.55;
           return (
             <g key={`dot-${d.s}-${d.fret}`} opacity={opacity} pointerEvents="none">
               {isRoot && settings.showRootHalos && (

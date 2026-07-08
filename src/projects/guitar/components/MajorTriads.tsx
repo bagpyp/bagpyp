@@ -114,6 +114,7 @@ export default function MajorTriads({
   });
   const [showRootLattice, setShowRootLattice] = useState(false);
   const [dimNonRoots, setDimNonRoots] = useState(true);
+  const [showGroups, setShowGroups] = useState(false);
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {
@@ -473,6 +474,17 @@ export default function MajorTriads({
             }`}
           >
             Dim 3rd &amp; 5th
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowGroups((v) => !v)}
+            className={`px-3 py-1.5 text-xs font-semibold rounded border transition-colors ${
+              showGroups
+                ? 'bg-blue-600 text-white border-blue-500'
+                : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+            }`}
+          >
+            Triad groups
           </button>
         </div>
       )}
@@ -844,6 +856,7 @@ export default function MajorTriads({
             selectedKey={selectedKey}
             showRootLattice={showRootLattice}
             dimNonRoots={dimNonRoots}
+            showGroups={showGroups}
           />
         </div>
       )}

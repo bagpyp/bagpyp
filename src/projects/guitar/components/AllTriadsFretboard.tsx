@@ -22,6 +22,11 @@ const OCTAVE_SHAPES = [
   { stringSpan: 3, cleanOffset: -3, dashOnClean: true },
 ] as const;
 
+// Boundary color per string group (lowest string index 0-3), so adjacent
+// string groups read as distinct. Validated categorical set (CVD-safe on the
+// dark fretboard): blue / aqua / violet / magenta.
+const STRING_GROUP_COLORS = ['#3987e5', '#199e70', '#9085e9', '#d55181'];
+
 interface Pt {
   x: number;
   y: number;
@@ -173,7 +178,10 @@ export default function AllTriadsFretboard({
   const groupPaths = showGroups
     ? voicings.map((v) => {
         const centers: Pt[] = v.frets.map((f, i) => ({ x: noteX(f), y: stringY[v.strings[i]] }));
-        return circlesHullPath(centers, noteRadius + 11);
+        return {
+          d: circlesHullPath(centers, noteRadius + 11),
+          color: STRING_GROUP_COLORS[v.strings[0] % STRING_GROUP_COLORS.length],
+        };
       })
     : [];
 
@@ -259,16 +267,16 @@ export default function AllTriadsFretboard({
           />
         ))}
 
-        {/* Triad-group boundaries (behind everything else) */}
-        {groupPaths.map((d, i) => (
+        {/* Triad-group boundaries (behind everything else), colored by string group */}
+        {groupPaths.map((g, i) => (
           <path
             key={`group-${i}`}
-            d={d}
-            fill="#e2e8f0"
-            fillOpacity={0.06}
-            stroke="#e2e8f0"
-            strokeWidth={1.25}
-            strokeOpacity={0.4}
+            d={g.d}
+            fill={g.color}
+            fillOpacity={0.13}
+            stroke={g.color}
+            strokeWidth={1.5}
+            strokeOpacity={0.65}
             pointerEvents="none"
           />
         ))}

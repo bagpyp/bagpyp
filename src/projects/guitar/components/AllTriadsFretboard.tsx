@@ -170,7 +170,7 @@ export default function AllTriadsFretboard({
   const groupPaths = showGroups
     ? voicings.map((v) => {
         const centers: Pt[] = v.frets.map((f, i) => ({ x: noteX(f), y: stringY[v.strings[i]] }));
-        return circlesHullPath(centers, noteRadius + 4);
+        return circlesHullPath(centers, noteRadius + 11);
       })
     : [];
 

@@ -40,6 +40,25 @@ function circlesHullPath(centers: Pt[], r: number): string {
   const cx = centers.reduce((a, p) => a + p.x, 0) / n;
   const cy = centers.reduce((a, p) => a + p.y, 0) / n;
   const pts = [...centers].sort((a, b) => Math.atan2(a.y - cy, a.x - cx) - Math.atan2(b.y - cy, b.x - cx));
+  // Pick ONE consistent outward orientation from the most reliable edge (the one
+  // whose midpoint is farthest from the centroid); "away from centroid" per-edge
+  // is unstable for thin/obtuse triangles and balloons the hull.
+  let flip = false;
+  let bestDist = -1;
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    const q = pts[(i + 1) % n];
+    const mx = (p.x + q.x) / 2 - cx;
+    const my = (p.y + q.y) / 2 - cy;
+    const dist = mx * mx + my * my;
+    if (dist > bestDist) {
+      bestDist = dist;
+      const ex = q.x - p.x;
+      const ey = q.y - p.y;
+      const len = Math.hypot(ex, ey) || 1;
+      flip = (ey / len) * mx + (-ex / len) * my < 0;
+    }
+  }
   const A: Pt[] = [];
   const B: Pt[] = [];
   for (let i = 0; i < n; i++) {
@@ -48,14 +67,8 @@ function circlesHullPath(centers: Pt[], r: number): string {
     const ex = q.x - p.x;
     const ey = q.y - p.y;
     const len = Math.hypot(ex, ey) || 1;
-    let nx = ey / len;
-    let ny = -ex / len;
-    const mx = (p.x + q.x) / 2 - cx;
-    const my = (p.y + q.y) / 2 - cy;
-    if (nx * mx + ny * my < 0) {
-      nx = -nx;
-      ny = -ny;
-    }
+    const nx = (flip ? -ey : ey) / len;
+    const ny = (flip ? ex : -ex) / len;
     A.push({ x: p.x + nx * r, y: p.y + ny * r });
     B.push({ x: q.x + nx * r, y: q.y + ny * r });
   }

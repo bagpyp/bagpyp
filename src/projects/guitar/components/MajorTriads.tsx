@@ -112,9 +112,9 @@ export default function MajorTriads({
     stringGroup: 0,
     position: 0,
   });
-  const [showRootLattice, setShowRootLattice] = useState(false);
+  const [showRootLattice, setShowRootLattice] = useState(true);
   const [dimNonRoots, setDimNonRoots] = useState(true);
-  const [showGroups, setShowGroups] = useState(false);
+  const [showGroups, setShowGroups] = useState(true);
 
   // Generate triads data locally (no API needed!)
   const triadsData = useMemo(() => {

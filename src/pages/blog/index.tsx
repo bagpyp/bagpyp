@@ -12,7 +12,7 @@ const BlogPage = ({ posts }: Props) => {
 	return (
 		<Layout
 			title="Blog | Bagpyp"
-			description="Technical writing on AI engineering, reliability testing, production systems, and software architecture"
+			description="Technical writing on AI engineering, reliability, production systems, music, and mathematics"
 		>
 			{/* Header */}
 			<section className="bg-gradient-to-br from-slate-900 to-primary-900 text-white py-20">
@@ -20,8 +20,8 @@ const BlogPage = ({ posts }: Props) => {
 					<div className="max-w-4xl">
 						<h1 className="mb-6">Technical Blog</h1>
 						<p className="text-xl text-slate-300 leading-relaxed">
-							Deep dives into AI engineering, the CAT framework, mathematical
-							foundations of ML systems, and lessons from production deployments.
+							Deep dives into AI engineering, reliability, mathematical structures,
+							music, and lessons from production systems.
 						</p>
 					</div>
 				</div>

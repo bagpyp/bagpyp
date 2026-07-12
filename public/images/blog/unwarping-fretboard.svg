@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.55" stop-color="#172554"/>
+      <stop offset="1" stop-color="#3b0764"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.22" stroke="#94a3b8" stroke-width="2">
+    <line x1="0" y1="120" x2="1200" y2="120"/>
+    <line x1="0" y1="205" x2="1200" y2="205"/>
+    <line x1="0" y1="290" x2="1200" y2="290"/>
+    <line x1="0" y1="375" x2="1200" y2="375"/>
+    <line x1="0" y1="460" x2="1200" y2="460"/>
+    <line x1="0" y1="545" x2="1200" y2="545"/>
+    <line x1="145" y1="70" x2="145" y2="590"/>
+    <line x1="310" y1="70" x2="310" y2="590"/>
+    <line x1="475" y1="70" x2="475" y2="590"/>
+    <line x1="640" y1="70" x2="640" y2="590"/>
+    <line x1="805" y1="70" x2="805" y2="590"/>
+    <line x1="970" y1="70" x2="970" y2="590"/>
+  </g>
+  <line x1="0" y1="418" x2="1200" y2="418" stroke="#fb7185" stroke-width="5" stroke-dasharray="16 13" opacity="0.9"/>
+  <text x="68" y="405" fill="#fb7185" font-size="20" font-weight="800">G–B SEAM</text>
+  <g filter="url(#glow)">
+    <path d="M190 460 L355 375 L520 205 L685 205" fill="none" stroke="#fbbf24" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="190" cy="460" r="24" fill="#fb7185"/>
+    <circle cx="355" cy="375" r="24" fill="#38bdf8"/>
+    <circle cx="520" cy="205" r="24" fill="#fbbf24"/>
+    <circle cx="685" cy="205" r="24" fill="#fb7185"/>
+  </g>
+  <g fill="#fff" font-size="22" font-weight="900" text-anchor="middle">
+    <text x="190" y="468">R</text>
+    <text x="355" y="383">3</text>
+    <text x="520" y="213">5</text>
+    <text x="685" y="213">R′</text>
+  </g>
+  <g font-size="22" font-weight="800" text-anchor="middle">
+    <text x="270" y="398" fill="#fb7185">4</text>
+    <text x="438" y="278" fill="#38bdf8">3</text>
+    <text x="603" y="184" fill="#fbbf24">5</text>
+  </g>
+  <rect x="735" y="118" width="385" height="292" rx="28" fill="#0f172a" opacity="0.86" stroke="#475569" stroke-width="2"/>
+  <text x="780" y="183" fill="#f8fafc" font-size="37" font-weight="900">UNWARPING</text>
+  <text x="780" y="230" fill="#f8fafc" font-size="37" font-weight="900">THE FRETBOARD</text>
+  <text x="780" y="285" fill="#cbd5e1" font-size="22">triads • interval vectors</text>
+  <text x="780" y="321" fill="#cbd5e1" font-size="22">the one-fret seam</text>
+  <rect x="780" y="350" width="190" height="6" rx="3" fill="#38bdf8"/>
+  <rect x="970" y="350" width="105" height="6" rx="3" fill="#fb7185"/>
+  <text x="68" y="70" fill="#e2e8f0" font-size="18" font-weight="700" letter-spacing="3">MUSIC × MATHEMATICS</text>
+</svg>

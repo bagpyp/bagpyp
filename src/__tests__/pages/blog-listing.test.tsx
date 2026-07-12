@@ -45,6 +45,14 @@ describe("Blog Listing Page", () => {
 		}
 	});
 
+	it("renders the interval-lattice companion post", () => {
+		render(<BlogPage {...mockProps} />);
+		expect(screen.getByText("Unwarping the Fretboard")).toBeInTheDocument();
+		expect(
+			screen.getByText("Triads, Interval Vectors, and the One-Fret Seam")
+		).toBeInTheDocument();
+	});
+
 	it("shows 'coming soon' message when no posts", () => {
 		render(<BlogPage posts={[]} />);
 		expect(screen.getByText(/Blog posts coming soon/i)).toBeInTheDocument();

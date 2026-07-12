@@ -113,6 +113,22 @@ export const blogPostsData: BlogPost[] = [
 		readingTime: 9,
 		featured: true,
 		image: "octave-lattice.svg"
+	},
+	{
+		id: "unwarping-fretboard",
+		slug: "unwarping-fretboard",
+		title: "Unwarping the Fretboard",
+		subtitle: "Triads, Interval Vectors, and the One-Fret Seam",
+		excerpt:
+			"A major triad is the cyclic interval word 4–3–5. Unwarp the G–B seam and its inversions become translations again—three chord-tone steps that add up to an octave-lattice generator.",
+		content: "/blog/unwarping-fretboard.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-07-12",
+		tags: ["Music Theory", "Guitar", "Intervals", "Lattices", "Triads"],
+		category: "Music & Mathematics",
+		readingTime: 11,
+		featured: true,
+		image: "unwarping-fretboard.svg"
 	}
 ];
 

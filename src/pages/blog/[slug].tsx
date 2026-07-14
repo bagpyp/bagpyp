@@ -1,6 +1,7 @@
 import { GetStaticProps, GetStaticPaths } from "next";
 import Head from "next/head";
 import Layout from "../../components/Layout";
+import Comments from "../../components/Comments";
 import { BlogPost } from "../../interfaces";
 import { blogPostsData } from "../../data/blog-posts";
 import ReactMarkdown from "react-markdown";
@@ -159,6 +160,9 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 								<p className="text-slate-600 dark:text-slate-400">Content not available</p>
 							</div>
 						)}
+
+						{/* Comments */}
+						<Comments slug={post.slug} />
 					</div>
 				</article>
 			</Layout>

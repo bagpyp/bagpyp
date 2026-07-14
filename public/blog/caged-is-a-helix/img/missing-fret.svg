@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 570" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+    <pattern id="danger" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="14" height="14" fill="#450a0a"/>
+      <rect width="5" height="14" fill="#7f1d1d" opacity="0.55"/>
+    </pattern>
+  </defs>
+  <rect width="980" height="570" rx="22" fill="url(#bg)"/>
+  <text x="490" y="44" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="850" letter-spacing="1.2">THE MISSING FRET IN C MAJOR</text>
+  <text x="490" y="72" text-anchor="middle" fill="#94a3b8" font-size="15">E-form root at fret 8 · scale density at frets 10, 11, 12 is 6 → 0 → 6</text>
+
+  <g>
+    <rect x="205" y="113" width="205" height="348" rx="12" fill="#0c4a6e" opacity="0.5" stroke="#38bdf8" stroke-width="2"/>
+    <rect x="410" y="113" width="205" height="348" fill="url(#danger)" stroke="#fb7185" stroke-width="3"/>
+    <rect x="615" y="113" width="205" height="348" rx="12" fill="#064e3b" opacity="0.65" stroke="#34d399" stroke-width="2"/>
+  </g>
+
+  <g fill="#e2e8f0" font-size="18" font-weight="850" text-anchor="middle">
+    <text x="307" y="105">FRET 10 · r+2</text>
+    <text x="512" y="105" fill="#fda4af">FRET 11 · r+3</text>
+    <text x="717" y="105">FRET 12 · r+4</text>
+  </g>
+
+  <g stroke="#64748b" stroke-width="1.5">
+    <line x1="205" y1="150" x2="820" y2="150"/>
+    <line x1="205" y1="207" x2="820" y2="207"/>
+    <line x1="205" y1="264" x2="820" y2="264"/>
+    <line x1="205" y1="321" x2="820" y2="321"/>
+    <line x1="205" y1="378" x2="820" y2="378"/>
+    <line x1="205" y1="435" x2="820" y2="435"/>
+  </g>
+  <g fill="#cbd5e1" font-size="15" font-weight="800" text-anchor="end">
+    <text x="179" y="156">string 6</text><text x="179" y="213">string 5</text><text x="179" y="270">string 4</text>
+    <text x="179" y="327">string 3</text><text x="179" y="384">string 2</text><text x="179" y="441">string 1</text>
+  </g>
+
+  <!-- In-key columns -->
+  <g font-size="16" font-weight="900" text-anchor="middle">
+    <g fill="#e0f2fe" stroke="#38bdf8" stroke-width="2">
+      <circle cx="307" cy="150" r="19"/><circle cx="307" cy="207" r="19"/><circle cx="307" cy="264" r="19"/>
+      <circle cx="307" cy="321" r="19"/><circle cx="307" cy="378" r="19"/><circle cx="307" cy="435" r="19"/>
+    </g>
+    <g fill="#0c4a6e">
+      <text x="307" y="156">D</text><text x="307" y="213">G</text><text x="307" y="270">C</text>
+      <text x="307" y="327">F</text><text x="307" y="384">A</text><text x="307" y="441">D</text>
+    </g>
+    <g fill="#d1fae5" stroke="#34d399" stroke-width="2">
+      <circle cx="717" cy="150" r="19"/><circle cx="717" cy="207" r="19"/><circle cx="717" cy="264" r="19"/>
+      <circle cx="717" cy="321" r="19"/><circle cx="717" cy="378" r="19"/><circle cx="717" cy="435" r="19"/>
+    </g>
+    <g fill="#064e3b">
+      <text x="717" y="156">E</text><text x="717" y="213">A</text><text x="717" y="270">D</text>
+      <text x="717" y="327">G</text><text x="717" y="384">B</text><text x="717" y="441">E</text>
+    </g>
+  </g>
+
+  <!-- Out-of-key column -->
+  <g fill="#fecaca" font-size="18" font-weight="850" text-anchor="middle">
+    <text x="512" y="157">D♯</text><text x="512" y="214">G♯</text><text x="512" y="271">C♯</text>
+    <text x="512" y="328">F♯</text><text x="512" y="385">A♯</text><text x="512" y="442">D♯</text>
+  </g>
+  <g stroke="#fb7185" stroke-width="2.5" opacity="0.85">
+    <path d="M495 135 L529 169 M529 135 L495 169"/><path d="M495 192 L529 226 M529 192 L495 226"/>
+    <path d="M495 249 L529 283 M529 249 L495 283"/><path d="M495 306 L529 340 M529 306 L495 340"/>
+    <path d="M495 363 L529 397 M529 363 L495 397"/><path d="M495 420 L529 454 M529 420 L495 454"/>
+  </g>
+
+  <g text-anchor="middle" font-weight="900">
+    <text x="307" y="493" fill="#7dd3fc" font-size="25">6 / 6 IN KEY</text>
+    <text x="512" y="493" fill="#fb7185" font-size="27">0 / 6</text>
+    <text x="717" y="493" fill="#6ee7b7" font-size="25">6 / 6 IN KEY</text>
+  </g>
+  <text x="490" y="535" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="750">fret 11 contains exactly C major's chromatic complement: ♭2 · ♭3 · ♭5 · ♭6 · ♭7</text>
+</svg>

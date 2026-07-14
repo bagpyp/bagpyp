@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 610" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="0.58" stop-color="#172554"/>
+      <stop offset="1" stop-color="#3b0764"/>
+    </linearGradient>
+    <marker id="arrowRose" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 Z" fill="#fb7185"/>
+    </marker>
+    <marker id="arrowSlate" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#94a3b8"/>
+    </marker>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <rect width="1000" height="610" rx="22" fill="url(#bg)"/>
+  <text x="500" y="45" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="850" letter-spacing="1.5">THE ROOT BRAID OF C MAJOR</text>
+  <text x="500" y="73" text-anchor="middle" fill="#94a3b8" font-size="15">same pitch class · different registers · multiple physical representatives</text>
+
+  <g stroke="#475569" stroke-width="1.5" opacity="0.72">
+    <line x1="95" y1="166" x2="945" y2="166"/>
+    <line x1="95" y1="316" x2="945" y2="316"/>
+    <line x1="95" y1="466" x2="945" y2="466"/>
+  </g>
+  <g fill="#cbd5e1" font-size="18" font-weight="800" text-anchor="end">
+    <text x="75" y="172">C5</text>
+    <text x="75" y="322">C4</text>
+    <text x="75" y="472">C3</text>
+  </g>
+
+  <g fill="#e2e8f0" font-size="22" font-weight="900" text-anchor="middle">
+    <text x="150" y="113">C</text>
+    <text x="290" y="113">A</text>
+    <text x="430" y="113">G</text>
+    <text x="570" y="113">E</text>
+    <text x="730" y="113">D</text>
+    <text x="885" y="113">C′</text>
+  </g>
+
+  <!-- Root-register fibers -->
+  <path d="M150 466 L290 466 L430 466 L570 466" fill="none" stroke="#fbbf24" stroke-width="7" stroke-linecap="round"/>
+  <path d="M150 316 L290 316 L430 316 L570 316 L730 316 L885 316" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+  <path d="M430 166 L570 166 L730 166 L885 166" fill="none" stroke="#c084fc" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- Unison handoffs -->
+  <g fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowSlate)">
+    <path d="M168 300 C205 265 250 265 278 300"/>
+    <path d="M308 450 C345 415 390 415 418 450"/>
+    <path d="M448 300 C485 265 530 265 558 300"/>
+    <path d="M588 150 C625 115 685 115 718 150"/>
+    <path d="M748 300 C785 265 842 265 873 300"/>
+  </g>
+
+  <!-- Bass selection trace -->
+  <path d="M150 466 L290 466 L430 466 L570 466 C625 466 675 400 730 316 L885 316" fill="none" stroke="#fb7185" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowRose)" filter="url(#glow)"/>
+  <text x="650" y="423" fill="#fda4af" font-size="17" font-weight="850" transform="rotate(-43 650 423)">selected bass root +12</text>
+
+  <!-- Root nodes -->
+  <g stroke="#f8fafc" stroke-width="2">
+    <g fill="#fbbf24">
+      <circle cx="150" cy="466" r="16"/><circle cx="290" cy="466" r="16"/><circle cx="430" cy="466" r="16"/><circle cx="570" cy="466" r="16"/>
+    </g>
+    <g fill="#38bdf8">
+      <circle cx="150" cy="316" r="14"/><circle cx="290" cy="316" r="14"/><circle cx="430" cy="316" r="14"/><circle cx="570" cy="316" r="16"/><circle cx="730" cy="316" r="18"/><circle cx="885" cy="316" r="18"/>
+    </g>
+    <g fill="#c084fc">
+      <circle cx="430" cy="166" r="14"/><circle cx="570" cy="166" r="14"/><circle cx="730" cy="166" r="14"/><circle cx="885" cy="166" r="14"/>
+    </g>
+  </g>
+
+  <g fill="#0f172a" font-size="10" font-weight="900" text-anchor="middle">
+    <text x="150" y="470">R</text><text x="290" y="470">R</text><text x="430" y="470">R</text><text x="570" y="470">R</text>
+    <text x="150" y="320">R</text><text x="290" y="320">R</text><text x="430" y="320">R</text><text x="570" y="320">R</text><text x="730" y="320">R</text><text x="885" y="320">R</text>
+    <text x="430" y="170">R</text><text x="570" y="170">R</text><text x="730" y="170">R</text><text x="885" y="170">R</text>
+  </g>
+
+  <g fill="#cbd5e1" font-size="12" text-anchor="middle">
+    <text x="150" y="500">s5f3</text><text x="290" y="500">s5f3</text><text x="430" y="500">s6f8</text><text x="570" y="500">s6f8</text>
+    <text x="150" y="345">s2f1</text><text x="290" y="345">s3f5</text><text x="430" y="345">s3f5</text><text x="570" y="345">s4f10</text><text x="730" y="345">s4f10</text><text x="885" y="345">s5f15</text>
+    <text x="430" y="195">s1f8</text><text x="570" y="195">s1f8</text><text x="730" y="195">s2f13</text><text x="885" y="195">s2f13</text>
+  </g>
+
+  <rect x="103" y="535" width="794" height="48" rx="13" fill="#0f172a" opacity="0.78" stroke="#475569"/>
+  <circle cx="137" cy="559" r="8" fill="#fbbf24"/><text x="154" y="564" fill="#e2e8f0" font-size="13">C3 persists through C–A–G–E</text>
+  <circle cx="438" cy="559" r="8" fill="#38bdf8"/><text x="455" y="564" fill="#e2e8f0" font-size="13">C4 becomes the floor at D</text>
+  <line x1="710" y1="559" x2="755" y2="559" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 5"/><text x="768" y="564" fill="#e2e8f0" font-size="13">unison transfer</text>
+</svg>

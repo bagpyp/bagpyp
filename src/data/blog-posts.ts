@@ -129,6 +129,22 @@ export const blogPostsData: BlogPost[] = [
 		readingTime: 11,
 		featured: true,
 		image: "unwarping-fretboard.svg"
+	},
+	{
+		id: "caged-is-a-helix",
+		slug: "caged-is-a-helix",
+		title: "CAGED Is a Helix",
+		subtitle: "Bass Roots, the Missing Fret, and the Hidden Register Seam",
+		excerpt:
+			"CAGED closes into a circle only after register is forgotten. Track absolute pitch and the D form reveals an octave jump, a literal zero-density fret, and a helix winding through overlapping triad neighborhoods.",
+		content: "/blog/caged-is-a-helix.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-07-14",
+		tags: ["Music Theory", "Guitar", "CAGED", "Lattices", "Fretboard Geometry"],
+		category: "Music & Mathematics",
+		readingTime: 30,
+		featured: true,
+		image: "caged-is-a-helix.svg"
 	}
 ];
 

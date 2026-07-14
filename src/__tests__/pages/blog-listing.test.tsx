@@ -53,6 +53,16 @@ describe("Blog Listing Page", () => {
 		).toBeInTheDocument();
 	});
 
+	it("renders the CAGED register-seam companion post", () => {
+		render(<BlogPage {...mockProps} />);
+		expect(screen.getByText("CAGED Is a Helix")).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				"Bass Roots, the Missing Fret, and the Hidden Register Seam"
+			)
+		).toBeInTheDocument();
+	});
+
 	it("shows 'coming soon' message when no posts", () => {
 		render(<BlogPage posts={[]} />);
 		expect(screen.getByText(/Blog posts coming soon/i)).toBeInTheDocument();

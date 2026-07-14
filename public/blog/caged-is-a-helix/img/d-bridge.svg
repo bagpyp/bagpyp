@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 650" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#1e1b4b"/></linearGradient>
+    <pattern id="gap" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" fill="#450a0a"/><rect width="4" height="12" fill="#7f1d1d" opacity="0.55"/></pattern>
+  </defs>
+  <rect width="1080" height="650" rx="22" fill="url(#bg)"/>
+  <text x="540" y="44" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="850" letter-spacing="1.2">D IS THE BRIDGE BETWEEN REGISTER SHEETS</text>
+  <text x="540" y="72" text-anchor="middle" fill="#94a3b8" font-size="15">C major · E form behind it · octave-higher C form ahead of it</text>
+
+  <!-- Form labels -->
+  <g font-size="18" font-weight="900" text-anchor="middle">
+    <rect x="100" y="94" width="270" height="42" rx="12" fill="#0c4a6e" stroke="#38bdf8"/><text x="235" y="121" fill="#bae6fd">E FORM</text>
+    <rect x="370" y="94" width="355" height="42" rx="12" fill="#581c87" stroke="#c084fc"/><text x="548" y="121" fill="#e9d5ff">D BRIDGE</text>
+    <rect x="725" y="94" width="255" height="42" rx="12" fill="#713f12" stroke="#fbbf24"/><text x="852" y="121" fill="#fef3c7">NEXT C FORM</text>
+  </g>
+
+  <!-- Fretboard -->
+  <rect x="92" y="168" width="896" height="360" rx="14" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+  <rect x="428" y="168" width="112" height="360" fill="url(#gap)" opacity="0.9"/>
+  <g stroke="#94a3b8" stroke-width="1.4" opacity="0.75">
+    <line x1="92" y1="210" x2="988" y2="210"/><line x1="92" y1="270" x2="988" y2="270"/>
+    <line x1="92" y1="330" x2="988" y2="330"/><line x1="92" y1="390" x2="988" y2="390"/>
+    <line x1="92" y1="450" x2="988" y2="450"/><line x1="92" y1="510" x2="988" y2="510"/>
+    <line x1="92" y1="168" x2="92" y2="528"/><line x1="204" y1="168" x2="204" y2="528"/>
+    <line x1="316" y1="168" x2="316" y2="528"/><line x1="428" y1="168" x2="428" y2="528"/>
+    <line x1="540" y1="168" x2="540" y2="528"/><line x1="652" y1="168" x2="652" y2="528"/>
+    <line x1="764" y1="168" x2="764" y2="528"/><line x1="876" y1="168" x2="876" y2="528"/><line x1="988" y1="168" x2="988" y2="528"/>
+  </g>
+  <g fill="#cbd5e1" font-size="14" font-weight="800" text-anchor="middle">
+    <text x="148" y="555">8</text><text x="260" y="555">9</text><text x="372" y="555">10</text><text x="484" y="555" fill="#fda4af">11</text>
+    <text x="596" y="555">12</text><text x="708" y="555">13</text><text x="820" y="555">14</text><text x="932" y="555">15</text>
+  </g>
+  <g fill="#cbd5e1" font-size="14" font-weight="800" text-anchor="end">
+    <text x="76" y="215">1</text><text x="76" y="275">2</text><text x="76" y="335">3</text><text x="76" y="395">4</text><text x="76" y="455">5</text><text x="76" y="515">6</text>
+  </g>
+
+  <!-- Form connective skeletons -->
+  <polyline points="148,510 372,450 372,390 260,330 148,270 148,210" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.42"/>
+  <polyline points="372,390 596,330 708,270 596,210" fill="none" stroke="#c084fc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+  <polyline points="932,450 820,390 596,330 708,270 596,210" fill="none" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+
+  <!-- Notes: roots rose, thirds blue, fifths gold -->
+  <g stroke="#f8fafc" stroke-width="2.5">
+    <!-- E -->
+    <circle cx="148" cy="510" r="20" fill="#fb7185"/><circle cx="372" cy="450" r="20" fill="#fbbf24"/><circle cx="372" cy="390" r="23" fill="#fb7185"/>
+    <circle cx="260" cy="330" r="20" fill="#38bdf8"/><circle cx="148" cy="270" r="20" fill="#fbbf24"/><circle cx="148" cy="210" r="20" fill="#fb7185"/>
+    <!-- D and C' shared -->
+    <circle cx="596" cy="330" r="23" fill="#fbbf24"/><circle cx="708" cy="270" r="24" fill="#fb7185"/><circle cx="596" cy="210" r="23" fill="#38bdf8"/>
+    <!-- C' remaining -->
+    <circle cx="820" cy="390" r="20" fill="#38bdf8"/><circle cx="932" cy="450" r="22" fill="#fb7185"/>
+  </g>
+  <g fill="#0f172a" font-size="11" font-weight="950" text-anchor="middle">
+    <text x="148" y="514">R</text><text x="372" y="454">5</text><text x="372" y="394">R</text><text x="260" y="334">3</text><text x="148" y="274">5</text><text x="148" y="214">R</text>
+    <text x="596" y="334">5</text><text x="708" y="274">R</text><text x="596" y="214">3</text><text x="820" y="394">3</text><text x="932" y="454">R</text>
+  </g>
+
+  <g fill="#f8fafc" font-size="13" font-weight="800">
+    <text x="385" y="380">C4</text><text x="162" y="500">C3</text><text x="162" y="199">C5</text>
+    <text x="720" y="259">C5</text><text x="944" y="443">C4</text>
+  </g>
+  <path d="M372 365 C420 310 500 285 575 300" fill="none" stroke="#c084fc" stroke-width="2.5" stroke-dasharray="7 6"/>
+  <text x="445" y="286" fill="#e9d5ff" font-size="14" font-weight="800">D inherits this root from E</text>
+  <path d="M608 345 C655 385 715 405 778 396" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="7 6"/>
+  <text x="625" y="430" fill="#fef3c7" font-size="14" font-weight="800">D's upper G–C–E triangle belongs to C′</text>
+  <text x="484" y="584" text-anchor="middle" fill="#fb7185" font-size="15" font-weight="900">ZERO-DENSITY FRET</text>
+  <text x="540" y="620" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="750">D promotes E's interior C4 to bass, reaches over fret 11, and hands its upper triad to C′.</text>
+</svg>

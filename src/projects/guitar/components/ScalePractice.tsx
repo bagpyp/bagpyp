@@ -212,37 +212,37 @@ export default function ScalePractice() {
   return (
     <div className="max-w-5xl mx-auto">
       {/* Game Stats Header */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl p-4 shadow-xl border-2 border-purple-400">
-          <div className="text-purple-200 text-sm font-semibold uppercase tracking-wide">Score</div>
-          <div className="text-4xl font-bold text-white mt-1">{score}</div>
+          <div className="text-purple-200 text-xs sm:text-sm font-semibold uppercase tracking-wide">Score</div>
+          <div className="text-3xl sm:text-4xl font-bold text-white mt-1">{score}</div>
         </div>
         <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 shadow-xl border-2 border-orange-400">
-          <div className="text-orange-100 text-sm font-semibold uppercase tracking-wide">Streak</div>
-          <div className="text-4xl font-bold text-white mt-1">{streak} 🔥</div>
+          <div className="text-orange-100 text-xs sm:text-sm font-semibold uppercase tracking-wide">Streak</div>
+          <div className="text-3xl sm:text-4xl font-bold text-white mt-1">{streak} 🔥</div>
         </div>
         <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 shadow-xl border-2 border-blue-400">
-          <div className="text-blue-100 text-sm font-semibold uppercase tracking-wide">Completed</div>
-          <div className="text-4xl font-bold text-white mt-1">{totalChallenges}</div>
+          <div className="text-blue-100 text-xs sm:text-sm font-semibold uppercase tracking-wide">Completed</div>
+          <div className="text-3xl sm:text-4xl font-bold text-white mt-1">{totalChallenges}</div>
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl shadow-2xl p-8 border-4 border-gray-700">
+      <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl shadow-2xl p-4 sm:p-8 border-2 sm:border-4 border-gray-700">
         {/* Challenge Display */}
         <div className="text-center mb-8 bg-gradient-to-r from-blue-900/40 to-purple-900/40 rounded-xl p-6 border-2 border-blue-500/50 shadow-lg">
           <div className="text-xl font-bold mb-3 text-blue-300 uppercase tracking-wider">🎯 Current Challenge</div>
           <div className="flex justify-center items-center gap-6 flex-wrap text-2xl">
-            <div className="bg-blue-600/30 rounded-lg px-6 py-3 border-2 border-blue-400">
+            <div className="bg-blue-600/30 rounded-lg px-4 py-2 sm:px-6 sm:py-3 border-2 border-blue-400">
               <span className="text-blue-200 text-sm block mb-1">Mode</span>
-              <span className="font-bold text-blue-300 text-3xl">{mode}</span>
+              <span className="font-bold text-blue-300 text-2xl sm:text-3xl">{mode}</span>
             </div>
-            <div className="bg-green-600/30 rounded-lg px-6 py-3 border-2 border-green-400">
+            <div className="bg-green-600/30 rounded-lg px-4 py-2 sm:px-6 sm:py-3 border-2 border-green-400">
               <span className="text-green-200 text-sm block mb-1">Note</span>
-              <span className="font-bold text-green-300 text-3xl">{note}</span>
+              <span className="font-bold text-green-300 text-2xl sm:text-3xl">{note}</span>
             </div>
-            <div className="bg-yellow-600/30 rounded-lg px-6 py-3 border-2 border-yellow-400">
+            <div className="bg-yellow-600/30 rounded-lg px-4 py-2 sm:px-6 sm:py-3 border-2 border-yellow-400">
               <span className="text-yellow-200 text-sm block mb-1">Target Fret</span>
-              <span className="font-bold text-yellow-300 text-3xl">{targetFret}</span>
+              <span className="font-bold text-yellow-300 text-2xl sm:text-3xl">{targetFret}</span>
             </div>
           </div>
         </div>
@@ -334,11 +334,11 @@ export default function ScalePractice() {
               </p>
               <div className="mt-4 bg-black/30 rounded-lg p-4">
                 <p className="text-yellow-200 mb-3 font-bold">3NPS/XYZ Layout (low → high):</p>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
                   {answer.xyzLayout.map((pos, idx) => (
                     <div
                       key={idx}
-                      className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg px-4 py-3 text-sm font-mono border border-yellow-600/50 shadow-md"
+                      className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg px-3 py-3 text-sm font-mono border border-yellow-600/50 shadow-md"
                     >
                       <span className="text-yellow-300 font-bold">{STRING_NAMES[pos.stringIndex]}</span>
                       {': '}

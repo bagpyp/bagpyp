@@ -78,11 +78,9 @@ export default function CompactHorizontalFretboard({
 
   return (
     <svg
-      width={width}
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet"
-      className="rounded-sm"
-      style={{ maxWidth: '100%', height: 'auto' }}
+      className="w-full h-auto rounded-sm"
     >
       <rect
         x={woodLeft}

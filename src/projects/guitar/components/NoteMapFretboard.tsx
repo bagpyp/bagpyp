@@ -152,15 +152,9 @@ export default function NoteMapFretboard({
   return (
     <div className="relative w-full" style={{ padding: '6px' }}>
       <svg
-        width="100%"
-        className="rounded-lg"
+        className="rounded-lg w-full h-auto block"
         viewBox={`0 0 ${viewBoxW} ${viewBoxH}`}
         preserveAspectRatio="xMidYMid meet"
-        style={
-          vertical
-            ? { height: '80vh', width: 'auto', maxWidth: '100%', display: 'block', margin: '0 auto' }
-            : undefined
-        }
       >
         {/* Fretboard wood */}
         {vertical ? (
@@ -356,6 +350,8 @@ export default function NoteMapFretboard({
                   : undefined
               }
             >
+              {/* Invisible enlarged hit area for touch targets */}
+              <circle cx={x} cy={y} r={noteRadius + 8} fill="transparent" />
               {isAnchor && (
                 <circle cx={x} cy={y} r={noteRadius + 4} fill="none" stroke="#ffffff" strokeWidth={2} />
               )}

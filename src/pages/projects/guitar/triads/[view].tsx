@@ -6,6 +6,8 @@ import type { TriadsViewMode } from "../../../../projects/guitar/components/Majo
 const VIEW_SLUGS: Record<string, TriadsViewMode> = {
 	bykey: "by-key",
 	byvoicing: "by-voicing",
+	"by-key": "by-key",
+	"by-voicing": "by-voicing",
 	all: "all"
 };
 

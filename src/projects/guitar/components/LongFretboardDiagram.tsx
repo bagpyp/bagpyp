@@ -163,10 +163,9 @@ export default function LongFretboardDiagram({
   return (
     <div className="flex flex-col items-center w-full">
       {/* SVG Long Fretboard */}
-      <div className="relative" style={{ width: '98vw', maxWidth: '100%', padding: "10px" }}>
+      <div className="relative w-full overflow-x-auto p-2">
         <svg
-          width="100%"
-          className="rounded-lg"
+          className="w-full min-w-[760px] lg:min-w-0 h-auto rounded-lg"
           viewBox={`0 0 ${viewBoxWidth} ${1.1*height}`}
           preserveAspectRatio="xMidYMid meet"
         >

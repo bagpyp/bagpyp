@@ -186,10 +186,9 @@ export default function AllTriadsFretboard({
     : [];
 
   return (
-    <div className="relative w-full" style={{ padding: '10px' }}>
+    <div className="relative w-full overflow-x-auto p-2">
       <svg
-        width="100%"
-        className="rounded-lg"
+        className="w-full min-w-[760px] lg:min-w-0 h-auto rounded-lg"
         viewBox={`0 0 ${viewBoxWidth} ${1.1 * height}`}
         preserveAspectRatio="xMidYMid meet"
       >

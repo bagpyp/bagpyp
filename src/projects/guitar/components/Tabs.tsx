@@ -20,7 +20,7 @@ export function Tabs({ children, activeTab, onTabChange }: TabsProps) {
   return (
     <div className="w-full">
       <div className="border-b border-gray-700">
-        <nav className="flex space-x-4 px-6">
+        <nav className="flex space-x-4 px-4 sm:px-6 overflow-x-auto whitespace-nowrap">
           {tabs.map((tab) => (
             <button
               key={tab.props.id}
@@ -36,7 +36,7 @@ export function Tabs({ children, activeTab, onTabChange }: TabsProps) {
           ))}
         </nav>
       </div>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {tabs.find((tab) => tab.props.id === activeTab)?.props.children}
       </div>
     </div>

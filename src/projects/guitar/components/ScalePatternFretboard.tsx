@@ -232,12 +232,10 @@ export default function ScalePatternFretboard({
         </div>
       )}
 
-      <div className={titlePlacement === 'left' && showTitle ? 'flex-1' : ''}>
+      <div className={`${titlePlacement === 'left' ? 'md:flex-1 md:min-w-0 ' : ''}overflow-x-auto`}>
         <svg
-          width={titlePlacement === 'left' ? '100%' : '98%'}
-          height={DIMENSIONS.svgHeight}
+          className="mx-auto block h-auto w-full min-w-[720px] lg:min-w-0"
           viewBox={`0 0 ${DIMENSIONS.viewBoxWidth} ${DIMENSIONS.svgHeight}`}
-          style={{ display: 'block', margin: '0 auto' }}
         >
         <defs>
           <filter id="note-vibe-glow" x="-60%" y="-60%" width="220%" height="220%">

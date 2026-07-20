@@ -17,7 +17,7 @@ export default function VoicingPositionSelector({
   onChange,
 }: VoicingPositionSelectorProps) {
   return (
-    <div className="inline-grid grid-cols-4 gap-1 p-1 rounded-md border border-slate-700 bg-slate-800">
+    <div className="inline-grid grid-cols-4 gap-1.5 lg:gap-1 p-1 rounded-md border border-slate-700 bg-slate-800">
       {[0, 1, 2, 3].map(stringGroup =>
         [0, 1, 2, 3].map(position => {
           const isSelected =
@@ -30,7 +30,7 @@ export default function VoicingPositionSelector({
               onClick={() => onChange({ stringGroup, position })}
               aria-label={`String group ${stringGroup + 1}, Position ${position}`}
               aria-pressed={isSelected}
-              className={`w-4 h-4 rounded-sm transition-colors ${
+              className={`w-8 h-8 lg:w-4 lg:h-4 rounded-sm transition-colors ${
                 isSelected
                   ? 'bg-primary-500 ring-1 ring-primary-300'
                   : 'bg-slate-900 hover:bg-slate-700'

@@ -73,7 +73,7 @@ const FullscreenWrapper = ({ children, className = "" }: FullscreenWrapperProps)
 		<div
 			ref={containerRef}
 			className={`relative ${className} ${
-				isFullscreen ? "fixed inset-0 z-50 bg-inherit" : ""
+				isFullscreen ? "fullscreen-active fixed inset-0 z-50 bg-inherit overflow-y-auto overflow-x-clip overscroll-contain" : ""
 			}`}
 		>
 			{children}
@@ -81,7 +81,7 @@ const FullscreenWrapper = ({ children, className = "" }: FullscreenWrapperProps)
 			{/* Fullscreen toggle button */}
 			<button
 				onClick={toggleFullscreen}
-				className="fixed bottom-4 right-4 z-[60] p-3 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-white shadow-lg transition-all duration-200 backdrop-blur-sm border border-slate-600/50"
+				className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[60] p-3 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-white shadow-lg transition-all duration-200 backdrop-blur-sm border border-slate-600/50"
 				title={isFullscreen ? "Exit fullscreen (Esc)" : "Enter fullscreen"}
 				aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
 			>

@@ -132,13 +132,13 @@ export default function GuitarWorkbench({
   }, [requestWakeLock, releaseWakeLock]);
 
   return (
-    <div className="w-full min-h-screen bg-slate-950">
-      <div className="sticky top-0 z-30 bg-slate-950/95 backdrop-blur border-b border-slate-800">
+    <div className="w-full min-h-screen bg-slate-950 overflow-x-clip">
+      <div className="sticky top-16 [.fullscreen-active_&]:top-0 z-30 bg-slate-950/95 backdrop-blur border-b border-slate-800">
         <div className="max-w-[1760px] mx-auto px-4 py-3 xl:px-6">
           <div className="flex items-center justify-center gap-2 flex-wrap">
             <button
               onClick={() => navigate({ section: 'triads' })}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
+              className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold transition-colors border ${
                 section === 'triads'
                   ? 'bg-blue-600 text-white border-blue-500'
                   : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -148,7 +148,7 @@ export default function GuitarWorkbench({
             </button>
             <button
               onClick={() => navigate({ section: 'boxes' })}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
+              className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold transition-colors border ${
                 section === 'boxes'
                   ? 'bg-blue-600 text-white border-blue-500'
                   : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -158,7 +158,7 @@ export default function GuitarWorkbench({
             </button>
             <button
               onClick={() => navigate({ section: 'notes' })}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
+              className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm font-semibold transition-colors border ${
                 section === 'notes'
                   ? 'bg-blue-600 text-white border-blue-500'
                   : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -171,7 +171,7 @@ export default function GuitarWorkbench({
       </div>
 
       {section === 'triads' && (
-        <div className="bg-slate-900 min-h-screen">
+        <div className="bg-slate-900">
           <MajorTriads
             selectedKey={selectedMajorKey}
             onSelectedKeyChange={handleMajorKeyChange}

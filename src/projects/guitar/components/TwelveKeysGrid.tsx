@@ -74,7 +74,7 @@ export default function TwelveKeysGrid({
 
   return (
     <div className="w-full space-y-6">
-    <div className="grid grid-cols-3 gap-3 w-full">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 w-full">
       {cells.map(cell => (
         <div key={cell.root} className="flex flex-col items-center w-full">
           <div className="text-center text-sm font-semibold text-slate-100 mb-1">
@@ -95,10 +95,12 @@ export default function TwelveKeysGrid({
         </div>
       ))}
     </div>
-    <UnionFretboard
-      voicings={cells.map(c => c.voicing)}
-      fretRange={{ start: 0, end: MAX_FRET }}
-    />
+    <div className="overflow-x-auto">
+      <UnionFretboard
+        voicings={cells.map(c => c.voicing)}
+        fretRange={{ start: 0, end: MAX_FRET }}
+      />
+    </div>
     </div>
   );
 }

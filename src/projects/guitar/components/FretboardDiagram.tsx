@@ -27,15 +27,17 @@ function getIntervalName(notePc: number, triadPcs: [number, number, number]): 'r
  */
 export default function FretboardDiagram({ voicing, stringNames, triadPcs }: FretboardDiagramProps) {
   const [hoveredFret, setHoveredFret] = useState<number | null>(null);
+  const [pinnedFret, setPinnedFret] = useState<number | null>(null);
+  const activeFret = pinnedFret ?? hoveredFret;
 
   const { frets, notes, noteNames, inversion } = voicing;
 
-  // SVG dimensions
+  // SVG dimensions (viewBox units — the SVG scales to its container width)
   const width = 200;
-  const height = 300;
   const minFret = Math.min(...frets);
   const maxFret = Math.max(...frets);
-  const displayFretCount = Math.min(maxFret - minFret + 3, 8); // Show a few frets beyond, max 8 frets
+  const displayFretCount = Math.min(maxFret - minFret + 2, 6); // Show one context fret beyond, max 6 frets
+  const height = 60 * displayFretCount + 40; // Canvas height fits the fret count
 
   const stringSpacing = width / 4; // Space for 3 strings with margins
 
@@ -51,20 +53,18 @@ export default function FretboardDiagram({ voicing, stringNames, triadPcs }: Fre
 
   return (
     <div className="flex flex-col items-center gap-2 p-3 bg-gray-800 rounded-lg border border-gray-700">
-      {/* String names header */}
-      <div className="flex gap-8 text-xs text-gray-400">
+      {/* String names header - proportional so labels track the string lines at any width */}
+      <div className="flex w-full max-w-[200px] justify-between px-[12.5%] text-xs text-gray-400">
         {stringNames.map((name, idx) => (
-          <span key={idx} className="w-8 text-center">
+          <span key={idx} className="text-center">
             {name}
           </span>
         ))}
       </div>
 
-      {/* SVG Fretboard */}
+      {/* SVG Fretboard - scales to container width via viewBox */}
       <svg
-        width={width}
-        height={height}
-        className="bg-gray-900 rounded"
+        className="bg-gray-900 rounded w-full h-auto max-w-[200px] mx-auto"
         viewBox={`0 0 ${width} ${height}`}
       >
         {/* Fret lines */}
@@ -128,15 +128,18 @@ export default function FretboardDiagram({ voicing, stringNames, triadPcs }: Fre
           const noteName = noteNames[stringIdx];
           const noteColor = getNoteColor(noteName);
 
-          const isHovered = hoveredFret === stringIdx;
+          const isHovered = activeFret === stringIdx;
 
           return (
             <g
               key={`dot-${stringIdx}`}
               onMouseEnter={() => setHoveredFret(stringIdx)}
               onMouseLeave={() => setHoveredFret(null)}
+              onClick={() => setPinnedFret((prev) => (prev === stringIdx ? null : stringIdx))}
               style={{ cursor: 'pointer' }}
             >
+              {/* Invisible enlarged hit area for touch targets */}
+              <circle cx={x} cy={y} r={24} fill="transparent" />
               {/* Dot circle */}
               <circle
                 cx={x}
@@ -172,15 +175,15 @@ export default function FretboardDiagram({ voicing, stringNames, triadPcs }: Fre
           {inversion === 'first' && '1st Inversion'}
           {inversion === 'second' && '2nd Inversion'}
         </span>
-        {hoveredFret !== null && (
+        {activeFret !== null && (
           <span className="text-yellow-400 font-medium">
-            {noteNames[hoveredFret]} ({getIntervalName(notes[hoveredFret], triadPcs)})
+            {noteNames[activeFret]} ({getIntervalName(notes[activeFret], triadPcs)})
           </span>
         )}
       </div>
 
       {/* Note legend - show the notes in this voicing */}
-      <div className="flex gap-3 text-xs mt-1">
+      <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs mt-1">
         {noteNames.map((name, idx) => {
           const noteColor = getNoteColor(name);
           const intervalName = getIntervalName(notes[idx], triadPcs);

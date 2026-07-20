@@ -49,8 +49,8 @@ const STANDARD_TUNING_PCS = [4, 9, 2, 7, 11, 4]; // E A D G B E
 const BOX_FRET_COUNT = 24;
 const CHROMATIC_DEGREE_LABELS = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7'] as const;
 
-const SEGMENT_WRAPPER_CLASS = 'inline-flex rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10';
-const SEGMENT_BUTTON_BASE_CLASS = 'rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none';
+const SEGMENT_WRAPPER_CLASS = 'inline-flex flex-wrap justify-center rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10';
+const SEGMENT_BUTTON_BASE_CLASS = 'min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none';
 
 function getSegmentButtonClass(isActive: boolean): string {
   return `${SEGMENT_BUTTON_BASE_CLASS} ${isActive
@@ -311,8 +311,10 @@ export default function BoxShapes({
   }, [displayPatterns, showNotesFromOtherPositions]);
 
   const shouldShowPracticePanels = showPracticePanel || showCheatSheetPanel;
-  const shouldFloatCheatSheet = showCheatSheetPanel && floatingPanelPositions?.leftPanelLeft !== null;
-  const shouldFloatProgressions = showPracticePanel && floatingPanelPositions?.rightPanelLeft !== null;
+  const shouldFloatCheatSheet =
+    showCheatSheetPanel && floatingPanelPositions !== null && floatingPanelPositions.leftPanelLeft !== null;
+  const shouldFloatProgressions =
+    showPracticePanel && floatingPanelPositions !== null && floatingPanelPositions.rightPanelLeft !== null;
   const shouldStackCheatSheet = showCheatSheetPanel && !shouldFloatCheatSheet;
   const shouldStackProgressions = showPracticePanel && !shouldFloatProgressions;
 
@@ -484,13 +486,15 @@ export default function BoxShapes({
           </div>
 
           <div ref={circleSelectorRef} className="w-full max-w-[970px] mx-auto relative z-[120]">
-            <CircleOfFifthsSelector
-              selectedKey={selectedMajorKey}
-              onSelectKey={onSelectedMajorKeyChange}
-              showSettingsButton
-              isSettingsOpen={isSettingsOpen}
-              onSettingsToggle={() => setIsSettingsOpen((current) => !current)}
-            />
+            <div className="overflow-x-auto">
+              <CircleOfFifthsSelector
+                selectedKey={selectedMajorKey}
+                onSelectKey={onSelectedMajorKeyChange}
+                showSettingsButton
+                isSettingsOpen={isSettingsOpen}
+                onSettingsToggle={() => setIsSettingsOpen((current) => !current)}
+              />
+            </div>
 
             {isSettingsOpen && (
               <div className="absolute top-24 right-0 z-50 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700">
@@ -729,7 +733,7 @@ export default function BoxShapes({
                   <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                     Single-Note Targets
                   </p>
-                  <div className="flex w-full items-stretch justify-center gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10">
+                  <div className="grid w-full grid-cols-2 gap-1 rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10 sm:grid-cols-3 lg:flex lg:items-stretch lg:justify-center">
                     {orderedSingleTargetToneConfigs.map((config) => {
                       const pitchClass = getTargetTonePitchClass(config, majorCenterKey, minorCenterKey);
                       const isVisible = visibleTargetToneByPitchClass.has(pitchClass);
@@ -757,7 +761,7 @@ export default function BoxShapes({
                             }));
                           }}
                           className={[
-                            'inline-flex min-w-0 flex-1 flex-col items-center gap-1 rounded-md px-2 py-2 text-sm font-medium transition-colors',
+                            'inline-flex min-h-[44px] min-w-0 flex-col items-center gap-1 rounded-md px-2 py-2 text-center text-sm font-medium transition-colors lg:flex-1',
                             isVisible
                               ? 'bg-primary-600 text-white'
                               : 'bg-slate-900/60 text-slate-300 hover:bg-slate-700/70 hover:text-slate-100',

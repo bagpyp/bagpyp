@@ -66,7 +66,7 @@ export default function TriadSettingsPanel({
 				{isOpen && (
 					<div className="
 						absolute top-12 left-0
-
+						max-w-[calc(100vw-1rem)] max-h-[70vh] overflow-y-auto
 						bg-white dark:bg-slate-800
 						rounded-lg shadow-xl
 						border
@@ -85,7 +85,7 @@ export default function TriadSettingsPanel({
 											!settings.showChromaticNotes
 										)
 									}
-									className="flex items-center gap-3 cursor-pointer py-1"
+									className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
 								>
 									<div
 										className="relative flex-shrink-0"
@@ -126,7 +126,7 @@ export default function TriadSettingsPanel({
 											!settings.showOctaveColors
 										)
 									}
-									className="flex items-center gap-3 cursor-pointer py-1"
+									className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
 								>
 									<div
 										className="relative flex-shrink-0"
@@ -164,7 +164,7 @@ export default function TriadSettingsPanel({
 									onClick={() =>
 										updateSetting("showRootHalos", !settings.showRootHalos)
 									}
-									className="flex items-center gap-3 cursor-pointer py-1"
+									className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
 								>
 									<div
 										className="relative flex-shrink-0"
@@ -205,7 +205,7 @@ export default function TriadSettingsPanel({
 											!settings.enableHoverSound
 										)
 									}
-									className="flex items-center gap-3 cursor-pointer py-1"
+									className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
 								>
 									<div
 										className="relative flex-shrink-0"

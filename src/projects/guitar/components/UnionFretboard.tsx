@@ -93,11 +93,9 @@ export default function UnionFretboard({
 
   return (
     <svg
-      width="100%"
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet"
-      style={{ maxWidth: '100%' }}
-      className="rounded-sm"
+      className="w-full min-w-[640px] lg:min-w-0 h-auto rounded-sm"
     >
       <rect
         x={woodLeft}

@@ -86,7 +86,7 @@ export default function NotesExplorer() {
 
   return (
     <div className="w-full min-h-screen bg-slate-900 pb-10">
-      <div className="mx-auto w-full max-w-[970px] px-4 pt-4">
+      <div className="mx-auto w-full max-w-[970px] px-4 pt-4 overflow-x-auto">
         <CircleOfFifthsSelector selectedKey={note} onSelectKey={setNote} />
       </div>
 
@@ -95,10 +95,10 @@ export default function NotesExplorer() {
       </h2>
 
       {/* Controls */}
-      <div className="flex items-center justify-center gap-3 mb-2 px-4">
+      <div className="flex flex-wrap items-center justify-center gap-3 mb-2 px-4">
         <button
           onClick={() => setShowAll((v) => !v)}
-          className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
+          className={`px-3 py-2.5 md:py-1 min-h-[40px] md:min-h-0 rounded border text-xs md:text-[11px] font-semibold transition-colors ${
             showAll
               ? 'bg-blue-600 text-white border-blue-500'
               : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -111,7 +111,7 @@ export default function NotesExplorer() {
             <button
               key={n}
               onClick={() => setFretCount(n)}
-              className={`px-2 py-1 text-[11px] font-semibold transition-colors ${
+              className={`px-3 py-2.5 md:py-1 min-h-[40px] md:min-h-0 text-xs md:text-[11px] font-semibold transition-colors ${
                 fretCount === n
                   ? 'bg-blue-600 text-white'
                   : 'bg-slate-800 text-slate-200 hover:bg-slate-700'

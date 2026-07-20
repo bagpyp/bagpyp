@@ -33,8 +33,7 @@ export default function CircleOfFifthsSelector({
 
   return (
     <svg
-      width="100%"
-      height="100"
+      className="w-full min-w-[640px] lg:min-w-0 h-auto"
       viewBox="0 0 970 100"
       preserveAspectRatio="xMidYMid meet"
     >

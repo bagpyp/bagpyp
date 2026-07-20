@@ -961,11 +961,11 @@ function LooperSyncModal({
 
   return (
     <div
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 px-4"
+      className="fixed inset-0 z-[150] flex items-center justify-center bg-black/70 px-4 py-6"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-3xl rounded-lg border border-slate-700 p-4 shadow-xl"
+        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-lg border border-slate-700 p-4 shadow-xl"
         style={{ backgroundColor: 'rgb(30 41 59)' }}
         onClick={(event) => event.stopPropagation()}
       >
@@ -1510,13 +1510,15 @@ export default function PracticeProgressionsPanel({
       scrollRegion.scrollLeft += deltaX;
     }
 
-    return scrollRegion.scrollTop !== prevTop || scrollRegion.scrollLeft !== prevLeft || canScrollY || canScrollX;
+    return scrollRegion.scrollTop !== prevTop || scrollRegion.scrollLeft !== prevLeft;
   }, []);
 
   const handlePanelWheel = useCallback((event: React.WheelEvent<HTMLElement>) => {
-    applyPanelWheelScroll(event.deltaX, event.deltaY);
-    event.preventDefault();
-    event.stopPropagation();
+    const consumed = applyPanelWheelScroll(event.deltaX, event.deltaY);
+    if (consumed) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }, [applyPanelWheelScroll]);
 
   useEffect(() => {
@@ -1526,9 +1528,11 @@ export default function PracticeProgressionsPanel({
     }
 
     const handleNativeWheel = (event: WheelEvent) => {
-      applyPanelWheelScroll(event.deltaX, event.deltaY);
-      event.preventDefault();
-      event.stopPropagation();
+      const consumed = applyPanelWheelScroll(event.deltaX, event.deltaY);
+      if (consumed) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
     };
 
     panelContainer.addEventListener('wheel', handleNativeWheel, { passive: false });
@@ -1824,10 +1828,9 @@ export default function PracticeProgressionsPanel({
     <>
       <aside
         ref={panelContainerRef}
-        className="flex w-full flex-col overflow-hidden rounded-lg border border-slate-700 bg-slate-800 shadow-xl"
+        className="flex w-full max-w-full flex-col overflow-hidden rounded-lg border border-slate-700 bg-slate-800 shadow-xl lg:max-w-[320px]"
         onWheelCapture={handlePanelWheel}
         style={{
-          maxWidth: '320px',
           height: resolvedPanelHeightPx ? `${resolvedPanelHeightPx}px` : undefined,
           maxHeight: resolvedPanelHeightPx ? `${resolvedPanelHeightPx}px` : undefined,
         }}

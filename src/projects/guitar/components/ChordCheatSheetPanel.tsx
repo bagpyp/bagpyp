@@ -140,8 +140,7 @@ export default function ChordCheatSheetPanel({
 
   return (
     <aside
-      className="w-full rounded-xl bg-slate-800/92 shadow-2xl backdrop-blur ring-1 ring-white/10"
-      style={{ maxWidth: '260px' }}
+      className="w-full max-w-full rounded-xl bg-slate-800/92 shadow-2xl backdrop-blur ring-1 ring-white/10 lg:max-w-[260px]"
     >
       <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-200">

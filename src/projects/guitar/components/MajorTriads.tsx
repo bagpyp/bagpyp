@@ -417,7 +417,7 @@ export default function MajorTriads({
           <button
             type="button"
             onClick={() => setViewMode('by-key')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${
               viewMode === 'by-key'
                 ? 'bg-primary-600 text-white'
                 : 'text-slate-400 hover:text-slate-100'
@@ -428,7 +428,7 @@ export default function MajorTriads({
           <button
             type="button"
             onClick={() => setViewMode('by-voicing')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${
               viewMode === 'by-voicing'
                 ? 'bg-primary-600 text-white'
                 : 'text-slate-400 hover:text-slate-100'
@@ -439,7 +439,7 @@ export default function MajorTriads({
           <button
             type="button"
             onClick={() => setViewMode('all')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${
               viewMode === 'all'
                 ? 'bg-primary-600 text-white'
                 : 'text-slate-400 hover:text-slate-100'
@@ -452,11 +452,11 @@ export default function MajorTriads({
 
       {/* All-view controls */}
       {viewMode === 'all' && (
-        <div className="flex items-center justify-center gap-3 pt-3">
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
           <button
             type="button"
             onClick={() => setShowRootLattice((v) => !v)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded border transition-colors ${
+            className={`px-3 py-2 min-h-[40px] lg:py-1.5 lg:min-h-0 text-xs font-semibold rounded border transition-colors ${
               showRootLattice
                 ? 'bg-blue-600 text-white border-blue-500'
                 : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -467,7 +467,7 @@ export default function MajorTriads({
           <button
             type="button"
             onClick={() => setDimNonRoots((v) => !v)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded border transition-colors ${
+            className={`px-3 py-2 min-h-[40px] lg:py-1.5 lg:min-h-0 text-xs font-semibold rounded border transition-colors ${
               dimNonRoots
                 ? 'bg-blue-600 text-white border-blue-500'
                 : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -478,7 +478,7 @@ export default function MajorTriads({
           <button
             type="button"
             onClick={() => setShowGroups((v) => !v)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded border transition-colors ${
+            className={`px-3 py-2 min-h-[40px] lg:py-1.5 lg:min-h-0 text-xs font-semibold rounded border transition-colors ${
               showGroups
                 ? 'bg-blue-600 text-white border-blue-500'
                 : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
@@ -490,9 +490,9 @@ export default function MajorTriads({
       )}
 
       {/* Chord Type Selector with Help Icon */}
-      <div className="flex items-center justify-between p-4">
-        <div className="flex-1" /> {/* Spacer */}
-        <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
+      <div className="flex flex-col items-center gap-2 p-2 sm:p-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="hidden lg:block lg:flex-1" /> {/* Spacer */}
+        <div className="flex flex-wrap justify-center max-w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 lg:inline-flex lg:flex-nowrap">
           {(() => {
             const labels = getChordTypeLabels(settings.chordLabelNotation);
             const isByVoicing = viewMode === 'by-voicing';
@@ -506,7 +506,7 @@ export default function MajorTriads({
               <>
                 <button
                   onClick={() => setSettings({ ...settings, chordType: 'major' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${
                     settings.chordType === 'major'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -518,7 +518,7 @@ export default function MajorTriads({
                   disabled={isByVoicing}
                   title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'minor' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'minor'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -530,7 +530,7 @@ export default function MajorTriads({
                   disabled={isByVoicing}
                   title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'dim' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'dim'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -542,7 +542,7 @@ export default function MajorTriads({
                   disabled={isByVoicing}
                   title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'aug' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'aug'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -554,7 +554,7 @@ export default function MajorTriads({
                   disabled={isByVoicing}
                   title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: '7' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === '7'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -566,7 +566,7 @@ export default function MajorTriads({
                   disabled={isByVoicing}
                   title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'min7' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'min7'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -578,7 +578,7 @@ export default function MajorTriads({
                   disabled={isByVoicing}
                   title={nonMajorTitle}
                   onClick={() => setSettings({ ...settings, chordType: 'maj7' })}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
+                  className={`px-3 sm:px-4 py-2.5 min-h-[40px] text-sm font-medium rounded-md transition-colors ${nonMajorDisabledClass} ${
                     settings.chordType === 'maj7'
                       ? 'bg-primary-600 text-white'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -590,7 +590,7 @@ export default function MajorTriads({
             );
           })()}
         </div>
-        <div className="flex-1 flex justify-end items-center gap-3">
+        <div className="w-full flex justify-center items-center gap-3 lg:w-auto lg:flex-1 lg:justify-end">
           {viewMode === 'by-voicing' && (
             <VoicingPositionSelector
               selected={selectedVoicingSlot}
@@ -624,25 +624,27 @@ export default function MajorTriads({
       {/* Circle of Fifths Visual Selector with Settings Icon */}
       {viewMode === 'by-key' && (
       <div className="w-full max-w-[970px] mx-auto relative">
-          <CircleOfFifthsSelector
-            selectedKey={selectedKey}
-            onSelectKey={onSelectedKeyChange}
-            getAuxLabel={getIntervalLabel}
-            showSettingsButton
-            isSettingsOpen={isSettingsOpen}
-            onSettingsToggle={() => setIsSettingsOpen(!isSettingsOpen)}
-          />
+          <div className="overflow-x-auto">
+            <CircleOfFifthsSelector
+              selectedKey={selectedKey}
+              onSelectKey={onSelectedKeyChange}
+              getAuxLabel={getIntervalLabel}
+              showSettingsButton
+              isSettingsOpen={isSettingsOpen}
+              onSettingsToggle={() => setIsSettingsOpen(!isSettingsOpen)}
+            />
+          </div>
 
           {/* Settings Panel Dropdown - Opens to the left */}
           {isSettingsOpen && (
-            <div className="absolute top-24 right-0 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
+            <div className="absolute top-24 right-0 max-w-[calc(100vw-1.5rem)] max-h-[70vh] overflow-y-auto bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-50">
               <div className="space-2">
                 {/* Toggles */}
                 <div className="px-3">
                   {/* Show Chromatic Notes */}
                   <div
                     onClick={() => setSettings({ ...settings, showChromaticNotes: !settings.showChromaticNotes })}
-                    className="flex items-center gap-3 cursor-pointer py-1"
+                    className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
                   >
                     <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
                       <div
@@ -669,7 +671,7 @@ export default function MajorTriads({
                   {/* Show Octave Colors */}
                   <div
                     onClick={() => setSettings({ ...settings, showOctaveColors: !settings.showOctaveColors })}
-                    className="flex items-center gap-3 cursor-pointer py-1"
+                    className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
                   >
                     <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
                       <div
@@ -696,7 +698,7 @@ export default function MajorTriads({
                   {/* Show Root Halos */}
                   <div
                     onClick={() => setSettings({ ...settings, showRootHalos: !settings.showRootHalos })}
-                    className="flex items-center gap-3 cursor-pointer py-1"
+                    className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
                   >
                     <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
                       <div
@@ -723,7 +725,7 @@ export default function MajorTriads({
                   {/* Show Neighborhoods */}
                   <div
                     onClick={() => setSettings({ ...settings, showNeighborhoods: !settings.showNeighborhoods })}
-                    className="flex items-center gap-3 cursor-pointer py-1"
+                    className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
                   >
                     <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
                       <div
@@ -750,7 +752,7 @@ export default function MajorTriads({
                   {/* Enable Hover Sound */}
                   <div
                     onClick={() => setSettings({ ...settings, enableHoverSound: !settings.enableHoverSound })}
-                    className="flex items-center gap-3 cursor-pointer py-1"
+                    className="flex items-center gap-3 cursor-pointer py-2 min-h-[40px]"
                   >
                     <div className="relative flex-shrink-0" style={{ width: '36px', height: '20px' }}>
                       <div

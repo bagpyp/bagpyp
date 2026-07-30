@@ -903,6 +903,16 @@ export default function BoxShapes({
                       count += 1;
                     }
 
+                    // The E strings always mirror in these box shapes, so a target
+                    // borrowed onto one E string must appear on the other as well.
+                    [...targetPositions].forEach(([stringIndex, fret]) => {
+                      if (stringIndex === 0) {
+                        addTargetPosition(5, fret);
+                      } else if (stringIndex === 5) {
+                        addTargetPosition(0, fret);
+                      }
+                    });
+
                     if (targetPositions.length > 0) {
                       markers.push({
                         positions: targetPositions,

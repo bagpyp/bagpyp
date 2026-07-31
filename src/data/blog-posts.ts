@@ -1,7 +1,57 @@
 import { BlogPost } from "../interfaces";
 
 // Blog post metadata - actual content hosted as markdown/PDF
+// NOTE: /blog displays this array REVERSED (last entry appears first),
+// so entries at the START of this array appear at the BOTTOM of the page.
 export const blogPostsData: BlogPost[] = [
+	{
+		id: "octave-lattice",
+		slug: "octave-lattice",
+		title: "The Octave Lattice",
+		subtitle: "Why a Guitar Fretboard Is Secretly the Integer Grid",
+		excerpt:
+			"Every octave shape on a guitar is a vector, and the two compact ones form a unimodular basis—so the tangled octave map on the fretboard is, up to a change of basis, the integer grid ℤ². A graph-theoretic tour of the neck, and why the B-string wrinkle is invisible to the math.",
+		content: "/blog/octave-lattice.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-07-07",
+		tags: ["Graph Theory", "Music Theory", "Lattices", "Guitar", "Visualization"],
+		category: "Music & Mathematics",
+		readingTime: 9,
+		featured: true,
+		image: "octave-lattice.svg"
+	},
+	{
+		id: "unwarping-fretboard",
+		slug: "unwarping-fretboard",
+		title: "Unwarping the Fretboard",
+		subtitle: "Triads, Interval Vectors, and the One-Fret Seam",
+		excerpt:
+			"A major triad is the cyclic interval word 4–3–5. Unwarp the G–B seam and its inversions become translations again—three chord-tone steps that add up to an octave-lattice generator.",
+		content: "/blog/unwarping-fretboard.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-07-12",
+		tags: ["Music Theory", "Guitar", "Intervals", "Lattices", "Triads"],
+		category: "Music & Mathematics",
+		readingTime: 11,
+		featured: true,
+		image: "unwarping-fretboard.svg"
+	},
+	{
+		id: "caged-is-a-helix",
+		slug: "caged-is-a-helix",
+		title: "CAGED Is a Helix",
+		subtitle: "Bass Roots, the Missing Fret, and the Hidden Register Seam",
+		excerpt:
+			"CAGED closes into a circle only after register is forgotten. Track absolute pitch and the D form reveals an octave jump, a literal zero-density fret, and a helix winding through overlapping triad neighborhoods.",
+		content: "/blog/caged-is-a-helix.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-07-14",
+		tags: ["Music Theory", "Guitar", "CAGED", "Lattices", "Fretboard Geometry"],
+		category: "Music & Mathematics",
+		readingTime: 30,
+		featured: true,
+		image: "caged-is-a-helix.svg"
+	},
 	{
 		id: "introduction-agentic-reliability",
 		slug: "introduction-agentic-reliability",
@@ -97,54 +147,6 @@ export const blogPostsData: BlogPost[] = [
 		readingTime: 20,
 		featured: true,
 		image: "reliability-tensor.webp"
-	},
-	{
-		id: "octave-lattice",
-		slug: "octave-lattice",
-		title: "The Octave Lattice",
-		subtitle: "Why a Guitar Fretboard Is Secretly the Integer Grid",
-		excerpt:
-			"Every octave shape on a guitar is a vector, and the two compact ones form a unimodular basis—so the tangled octave map on the fretboard is, up to a change of basis, the integer grid ℤ². A graph-theoretic tour of the neck, and why the B-string wrinkle is invisible to the math.",
-		content: "/blog/octave-lattice.md",
-		author: "Robert Cunningham",
-		publishedDate: "2026-07-07",
-		tags: ["Graph Theory", "Music Theory", "Lattices", "Guitar", "Visualization"],
-		category: "Music & Mathematics",
-		readingTime: 9,
-		featured: true,
-		image: "octave-lattice.svg"
-	},
-	{
-		id: "unwarping-fretboard",
-		slug: "unwarping-fretboard",
-		title: "Unwarping the Fretboard",
-		subtitle: "Triads, Interval Vectors, and the One-Fret Seam",
-		excerpt:
-			"A major triad is the cyclic interval word 4–3–5. Unwarp the G–B seam and its inversions become translations again—three chord-tone steps that add up to an octave-lattice generator.",
-		content: "/blog/unwarping-fretboard.md",
-		author: "Robert Cunningham",
-		publishedDate: "2026-07-12",
-		tags: ["Music Theory", "Guitar", "Intervals", "Lattices", "Triads"],
-		category: "Music & Mathematics",
-		readingTime: 11,
-		featured: true,
-		image: "unwarping-fretboard.svg"
-	},
-	{
-		id: "caged-is-a-helix",
-		slug: "caged-is-a-helix",
-		title: "CAGED Is a Helix",
-		subtitle: "Bass Roots, the Missing Fret, and the Hidden Register Seam",
-		excerpt:
-			"CAGED closes into a circle only after register is forgotten. Track absolute pitch and the D form reveals an octave jump, a literal zero-density fret, and a helix winding through overlapping triad neighborhoods.",
-		content: "/blog/caged-is-a-helix.md",
-		author: "Robert Cunningham",
-		publishedDate: "2026-07-14",
-		tags: ["Music Theory", "Guitar", "CAGED", "Lattices", "Fretboard Geometry"],
-		category: "Music & Mathematics",
-		readingTime: 30,
-		featured: true,
-		image: "caged-is-a-helix.svg"
 	}
 ];
 

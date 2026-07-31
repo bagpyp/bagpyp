@@ -3,6 +3,41 @@ import { Project } from "../interfaces";
 // Personal projects - each loads its own React page
 export const projectsData: Project[] = [
 	{
+		id: "guitar-triads",
+		slug: "guitar",
+		title: "Guitar Workbench",
+		subtitle: "Triads and Box Shapes",
+		description:
+			"Unified guitar learning page with switchable tools for triads, pentatonic boxes, and blues boxes.",
+		longDescription:
+			"Comprehensive interactive guitar workspace combining chord and box-shape systems in one place. Switch between major triad voicings and box-shape visualizers with shared fretboard rendering and hover-to-play audio feedback.",
+		client: "Personal Project",
+		technologies: [
+			"Next.js 14",
+			"TypeScript",
+			"Vitest",
+			"Web Audio API"
+		],
+		features: [
+			"Major triads across 4 string groups (6-5-4, 5-4-3, 4-3-2, 3-2-1)",
+			"Major, pentatonic, and blues box-shape systems",
+			"Pentatonic 5-box and blues box visualizations",
+			"Shared fretboard rendering engine across tools",
+			"Interactive hover-to-play notes",
+			"Physics-based exponential fret spacing"
+		],
+		outcomes: [
+			"Demonstrates mathematical precision",
+			"Creative problem-solving (music theory + physics)",
+			"TDD excellence",
+			"Zero backend required"
+		],
+		images: ["guitar-triads-screenshot.png"],
+		featured: true,
+		year: "2024",
+		category: "Full-Stack"
+	},
+	{
 		id: "tonnetz-lattice",
 		slug: "tonnetz-lattice",
 		title: "Tonnetz Lattice",
@@ -111,41 +146,6 @@ export const projectsData: Project[] = [
 		featured: true,
 		year: "2020",
 		category: "Infrastructure"
-	},
-	{
-		id: "guitar-triads",
-		slug: "guitar",
-		title: "Guitar Workbench",
-		subtitle: "Triads and Box Shapes",
-		description:
-			"Unified guitar learning page with switchable tools for triads, pentatonic boxes, and blues boxes.",
-		longDescription:
-			"Comprehensive interactive guitar workspace combining chord and box-shape systems in one place. Switch between major triad voicings and box-shape visualizers with shared fretboard rendering and hover-to-play audio feedback.",
-		client: "Personal Project",
-		technologies: [
-			"Next.js 14",
-			"TypeScript",
-			"Vitest",
-			"Web Audio API"
-		],
-		features: [
-			"Major triads across 4 string groups (6-5-4, 5-4-3, 4-3-2, 3-2-1)",
-			"Major, pentatonic, and blues box-shape systems",
-			"Pentatonic 5-box and blues box visualizations",
-			"Shared fretboard rendering engine across tools",
-			"Interactive hover-to-play notes",
-			"Physics-based exponential fret spacing"
-		],
-		outcomes: [
-			"Demonstrates mathematical precision",
-			"Creative problem-solving (music theory + physics)",
-			"TDD excellence",
-			"Zero backend required"
-		],
-		images: ["guitar-triads-screenshot.png"],
-		featured: true,
-		year: "2024",
-		category: "Full-Stack"
 	},
 		{
 			id: "guitar-modes",

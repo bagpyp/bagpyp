@@ -80,10 +80,10 @@ export const projectsData: Project[] = [
 		title: "Graph Theoretic Multi-Agent Dynamics",
 		subtitle: "My First Python Script",
 		description:
-			"Mathematical simulation of autonomous agents reaching consensus through graph-based communication. Graduate thesis work in Applied Mathematics.",
+			"Mathematical simulation of autonomous agents reaching consensus through graph-based communication. Graduate research in Applied Mathematics.",
 		longDescription:
 			"First Python programming project from graduate school (2015). Models N autonomous agents in 2D/3D space whose dynamics are dictated by neighbor knowledge. Implements various network topologies using Laplacian matrices and solves ODEs to simulate consensus dynamics.",
-		client: "Portland State University - MS Thesis",
+		client: "Portland State University - Graduate Research",
 		technologies: [
 			"Python",
 			"NumPy",
@@ -100,7 +100,7 @@ export const projectsData: Project[] = [
 			"Customizable parameters"
 		],
 		outcomes: [
-			"Graduate thesis research",
+			"Graduate research",
 			"First programming project",
 			"Applied math to simulation",
 			"Foundation for understanding multi-agent systems"

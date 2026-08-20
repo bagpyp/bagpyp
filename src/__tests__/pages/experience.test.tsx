@@ -32,7 +32,7 @@ describe("Experience Page", () => {
 		render(<ExperiencePage {...mockProps} />);
 		expect(screen.getByText("Education & Expertise")).toBeInTheDocument();
 		expect(
-			screen.getByText("MS Computational & Applied Mathematics")
+			screen.getByText("Graduate Studies in Computational & Applied Mathematics")
 		).toBeInTheDocument();
 	});
 

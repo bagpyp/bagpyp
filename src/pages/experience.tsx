@@ -100,7 +100,7 @@ const ExperiencePage = ({ caseStudies }: Props) => {
 								<div className="space-y-6">
 									<div>
 										<h4 className="font-semibold text-primary-700 dark:text-primary-400">
-											MS Computational & Applied Mathematics
+											Graduate Studies in Computational & Applied Mathematics
 										</h4>
 										<p className="text-slate-600 dark:text-slate-300">
 											Portland State University, 2015-2017

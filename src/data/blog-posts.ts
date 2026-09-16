@@ -99,6 +99,22 @@ export const blogPostsData: BlogPost[] = [
 		readingTime: 20,
 		featured: true,
 		image: "reliability-tensor.webp"
+	},
+	{
+		id: "three-ways-through-the-major-scale",
+		slug: "three-ways-through-the-major-scale",
+		title: "Three Ways Through the Major Scale",
+		subtitle: "Seven Modes, Three Windows, Twenty-One Routes",
+		excerpt:
+			"Each 17-note major-scale box contains three overlapping two-octave routes. Follow the one-, two-, and three-note launches through all seven modal tonics and the familiar box system opens into a 7×3 map of the fretboard.",
+		content: "/blog/three-ways-through-the-major-scale.md",
+		author: "Robert Cunningham",
+		publishedDate: "2026-09-16",
+		tags: ["Music Theory", "Guitar", "Modes", "Fretboard Geometry", "Visualization"],
+		category: "Music & Mathematics",
+		readingTime: 14,
+		featured: true,
+		image: "major-scale-three-ways.svg"
 	}
 ];
 

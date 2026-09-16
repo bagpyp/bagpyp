@@ -53,10 +53,11 @@ const BlogPostCard = ({ post }: Props) => {
 						{post.category}
 					</span>
 					<span className="text-xs text-slate-500 dark:text-slate-400">
-						{new Date(post.publishedDate).toLocaleDateString("en-US", {
+						{new Date(`${post.publishedDate}T00:00:00Z`).toLocaleDateString("en-US", {
 							month: "short",
 							day: "numeric",
-							year: "numeric"
+							year: "numeric",
+							timeZone: "UTC"
 						})}
 					</span>
 				</div>

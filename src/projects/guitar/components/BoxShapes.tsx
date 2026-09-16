@@ -17,6 +17,7 @@ import ScalePatternFretboard, {
 import CircleOfFifthsSelector from './CircleOfFifthsSelector';
 import ChordCheatSheetPanel from './ChordCheatSheetPanel';
 import PracticeProgressionsPanel from './PracticeProgressionsPanel';
+import MajorScaleRunExplorer from './MajorScaleRunExplorer';
 import { buildPentatonicShapeOverlays } from '../lib/pentatonic-shape-overlays';
 import {
   getChordCheatSheetData,
@@ -51,6 +52,7 @@ const CHROMATIC_DEGREE_LABELS = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6'
 
 const SEGMENT_WRAPPER_CLASS = 'inline-flex flex-wrap justify-center rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10';
 const SEGMENT_BUTTON_BASE_CLASS = 'min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none';
+type MajorVisualization = 'routes' | 'boxes';
 
 function getSegmentButtonClass(isActive: boolean): string {
   return `${SEGMENT_BUTTON_BASE_CLASS} ${isActive
@@ -100,6 +102,7 @@ export default function BoxShapes({
     DEFAULT_SINGLE_TARGET_TONE_STATE
   );
   const [hexatonicMode, setHexatonicMode] = useState<HexatonicModeId>('off');
+  const [majorVisualization, setMajorVisualization] = useState<MajorVisualization>('routes');
   const controlsPanelRef = useRef<HTMLElement | null>(null);
   const fretboardsContainerRef = useRef<HTMLDivElement | null>(null);
   const circleSelectorRef = useRef<HTMLDivElement | null>(null);
@@ -310,7 +313,8 @@ export default function BoxShapes({
     return byPatternId;
   }, [displayPatterns, showNotesFromOtherPositions]);
 
-  const shouldShowPracticePanels = showPracticePanel || showCheatSheetPanel;
+  const isMajorRouteView = scaleFamily === 'major' && majorVisualization === 'routes';
+  const shouldShowPracticePanels = !isMajorRouteView && (showPracticePanel || showCheatSheetPanel);
   const shouldFloatCheatSheet =
     showCheatSheetPanel && floatingPanelPositions !== null && floatingPanelPositions.leftPanelLeft !== null;
   const shouldFloatProgressions =
@@ -474,7 +478,9 @@ export default function BoxShapes({
   ]);
 
   const title = scaleFamily === 'major'
-    ? `${majorCenterKey} Major System - 7 Modal Box Shapes`
+    ? majorVisualization === 'routes'
+      ? `${majorCenterKey} Major System - 21 Two-Octave Routes`
+      : `${majorCenterKey} Major System - 7 Modal Box Shapes`
     : `${tonalCenterMode === 'major' ? majorCenterKey : minorCenterKey} ${tonalCenterMode === 'major' ? 'Major' : 'Minor'} Pentatonic - 5 Box Shapes`;
 
   return (
@@ -482,21 +488,24 @@ export default function BoxShapes({
       <div className="mx-auto max-w-[1860px] px-4 py-4 xl:px-6">
         <div className="space-y-4">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white">{title}</h1>
+            <h1 className="px-2 text-2xl font-bold leading-tight text-white sm:text-3xl">{title}</h1>
           </div>
 
-          <div ref={circleSelectorRef} className="w-full max-w-[970px] mx-auto relative z-[120]">
+          <div ref={circleSelectorRef} className="relative z-40 mx-auto w-full max-w-[970px]">
             <div className="overflow-x-auto">
               <CircleOfFifthsSelector
                 selectedKey={selectedMajorKey}
                 onSelectKey={onSelectedMajorKeyChange}
-                showSettingsButton
+                showSettingsButton={!isMajorRouteView}
                 isSettingsOpen={isSettingsOpen}
                 onSettingsToggle={() => setIsSettingsOpen((current) => !current)}
               />
             </div>
+            <p className="mt-1 text-center text-[11px] text-slate-500 sm:hidden">
+              Swipe sideways to choose from all twelve keys.
+            </p>
 
-            {isSettingsOpen && (
+            {isSettingsOpen && !isMajorRouteView && (
               <div className="absolute top-24 right-0 z-50 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700">
                 <div className="px-3 py-2">
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-500">
@@ -629,7 +638,9 @@ export default function BoxShapes({
             ref={controlsPanelRef}
             className="mx-auto w-full max-w-[1320px] rounded-xl bg-slate-900/45 p-4 shadow-lg ring-1 ring-white/10 backdrop-blur-sm"
           >
-            <div className="grid gap-4 lg:grid-cols-3 lg:items-start">
+            <div className={`grid gap-4 lg:items-start ${
+              scaleFamily === 'major' && !isMajorRouteView ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+            }`}>
               <div className="flex flex-col items-center text-center">
                 <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                   Tonal Center
@@ -674,6 +685,34 @@ export default function BoxShapes({
                 <p className="mt-1 text-xs text-slate-400">{scaleFamilyLabel}</p>
               </div>
 
+              {scaleFamily === 'major' && (
+                <div className="flex flex-col items-center text-center">
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                    Major View
+                  </p>
+                  <div className={SEGMENT_WRAPPER_CLASS}>
+                    <button
+                      type="button"
+                      onClick={() => setMajorVisualization('routes')}
+                      className={getSegmentButtonClass(majorVisualization === 'routes')}
+                    >
+                      21 Routes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMajorVisualization('boxes')}
+                      className={getSegmentButtonClass(majorVisualization === 'boxes')}
+                    >
+                      7 Boxes
+                    </button>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-400">
+                    Two-octave windows or complete positions
+                  </p>
+                </div>
+              )}
+
+              {!isMajorRouteView && (
               <div className="flex flex-col items-center text-center">
                 <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                   Panels
@@ -696,6 +735,7 @@ export default function BoxShapes({
                 </div>
                 <p className="mt-1 text-xs text-slate-400">Always available without opening a menu.</p>
               </div>
+              )}
             </div>
 
             {scaleFamily === 'pentatonic' && (
@@ -789,8 +829,12 @@ export default function BoxShapes({
           </section>
 
           <div>
-            <div ref={fretboardsContainerRef} className="relative flex flex-col gap-1">
-              {displayPatterns.map((shapeData) => {
+            {isMajorRouteView ? (
+              <MajorScaleRunExplorer selectedMajorKey={majorCenterKey} />
+            ) : (
+              <>
+                <div ref={fretboardsContainerRef} className="relative flex flex-col gap-1">
+                {displayPatterns.map((shapeData) => {
                 let patternForRender = shapeData.pattern;
                 let rootPositionsForRender = shapeData.rootPositions;
                 const markers: FretboardMarker[] = [];
@@ -1128,11 +1172,11 @@ export default function BoxShapes({
                     activeChordPitchClasses={activeChordPitchClasses ?? undefined}
                     numFrets={BOX_FRET_COUNT}
                     titlePlacement="left"
-                    showTitle={false}
+                    showTitle={scaleFamily === 'major'}
                   />
                 );
-              })}
-            </div>
+                })}
+              </div>
 
             {shouldShowPracticePanels && shouldFloatCheatSheet && floatingPanelPositions && (
               <div
@@ -1206,6 +1250,8 @@ export default function BoxShapes({
                   />
                 )}
               </div>
+            )}
+              </>
             )}
           </div>
         </div>

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Three Ways Through the Major Scale</title>
+  <desc id="desc">A Dorian shown as three two-octave routes with one, two, or three notes on the low E string. Each route contains fifteen notes, one two-note interior string, and highlighted octave tonics.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.55" stop-color="#101b35"/>
+      <stop offset="1" stop-color="#1b1537"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#17233d" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#0e172b" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="1030" cy="70" r="250" fill="#6d28d9" opacity="0.09"/>
+  <circle cx="80" cy="630" r="270" fill="#0891b2" opacity="0.08"/>
+
+  <text x="48" y="64" fill="#f8fafc" font-family="ui-sans-serif,system-ui,sans-serif" font-size="42" font-weight="760" letter-spacing="-1">THREE WAYS THROUGH THE MAJOR SCALE</text>
+  <text x="50" y="100" fill="#94a3b8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="20" font-weight="600" letter-spacing="3">7 MODES × 3 WINDOWS = 21 TWO-OCTAVE ROUTES</text>
+  <rect x="1001" y="39" width="151" height="42" rx="21" fill="#fbbf24" opacity="0.16" stroke="#fbbf24"/>
+  <text x="1076.5" y="66" text-anchor="middle" fill="#fde68a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="16" font-weight="750" letter-spacing="1.5">A DORIAN</text>
+
+  <rect x="28" y="135" width="1144" height="506" rx="22" fill="url(#panel)" stroke="#334155" stroke-width="1.5"/>
+
+  <g font-family="ui-sans-serif,system-ui,sans-serif" font-size="15" font-weight="700" fill="#94a3b8" text-anchor="middle">
+    <text x="320" y="176">STRING 6</text><text x="480" y="176">STRING 5</text>
+    <text x="640" y="176">STRING 4</text><text x="800" y="176">STRING 3</text>
+    <text x="960" y="176">STRING 2</text><text x="1120" y="176">STRING 1</text>
+  </g>
+
+  <g fill="#0b1325" stroke="#334155">
+    <rect x="257" y="194" width="126" height="100" rx="12"/><rect x="417" y="194" width="126" height="100" rx="12"/><rect x="577" y="194" width="126" height="100" rx="12"/><rect x="737" y="194" width="126" height="100" rx="12"/><rect x="897" y="194" width="126" height="100" rx="12" stroke="#fbbf24" stroke-dasharray="5 5"/><rect x="1057" y="194" width="96" height="100" rx="12"/>
+    <rect x="257" y="344" width="126" height="100" rx="12"/><rect x="417" y="344" width="126" height="100" rx="12"/><rect x="577" y="344" width="126" height="100" rx="12"/><rect x="737" y="344" width="126" height="100" rx="12"/><rect x="897" y="344" width="126" height="100" rx="12" stroke="#fbbf24" stroke-dasharray="5 5"/><rect x="1057" y="344" width="96" height="100" rx="12"/>
+    <rect x="257" y="494" width="126" height="100" rx="12"/><rect x="417" y="494" width="126" height="100" rx="12"/><rect x="577" y="494" width="126" height="100" rx="12"/><rect x="737" y="494" width="126" height="100" rx="12" stroke="#fbbf24" stroke-dasharray="5 5"/><rect x="897" y="494" width="126" height="100" rx="12"/><rect x="1057" y="494" width="96" height="100" rx="12"/>
+  </g>
+
+  <g font-family="ui-sans-serif,system-ui,sans-serif">
+    <text x="54" y="218" fill="#67e8f9" font-size="22" font-weight="800">1-NOTE LAUNCH</text>
+    <text x="54" y="245" fill="#cbd5e1" font-size="16" font-weight="650">host: F# Locrian</text>
+    <text x="54" y="274" fill="#64748b" font-size="15" font-weight="650">1 · 3 · 3 · 3 · 2 · 3</text>
+    <text x="54" y="368" fill="#a78bfa" font-size="22" font-weight="800">2-NOTE LAUNCH</text>
+    <text x="54" y="395" fill="#cbd5e1" font-size="16" font-weight="650">host: G Ionian</text>
+    <text x="54" y="424" fill="#64748b" font-size="15" font-weight="650">2 · 3 · 3 · 3 · 2 · 2</text>
+    <text x="54" y="518" fill="#fb7185" font-size="22" font-weight="800">3-NOTE LAUNCH</text>
+    <text x="54" y="545" fill="#cbd5e1" font-size="16" font-weight="650">host: A Dorian</text>
+    <text x="54" y="574" fill="#64748b" font-size="15" font-weight="650">3 · 3 · 3 · 2 · 3 · 1</text>
+  </g>
+
+  <g fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.72">
+    <path d="M346 244 C470 210 645 216 774 244 S1025 280 1131 244"/>
+    <path d="M320 394 C430 355 560 357 666 394 S980 430 1105 394"/>
+    <path d="M294 544 C410 505 535 507 640 544 S970 580 1079 544"/>
+  </g>
+
+  <g fill="#67e8f9">
+    <circle cx="346" cy="244" r="10"/><circle cx="454" cy="244" r="10"/><circle cx="480" cy="244" r="10"/><circle cx="506" cy="244" r="10"/>
+    <circle cx="614" cy="244" r="10"/><circle cx="640" cy="244" r="10"/><circle cx="666" cy="244" r="10"/>
+    <circle cx="774" cy="244" r="10"/><circle cx="800" cy="244" r="10"/><circle cx="826" cy="244" r="10"/>
+    <circle cx="934" cy="244" r="10"/><circle cx="960" cy="244" r="10"/>
+    <circle cx="1079" cy="244" r="10"/><circle cx="1105" cy="244" r="10"/><circle cx="1131" cy="244" r="10"/>
+  </g>
+  <g fill="#a78bfa">
+    <circle cx="320" cy="394" r="10"/><circle cx="346" cy="394" r="10"/>
+    <circle cx="454" cy="394" r="10"/><circle cx="480" cy="394" r="10"/><circle cx="506" cy="394" r="10"/>
+    <circle cx="614" cy="394" r="10"/><circle cx="640" cy="394" r="10"/><circle cx="666" cy="394" r="10"/>
+    <circle cx="774" cy="394" r="10"/><circle cx="800" cy="394" r="10"/><circle cx="826" cy="394" r="10"/>
+    <circle cx="934" cy="394" r="10"/><circle cx="960" cy="394" r="10"/>
+    <circle cx="1079" cy="394" r="10"/><circle cx="1105" cy="394" r="10"/>
+  </g>
+  <g fill="#fb7185">
+    <circle cx="294" cy="544" r="10"/><circle cx="320" cy="544" r="10"/><circle cx="346" cy="544" r="10"/>
+    <circle cx="454" cy="544" r="10"/><circle cx="480" cy="544" r="10"/><circle cx="506" cy="544" r="10"/>
+    <circle cx="614" cy="544" r="10"/><circle cx="640" cy="544" r="10"/><circle cx="666" cy="544" r="10"/>
+    <circle cx="774" cy="544" r="10"/><circle cx="800" cy="544" r="10"/>
+    <circle cx="934" cy="544" r="10"/><circle cx="960" cy="544" r="10"/><circle cx="986" cy="544" r="10"/>
+    <circle cx="1079" cy="544" r="10"/>
+  </g>
+
+  <g fill="#fbbf24" stroke="#fff7d6" stroke-width="2" filter="url(#glow)">
+    <circle cx="346" cy="244" r="12"/><circle cx="774" cy="244" r="12"/><circle cx="1131" cy="244" r="12"/>
+    <circle cx="320" cy="394" r="12"/><circle cx="666" cy="394" r="12"/><circle cx="1105" cy="394" r="12"/>
+    <circle cx="294" cy="544" r="12"/><circle cx="640" cy="544" r="12"/><circle cx="1079" cy="544" r="12"/>
+  </g>
+
+  <g font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="800" fill="#fbbf24" text-anchor="middle" letter-spacing="1">
+    <text x="960" y="211">2-NOTE SEAM</text><text x="960" y="361">2-NOTE SEAM</text><text x="800" y="511">2-NOTE SEAM</text>
+  </g>
+
+  <g font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" fill="#64748b">
+    <circle cx="57" cy="614" r="7" fill="#fbbf24"/><text x="74" y="619">tonic · octave · double octave</text>
+    <text x="1125" y="619" text-anchor="end">15 notes · 24 semitones · all 6 strings</text>
+  </g>
+</svg>

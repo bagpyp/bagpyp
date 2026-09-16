@@ -79,15 +79,16 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 						{/* Header */}
 						<div className="mb-12">
 							{/* Category & Date */}
-							<div className="flex items-center gap-4 mb-6">
+							<div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6">
 								<span className="px-3 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm font-semibold rounded-full">
 									{post.category}
 								</span>
 								<span className="text-slate-500 dark:text-slate-400">
-									{new Date(post.publishedDate).toLocaleDateString("en-US", {
+									{new Date(`${post.publishedDate}T00:00:00Z`).toLocaleDateString("en-US", {
 										month: "long",
 										day: "numeric",
-										year: "numeric"
+										year: "numeric",
+										timeZone: "UTC"
 									})}
 								</span>
 								<span className="text-slate-500 dark:text-slate-400">• {post.readingTime} min read</span>
@@ -147,10 +148,22 @@ const BlogPostPage = ({ post, markdownContent, errors }: Props) => {
 								</a>
 							</div>
 						) : markdownContent ? (
-							<div className="prose prose-lg max-w-none prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-100 prose-pre:text-slate-900 prose-li:text-slate-700 prose-ul:text-slate-700 prose-ol:text-slate-700 prose-img:rounded-lg prose-img:shadow-lg dark:prose-headings:text-slate-100 dark:prose-p:text-slate-300 dark:prose-a:text-primary-400 dark:prose-strong:text-slate-100 dark:prose-code:text-primary-300 dark:prose-pre:bg-slate-900 dark:prose-pre:text-slate-100 dark:prose-li:text-slate-300 dark:prose-ul:text-slate-300 dark:prose-ol:text-slate-300">
+							<div className="prose prose-lg min-w-0 max-w-full prose-headings:text-slate-900 prose-p:text-slate-700 prose-a:text-primary-600 prose-strong:text-slate-900 prose-code:text-primary-700 prose-pre:bg-slate-100 prose-pre:text-slate-900 prose-li:text-slate-700 prose-ul:text-slate-700 prose-ol:text-slate-700 prose-img:rounded-lg prose-img:shadow-lg dark:prose-headings:text-slate-100 dark:prose-p:text-slate-300 dark:prose-a:text-primary-400 dark:prose-strong:text-slate-100 dark:prose-code:text-primary-300 dark:prose-pre:bg-slate-900 dark:prose-pre:text-slate-100 dark:prose-li:text-slate-300 dark:prose-ul:text-slate-300 dark:prose-ol:text-slate-300">
 								<ReactMarkdown
 									remarkPlugins={[remarkGfm, remarkMath]}
 									rehypePlugins={[rehypeRaw, rehypeKatex, rehypeHighlight]}
+									components={{
+										table: ({ children }) => (
+											<div
+												className="max-w-full overflow-x-auto overscroll-x-contain pb-2"
+												role="region"
+												aria-label="Scrollable table"
+												tabIndex={0}
+											>
+												<table className="min-w-max">{children}</table>
+											</div>
+										)
+									}}
 								>
 									{markdownContent}
 								</ReactMarkdown>

@@ -54,8 +54,7 @@ describe("BlogPostCard", () => {
 
 	it("shows formatted date", () => {
 		render(<BlogPostCard post={mockPost} />);
-		// Date formatting may vary, just check it contains "2024"
-		expect(screen.getByText(/2024/)).toBeInTheDocument();
+		expect(screen.getByText("Jan 15, 2024")).toBeInTheDocument();
 	});
 
 	it("has Read Article CTA", () => {

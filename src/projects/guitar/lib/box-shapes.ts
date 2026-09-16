@@ -75,7 +75,7 @@ const MAJOR_MODE_NAMES = [
 const MAJOR_INTERVALS = [0, 2, 4, 5, 7, 9, 11];
 // Box -> string index that is 2NPS for major modes
 // String indexes: 0=low E, 1=A, 2=D, 3=G, 4=B, 5=high E
-const MAJOR_2NPS_STRING_INDEX_BY_BOX = [4, 3, 3, 4, 4, 4, 4];
+export const MAJOR_2NPS_STRING_INDEX_BY_BOX = [4, 3, 3, 4, 4, 4, 4] as const;
 const PENTATONIC_INTERVALS = [0, 3, 5, 7, 10]; // Minor pentatonic
 const BLUES_INTERVALS = [0, 3, 5, 6, 7, 10]; // Minor blues (adds b5)
 
@@ -92,6 +92,8 @@ export function getPitchClass(noteName: string): number {
     Ab: 'G#',
     Bb: 'A#',
     Cb: 'B',
+    'E#': 'F',
+    'B#': 'C',
   };
 
   const sharp = flatMap[normalized];
@@ -218,8 +220,8 @@ function chooseRunStartFretForPitchClass(
     .sort((a, b) => b - a);
   const orderedCandidates = [
     ...allFrets.filter((fret) => fret >= localStart && fret <= localEnd),
-    ...allFrets.filter((fret) => fret > localEnd),
     ...belowWindow,
+    ...allFrets.filter((fret) => fret > localEnd),
   ];
 
   for (const candidate of orderedCandidates) {
@@ -849,7 +851,18 @@ export function generateBoxShapePatterns(
       const first = carryForward[0] ?? prevFrets[0] ?? current.pattern[0][0];
       const second = carryForward[1] ?? nextScaleFretOnString(0, rootPitchClass, MAJOR_INTERVALS, first);
       const third = nextScaleFretOnString(0, rootPitchClass, MAJOR_INTERVALS, second);
-      current.pattern[0] = [first, second, third];
+
+      if (third <= second && first >= 12 && second >= 12) {
+        const foldedFirst = first - 12;
+        const foldedSecond = second - 12;
+        current.pattern[0] = [
+          foldedFirst,
+          foldedSecond,
+          nextScaleFretOnString(0, rootPitchClass, MAJOR_INTERVALS, foldedSecond),
+        ];
+      } else {
+        current.pattern[0] = [first, second, third];
+      }
     }
 
     // Within each box, each higher string begins from the next scale tone

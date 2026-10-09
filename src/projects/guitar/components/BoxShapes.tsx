@@ -52,7 +52,7 @@ const CHROMATIC_DEGREE_LABELS = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6'
 
 const SEGMENT_WRAPPER_CLASS = 'inline-flex flex-wrap justify-center rounded-lg bg-slate-800/85 p-1.5 shadow-inner shadow-black/40 ring-1 ring-white/10';
 const SEGMENT_BUTTON_BASE_CLASS = 'min-h-[44px] rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none';
-type MajorVisualization = 'routes' | 'boxes';
+type MajorVisualization = 'routes' | 'boxes' | 'five-boxes';
 
 function getSegmentButtonClass(isActive: boolean): string {
   return `${SEGMENT_BUTTON_BASE_CLASS} ${isActive
@@ -145,8 +145,10 @@ export default function BoxShapes({
   );
 
   const shapePatterns = useMemo(() => {
-    return generateBoxShapePatterns(effectiveScaleKey, activeScaleFamily);
-  }, [effectiveScaleKey, activeScaleFamily]);
+    return generateBoxShapePatterns(effectiveScaleKey, activeScaleFamily, {
+      majorBoxCount: majorVisualization === 'five-boxes' ? 5 : 7,
+    });
+  }, [effectiveScaleKey, activeScaleFamily, majorVisualization]);
 
   const displayPatterns = useMemo(
     () => getDisplayOrderedBoxPatterns(
@@ -229,7 +231,7 @@ export default function BoxShapes({
 
   const tonalCenterKey = tonalCenterMode === 'major' ? majorCenterKey : minorCenterKey;
   const scaleFamilyLabel = activeScaleFamily === 'major'
-    ? 'Major (7 modes)'
+    ? majorVisualization === 'five-boxes' ? 'Major (5 boxes)' : 'Major (7 modes)'
     : tonalCenterMode === 'major'
       ? 'Major Pentatonic (5 boxes)'
       : 'Minor Pentatonic (5 boxes)';
@@ -480,7 +482,9 @@ export default function BoxShapes({
   const title = scaleFamily === 'major'
     ? majorVisualization === 'routes'
       ? `${majorCenterKey} Major System - 21 Two-Octave Routes`
-      : `${majorCenterKey} Major System - 7 Modal Box Shapes`
+      : majorVisualization === 'five-boxes'
+        ? `${majorCenterKey} Major System - 5 Box Shapes`
+        : `${majorCenterKey} Major System - 7 Modal Box Shapes`
     : `${tonalCenterMode === 'major' ? majorCenterKey : minorCenterKey} ${tonalCenterMode === 'major' ? 'Major' : 'Minor'} Pentatonic - 5 Box Shapes`;
 
   return (
@@ -678,7 +682,7 @@ export default function BoxShapes({
                       onClick={() => handleScaleFamilyChange(option.value)}
                       className={getSegmentButtonClass(option.value === scaleFamily)}
                     >
-                      {option.value === 'major' ? 'Major (7)' : 'Pentatonic (5)'}
+                      {option.value === 'major' ? 'Major' : 'Pentatonic (5)'}
                     </button>
                   ))}
                 </div>
@@ -705,9 +709,18 @@ export default function BoxShapes({
                     >
                       7 Boxes
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setMajorVisualization('five-boxes')}
+                      className={getSegmentButtonClass(majorVisualization === 'five-boxes')}
+                    >
+                      5 Boxes
+                    </button>
                   </div>
                   <p className="mt-1 text-xs text-slate-400">
-                    Two-octave windows or complete positions
+                    {majorVisualization === 'five-boxes'
+                      ? 'Five pentatonic positions with all seven scale tones'
+                      : 'Two-octave windows or complete positions'}
                   </p>
                 </div>
               )}

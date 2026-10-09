@@ -2,6 +2,7 @@ export type BoxScaleFamily = 'major' | 'pentatonic' | 'blues';
 
 export interface BoxShapeOptions {
   includeExperimentalBluesShape?: boolean;
+  majorBoxCount?: 5 | 7;
 }
 
 export interface BoxShapePattern {
@@ -813,6 +814,57 @@ export function getDisplayOrderedBoxPatterns(
   );
 }
 
+function generateFiveMajorBoxes(keyRoot: string): BoxShapePattern[] {
+  const rootPitchClass = getPitchClass(keyRoot);
+  const minorKey = getRelativeMinorKeyFromMajor(keyRoot);
+  const modeNames = ['Aeolian', 'Ionian', 'Dorian', 'Lydian', 'Mixolydian'];
+  const modalAnchors = [9, 0, 2, 5, 7];
+
+  return generateBoxShapePatterns(minorKey, 'pentatonic').map((skeleton, index) => {
+    // Fill the pentatonic pair, including a semitone immediately outside it.
+    // This retains its skeleton without introducing a whole-step/whole-step stretch.
+    const pattern = skeleton.pattern.map(([low, high], stringIndex) => {
+      const frets: number[] = [];
+      for (let fret = low - 1; fret <= high + 1; fret++) {
+        const interval = (STANDARD_TUNING_PCS[stringIndex] + fret - rootPitchClass + 24) % 12;
+        if (MAJOR_INTERVALS.includes(interval)) {
+          frets.push(fret);
+        }
+      }
+      return frets;
+    });
+
+    // Choose the lowest complete occurrence on the neck. In particular, the
+    // E-minor Aeolian box needs G-string fret -1, so it must move intact to 12.
+    let octaveShift = 0;
+    let lowestFret = Math.min(...pattern.flat());
+    while (lowestFret < 0) {
+      octaveShift += 12;
+      lowestFret += 12;
+    }
+    while (lowestFret >= 12) {
+      octaveShift -= 12;
+      lowestFret -= 12;
+    }
+
+    const shapeRootPitchClass = (rootPitchClass + modalAnchors[index]) % 12;
+    const shapeRootNote = getNoteName(shapeRootPitchClass);
+    const shape: BoxShapePattern = {
+      ...skeleton,
+      id: `major-five-${index + 1}`,
+      family: 'major',
+      keyRoot,
+      shapeRootNote,
+      shapeRootPitchClass,
+      modeName: modeNames[index],
+      label: `${shapeRootNote} ${modeNames[index]} (Box ${index + 1})`,
+      intervals: [...MAJOR_INTERVALS],
+      pattern: pattern.map((frets) => frets.map((fret) => fret + octaveShift)),
+    };
+    return recalculateShapeDerivedFields(shape, rootPitchClass);
+  });
+}
+
 export function generateBoxShapePatterns(
   keyRoot: string,
   family: BoxScaleFamily,
@@ -821,6 +873,9 @@ export function generateBoxShapePatterns(
   const rootPitchClass = getPitchClass(keyRoot);
 
   if (family === 'major') {
+    if (options.majorBoxCount === 5) {
+      return generateFiveMajorBoxes(keyRoot);
+    }
     const majorPerStringNoteCounts = MAJOR_INTERVALS.map((_, index) => {
       const noteCounts = [3, 3, 3, 3, 3, 3];
       noteCounts[MAJOR_2NPS_STRING_INDEX_BY_BOX[index]] = 2;

@@ -14,6 +14,91 @@ function pitchClassAt(stringIndex: number, fret: number): number {
 }
 
 describe('box shape generation', () => {
+  describe('five major boxes', () => {
+    const fiveBoxes = (key: string) => generateBoxShapePatterns(key, 'major', { majorBoxCount: 5 });
+
+    it('computes the five A-minor positions, folding complete boxes by an octave', () => {
+      const boxes = fiveBoxes('C');
+      expect(boxes.map((box) => box.modeName)).toEqual([
+        'Aeolian', 'Ionian', 'Dorian', 'Lydian', 'Mixolydian',
+      ]);
+      expect(boxes.map((box) => box.shapeRootNote)).toEqual(['A', 'C', 'D', 'F', 'G']);
+      expect(boxes.map((box) => box.pattern)).toEqual([
+        [[5, 7, 8], [5, 7, 8], [5, 7], [4, 5, 7], [5, 6, 8], [5, 7, 8]],
+        [[7, 8, 10], [7, 8, 10], [7, 9, 10], [7, 9, 10], [8, 10], [7, 8, 10]],
+        [[10, 12, 13], [10, 12], [9, 10, 12], [9, 10, 12], [10, 12, 13], [10, 12, 13]],
+        [[0, 1, 3], [0, 2, 3], [0, 2, 3], [0, 2], [0, 1, 3], [0, 1, 3]],
+        [[3, 5], [2, 3, 5], [2, 3, 5], [2, 4, 5], [3, 5, 6], [3, 5]],
+      ]);
+      expect(getDisplayOrderedBoxPatterns(boxes, 'major').map((box) => box.shapeNumber))
+        .toEqual([4, 5, 1, 2, 3]);
+    });
+
+    it('moves E minor intact to fret 12 instead of dropping the F# behind the nut', () => {
+      const aeolian = fiveBoxes('G')[0];
+      expect(aeolian.pattern).toEqual([
+        [12, 14, 15], [12, 14, 15], [12, 14], [11, 12, 14], [12, 13, 15], [12, 14, 15],
+      ]);
+      expect(aeolian.windowStart).toBe(11);
+      expect(aeolian.windowEnd).toBe(15);
+      expect(fiveBoxes('Ab')[0].pattern[3]).toEqual([0, 1, 3]); // F minor can use open G.
+      expect(fiveBoxes('A')[0].pattern[0]).toEqual([2, 4, 5]);
+      expect(fiveBoxes('A')[0].pattern[3]).toEqual([1, 2, 4]);
+    });
+
+    it('places the G Ionian B on the A string behind the next starting point', () => {
+      const ionian = fiveBoxes('G')[1];
+      expect(ionian.pattern[0]).toEqual([2, 3, 5]); // F# below the G anchor.
+      expect(ionian.pattern[1]).toEqual([2, 3, 5]);
+    });
+
+    it.each(['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'Db', 'Ab', 'Eb', 'Bb', 'F'])(
+      'preserves the pentatonic skeleton and continuous diatonic runs in %s',
+      (key) => {
+        const majorIntervals = [0, 2, 4, 5, 7, 9, 11];
+        const midiTuning = [40, 45, 50, 55, 59, 64];
+        const majorRoot = getPitchClass(key);
+        const skeletons = generateBoxShapePatterns(getRelativeMinorKeyFromMajor(key), 'pentatonic');
+        const boxes = fiveBoxes(key);
+        expect(boxes).toHaveLength(5);
+        boxes.forEach((box, index) => {
+          const skeleton = skeletons[index];
+          expect(box.pattern[5]).toEqual(box.pattern[0]);
+          expect(box.windowStart).toBe(Math.min(...box.pattern.flat()));
+          expect(box.windowEnd).toBe(Math.max(...box.pattern.flat()));
+          const octaveShift = box.pattern[0].find((fret) =>
+            (fret - skeleton.pattern[0][0]) % 12 === 0
+          )! - skeleton.pattern[0][0];
+          expect(Math.abs(octaveShift % 12)).toBe(0);
+          box.pattern.forEach((frets, stringIndex) => {
+            expect(frets.length).toBeGreaterThanOrEqual(2);
+            expect(frets.length).toBeLessThanOrEqual(3);
+            expect(frets[frets.length - 1] - frets[0]).toBeLessThanOrEqual(3);
+            skeleton.pattern[stringIndex].forEach((fret) => expect(frets).toContain(fret + octaveShift));
+            frets.forEach((fret) => {
+              expect(fret).toBeGreaterThanOrEqual(0);
+              expect(fret).toBeLessThanOrEqual(24);
+              expect(majorIntervals).toContain((pitchClassAt(stringIndex, fret) - majorRoot + 12) % 12);
+            });
+          });
+          const pitches = box.pattern.flatMap((frets, s) => frets.map((fret) => midiTuning[s] + fret));
+          for (let i = 1; i < pitches.length; i++) {
+            const nextInterval = majorIntervals.find((interval) =>
+              (majorRoot + interval + 12) % 12 === pitches[i - 1] % 12
+            )!;
+            const degree = majorIntervals.indexOf(nextInterval);
+            const step = (majorIntervals[(degree + 1) % 7] - nextInterval + 12) % 12;
+            expect(pitches[i] - pitches[i - 1]).toBe(step);
+          }
+          expect(box.rootPositions).toEqual(box.pattern.flatMap((frets, s) =>
+            frets.filter((fret) => pitchClassAt(s, fret) === box.shapeRootPitchClass)
+              .map((fret) => [s, fret])
+          ));
+        });
+      }
+    );
+  });
+
   it('generates seven major mode boxes with expected mode names', () => {
     const patterns = generateBoxShapePatterns('C', 'major');
 

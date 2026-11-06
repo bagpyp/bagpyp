@@ -544,7 +544,15 @@ export default function BoxShapes({
                     </span>
                   </div>
                   <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    Pentatonic overlay geometry
+                    Learn the shapes with{' '}
+                    <a
+                      href="https://fretscience.com/start"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary-600 underline underline-offset-2 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                    >
+                      Fret Science&apos;s free ebook
+                    </a>
                   </p>
 
                   <div
@@ -918,6 +926,13 @@ export default function BoxShapes({
 
                     // Primary pass: flood this target note inside the current box window.
                     for (let stringIndex = 0; stringIndex < 6; stringIndex++) {
+                      // Include a target a semitone before this string's first
+                      // pentatonic note, even just outside the window or at the nut.
+                      const leadingFret = shapeData.pattern[stringIndex][0] - 1;
+                      if (leadingFret >= 0 && matchesTargetPitchClass(stringIndex, leadingFret)) {
+                        addTargetPosition(stringIndex, leadingFret);
+                      }
+
                       for (let fret = minFret; fret <= maxFret; fret++) {
                         if (matchesTargetPitchClass(stringIndex, fret)) {
                           addTargetPosition(stringIndex, fret);

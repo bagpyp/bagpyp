@@ -98,17 +98,25 @@ describe('pentatonic box target positions', () => {
     expect(markers.flatMap((marker) => marker.positions)).not.toContainEqual([4, 3]);
   });
 
-  it('clips the corresponding F# below the nut in the G/E minor system', () => {
-    render(<BoxShapesWithKey initialKey="E" />);
-    fireEvent.click(screen.getByRole('button', { name: 'Aeolian' }));
+  it.each(['Ionian', 'Aeolian'])(
+    'shows the D-string F# stretch in the open G/E minor box with %s selected',
+    (mode) => {
+      render(<BoxShapesWithKey initialKey="E" />);
+      expect(firstBox().pattern[2]).toEqual([0, 2]);
 
-    expect(firstBox().pattern[3]).toEqual([0, 2]);
-    for (const box of screen.getAllByTestId('box')) {
-      const pattern: number[][] = JSON.parse(box.dataset.pattern!);
-      const markers: FretboardMarker[] = JSON.parse(box.dataset.markers!);
-      expect(pattern.flat().every((fret) => fret >= 0 && fret <= 24)).toBe(true);
-      expect(markers.flatMap((marker) => marker.positions)
-        .every(([, fret]) => fret >= 0 && fret <= 24)).toBe(true);
+      fireEvent.click(screen.getByRole('button', { name: mode }));
+
+      const { pattern, targetPositions } = firstBox();
+      expect(pattern[2]).toEqual([0, 2, 4]);
+      expect(targetPositions).toContainEqual([2, 4]);
+      expect(pattern[3]).toEqual([0, 2]);
+      for (const box of screen.getAllByTestId('box')) {
+        const pattern: number[][] = JSON.parse(box.dataset.pattern!);
+        const markers: FretboardMarker[] = JSON.parse(box.dataset.markers!);
+        expect(pattern.flat().every((fret) => fret >= 0 && fret <= 24)).toBe(true);
+        expect(markers.flatMap((marker) => marker.positions)
+          .every(([, fret]) => fret >= 0 && fret <= 24)).toBe(true);
+      }
     }
-  });
+  );
 });

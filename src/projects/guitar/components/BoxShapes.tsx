@@ -975,6 +975,11 @@ export default function BoxShapes({
                       count += 1;
                     }
 
+                    // In the open G major / E minor box, reach for F# at fret 4 on the D string.
+                    if (minorCenterKey === 'E' && shapeData.shapeNumber === 1 && matchesTargetPitchClass(2, 4)) {
+                      addTargetPosition(2, 4);
+                    }
+
                     // The E strings always mirror in these box shapes, so a target
                     // borrowed onto one E string must appear on the other as well.
                     [...targetPositions].forEach(([stringIndex, fret]) => {
